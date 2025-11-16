@@ -116,7 +116,7 @@ export default function GetStartedPage() {
     
     // Update steps array if plan was selected
     if (currentStep === 'pricing' && formData.selectedPlan) {
-      const newSteps = formData.selectedPlan === 'starter' 
+      const newSteps: Step[] = formData.selectedPlan === 'starter'
         ? ['pricing', 'account', 'business', 'confirmation']
         : ['pricing', 'account', 'business', 'payment', 'confirmation']
       const currentIndex = newSteps.indexOf(currentStep)
