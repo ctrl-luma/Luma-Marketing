@@ -10,6 +10,7 @@ export interface ButtonProps
   size?: 'sm' | 'md' | 'lg' | 'xl'
   isLoading?: boolean
   children: React.ReactNode
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(

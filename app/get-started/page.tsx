@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, ArrowRight, Check, CreditCard, Mail, Lock, User, Building, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, CreditCard, Mail, Lock, User, Building, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
+import { authService } from '@/lib/api'
 
 const pricingTiers = [
   {
@@ -24,8 +25,8 @@ const pricingTiers = [
     recommended: true
   },
   {
-    id: 'high-volume',
-    name: 'High-Volume',
+    id: 'enterprise',
+    name: 'Enterprise',
     price: 'Custom',
     description: 'For multi-bar operators and festival organizers',
     features: ['As low as 2.6% + $0.05', 'Unlimited devices', 'Priority support']
@@ -34,8 +35,29 @@ const pricingTiers = [
 
 type Step = 'account' | 'business' | 'pricing' | 'payment' | 'confirmation'
 
+// Format phone number for display
+const formatPhoneDisplay = (phone: string): string => {
+  if (!phone) return ''
+  
+  const cleaned = phone.replace(/\D/g, '')
+  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)
+  if (match) {
+    return `(${match[1]}) ${match[2]}-${match[3]}`
+  }
+  
+  // Partial formatting
+  if (cleaned.length <= 3) {
+    return cleaned
+  } else if (cleaned.length <= 6) {
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`
+  } else {
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`
+  }
+}
+
 export default function GetStartedPage() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const selectedTier = searchParams.get('tier')
   
   const [currentStep, setCurrentStep] = useState<Step>(selectedTier ? 'account' : 'pricing')
@@ -47,14 +69,19 @@ export default function GetStartedPage() {
     lastName: '',
     businessName: '',
     businessType: '',
+    phone: '',
     selectedPlan: selectedTier || '',
     cardNumber: '',
     expiryDate: '',
     cvv: '',
-    billingZip: ''
+    billingZip: '',
+    acceptTerms: false,
+    acceptPrivacy: false
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
   
   const getSteps = (): Step[] => {
     if (selectedTier) {
@@ -111,7 +138,52 @@ export default function GetStartedPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleNext = () => {
+  const handleSubmit = async () => {
+    setIsLoading(true)
+    setApiError(null)
+    
+    try {
+      const response = await authService.signup({
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        organizationName: formData.businessName,
+        phone: formData.phone,
+        acceptTerms: true,
+        acceptPrivacy: true,
+        subscriptionTier: formData.selectedPlan as 'starter' | 'pro' | 'enterprise'
+      })
+      
+      // Save auth tokens and user data
+      // Auth service already handles this in the signup method
+      
+      // Handle different tier-specific redirects
+      if (response.stripeOnboardingUrl) {
+        // Starter tier - go to Stripe Connect onboarding
+        window.location.href = response.stripeOnboardingUrl
+      } else if (response.stripeCheckoutUrl) {
+        // Pro tier - go to Stripe checkout for subscription
+        window.location.href = response.stripeCheckoutUrl
+      } else if (response.customPlanRequested) {
+        // Enterprise tier - show custom plan form
+        setCurrentStep('confirmation')
+        // Will redirect to custom plan form after confirmation
+        setTimeout(() => {
+          router.push('/custom-plan-request')
+        }, 3000)
+      } else {
+        // Fallback to dashboard
+        router.push('/dashboard')
+      }
+    } catch (error: any) {
+      console.error('Signup error:', error)
+      setApiError(error.error || 'Failed to create account. Please try again.')
+      setIsLoading(false)
+    }
+  }
+
+  const handleNext = async () => {
     if (!validateStep()) return
     
     // Update steps array if plan was selected
@@ -125,8 +197,17 @@ export default function GetStartedPage() {
     }
     
     const nextIndex = currentStepIndex + 1
+    
     if (nextIndex < steps.length) {
-      setCurrentStep(steps[nextIndex])
+      // If this is the last step before confirmation, submit the form
+      if (steps[nextIndex] === 'confirmation') {
+        await handleSubmit()
+        if (!apiError) {
+          setCurrentStep(steps[nextIndex])
+        }
+      } else {
+        setCurrentStep(steps[nextIndex])
+      }
     }
   }
 
@@ -147,10 +228,14 @@ export default function GetStartedPage() {
     }
   }
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
+    }
+    // Clear API error when user makes changes
+    if (apiError) {
+      setApiError(null)
     }
   }
 
@@ -364,6 +449,13 @@ export default function GetStartedPage() {
                     We'll use this to customize your Luma experience
                   </p>
                   
+                  {apiError && (
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 flex items-start gap-3">
+                      <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-red-400">{apiError}</p>
+                    </div>
+                  )}
+                  
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
@@ -447,6 +539,45 @@ export default function GetStartedPage() {
                       {errors.businessType && (
                         <p className="text-red-500 text-sm mt-1">{errors.businessType}</p>
                       )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Phone number <span className="text-gray-500">(optional)</span>
+                      </label>
+                      <div className="relative">
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                        <input
+                          type="tel"
+                          value={formatPhoneDisplay(formData.phone)}
+                          onChange={(e) => {
+                            // Remove all non-numeric characters
+                            const cleaned = e.target.value.replace(/\D/g, '')
+                            
+                            // Limit to 10 digits
+                            const limited = cleaned.slice(0, 10)
+                            
+                            // Store only digits
+                            handleInputChange('phone', limited)
+                          }}
+                          className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-gray-700 bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                          placeholder="(555) 123-4567"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3 pt-2">
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={formData.acceptTerms}
+                          onChange={(e) => handleInputChange('acceptTerms', e.target.checked)}
+                          className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-primary focus:ring-2 focus:ring-primary/50"
+                        />
+                        <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+                          I agree to the <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and acknowledge that I have read the <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+                        </span>
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -603,7 +734,7 @@ export default function GetStartedPage() {
               <Button
                 variant="ghost"
                 onClick={handleBack}
-                disabled={currentStepIndex === 0 && !selectedTier}
+                disabled={(currentStepIndex === 0 && !selectedTier) || isLoading}
                 className="disabled:opacity-30"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -613,9 +744,19 @@ export default function GetStartedPage() {
               <Button
                 onClick={handleNext}
                 size="lg"
+                disabled={isLoading}
               >
-                {currentStepIndex === steps.length - 2 ? 'Complete Setup' : 'Continue'}
-                <ArrowRight className="h-4 w-4 ml-2" />
+                {isLoading ? (
+                  <>
+                    <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    {currentStepIndex === steps.length - 2 ? 'Complete Setup' : 'Continue'}
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </>
+                )}
               </Button>
               </>
             ) : (

@@ -1,0 +1,62 @@
+import { authService } from './auth';
+import { apiClient } from './client';
+
+let isRefreshing = false;
+let refreshPromise: Promise<any> | null = null;
+
+export function setupAuthInterceptor() {
+  if (typeof window === 'undefined') return;
+
+  const originalFetch = window.fetch;
+
+  window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    const response = await originalFetch(input, init);
+
+    if (response.status === 401 && !isRefreshing) {
+      const url = input instanceof Request ? input.url : input.toString();
+      
+      if (!url.includes('/auth/refresh') && !url.includes('/auth/login')) {
+        isRefreshing = true;
+
+        if (!refreshPromise) {
+          refreshPromise = authService.refreshTokens()
+            .then(() => {
+              isRefreshing = false;
+              refreshPromise = null;
+            })
+            .catch((error) => {
+              isRefreshing = false;
+              refreshPromise = null;
+              
+              authService.logout();
+              window.location.href = '/get-started';
+              
+              throw error;
+            });
+        }
+
+        try {
+          await refreshPromise;
+          
+          const newInit = { ...init };
+          if (newInit.headers instanceof Headers) {
+            newInit.headers.set('Authorization', `Bearer ${authService.getAccessToken()}`);
+          } else if (Array.isArray(newInit.headers)) {
+            newInit.headers = [...newInit.headers, ['Authorization', `Bearer ${authService.getAccessToken()}`]];
+          } else {
+            newInit.headers = {
+              ...newInit.headers,
+              'Authorization': `Bearer ${authService.getAccessToken()}`,
+            };
+          }
+          
+          return originalFetch(input, newInit);
+        } catch (error) {
+          throw error;
+        }
+      }
+    }
+
+    return response;
+  };
+}
