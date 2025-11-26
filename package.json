@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3333",
     "lint": "next lint",
-    "build:dev": "dotenv -e .env.dev -- next build",
-    "build:prod": "cross-env NODE_ENV=production dotenv -e .env.prod -- next build"
+     "build:dev": "dotenv -e .env.dev -- next build && docker buildx build --platform linux/amd64,linux/arm64 --label version=latest -t ghcr.io/ctrl-luma/lumapos-web:dev --push .",
+  "build:prod": "dotenv -e .env.prod -- next build && docker buildx build --platform linux/amd64,linux/arm64 --label version=latest -t ghcr.io/ctrl-luma/lumapos-web:latest --push ."
   },
   "dependencies": {
     "@types/node": "^24.10.1",

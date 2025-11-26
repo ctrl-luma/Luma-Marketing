@@ -1,15 +1,10 @@
-# Dockerfile
+# Base image: tiny static web server
+FROM joseluisq/static-web-server:2-alpine
 
-FROM node:20-alpine AS build
-WORKDIR /app
+ENV SERVER_ROOT="/www"
+WORKDIR /www
 
-COPY package*.json ./
-RUN npm ci
+# Copy the static Next.js export
+COPY out .
 
-COPY . .
-# adjust these to your stack
-RUN npm run build && npm run export
-
-FROM nginx:alpine
-COPY --from=build /app/out /usr/share/nginx/html
 EXPOSE 80
