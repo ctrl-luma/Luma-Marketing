@@ -1,0 +1,21 @@
+/* Stripe Elements Custom Styles */
+.StripeElement {
+  background-color: rgba(17, 24, 39, 0.5);
+  border: 1px solid #374151;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1rem;
+  transition: all 0.2s;
+}
+
+.StripeElement--focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 1px #f97316;
+}
+
+.StripeElement--invalid {
+  border-color: #ef4444;
+}
+
+.StripeElement--webkit-autofill {
+  background-color: rgba(17, 24, 39, 0.5) !important;
+}

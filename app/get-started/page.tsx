@@ -7,6 +7,9 @@ import { ArrowLeft, ArrowRight, Check, CreditCard, Mail, Lock, User, Building, E
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { authService } from '@/lib/api'
+import { Elements } from '@stripe/react-stripe-js'
+import { getStripe } from '@/lib/stripe'
+import StripePaymentForm from '@/components/StripePaymentForm'
 
 const pricingTiers = [
   {
@@ -61,6 +64,7 @@ export default function GetStartedPage() {
   const selectedTier = searchParams.get('tier')
   
   const [currentStep, setCurrentStep] = useState<Step>(selectedTier ? 'account' : 'pricing')
+  const [paymentIntentClientSecret, setPaymentIntentClientSecret] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -71,16 +75,13 @@ export default function GetStartedPage() {
     businessType: '',
     phone: '',
     selectedPlan: selectedTier || '',
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    billingZip: '',
     acceptTerms: false,
     acceptPrivacy: false
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
   
   const getSteps = (): Step[] => {
@@ -108,7 +109,15 @@ export default function GetStartedPage() {
     
     switch (currentStep) {
       case 'account':
-        if (!formData.email) newErrors.email = 'Email is required'
+        if (!formData.email) {
+          newErrors.email = 'Email is required'
+        } else {
+          // Email regex validation
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+          if (!emailRegex.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email address'
+          }
+        }
         if (!formData.password) newErrors.password = 'Password is required'
         if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters'
         if (formData.password !== formData.confirmPassword) {
@@ -125,12 +134,7 @@ export default function GetStartedPage() {
         if (!formData.selectedPlan) newErrors.selectedPlan = 'Please select a plan'
         break
       case 'payment':
-        if (formData.selectedPlan !== 'starter') {
-          if (!formData.cardNumber) newErrors.cardNumber = 'Card number is required'
-          if (!formData.expiryDate) newErrors.expiryDate = 'Expiry date is required'
-          if (!formData.cvv) newErrors.cvv = 'CVV is required'
-          if (!formData.billingZip) newErrors.billingZip = 'Billing ZIP is required'
-        }
+        // Payment validation will be handled by Stripe Elements
         break
     }
     
@@ -143,6 +147,12 @@ export default function GetStartedPage() {
     setApiError(null)
     
     try {
+      // For Pro tier, account is already created when reaching payment step
+      if (formData.selectedPlan === 'pro' && paymentIntentClientSecret) {
+        // Payment will be handled by StripePaymentForm
+        return
+      }
+      
       const response = await authService.signup({
         email: formData.email,
         password: formData.password,
@@ -163,7 +173,7 @@ export default function GetStartedPage() {
         // Starter tier - go to Stripe Connect onboarding
         window.location.href = response.stripeOnboardingUrl
       } else if (response.stripeCheckoutUrl) {
-        // Pro tier - go to Stripe checkout for subscription
+        // Legacy checkout flow fallback
         window.location.href = response.stripeCheckoutUrl
       } else if (response.customPlanRequested) {
         // Enterprise tier - show custom plan form
@@ -174,7 +184,7 @@ export default function GetStartedPage() {
         }, 3000)
       } else {
         // Fallback to dashboard
-        router.push('/dashboard')
+        window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'
       }
     } catch (error: any) {
       console.error('Signup error:', error)
@@ -183,8 +193,43 @@ export default function GetStartedPage() {
     }
   }
 
+  const handlePaymentSuccess = () => {
+    // Payment was successful, move to confirmation
+    setCurrentStep('confirmation')
+    
+    // Auto-redirect after 5 seconds
+    setTimeout(() => {
+      window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'
+    }, 5000)
+  }
+
+  const handlePaymentError = (error: string) => {
+    setApiError(error)
+    setIsLoading(false)
+  }
+
   const handleNext = async () => {
     if (!validateStep()) return
+    
+    // Check email availability when moving from account step
+    if (currentStep === 'account') {
+      setIsCheckingEmail(true)
+      try {
+        const result = await authService.checkEmailAvailability(formData.email)
+        if (result.inUse) {
+          setErrors(prev => ({ ...prev, email: 'Email address already in use' }))
+          setIsCheckingEmail(false)
+          return
+        }
+      } catch (error) {
+        console.error('Email check error:', error)
+        // Show error message and prevent navigation
+        setErrors(prev => ({ ...prev, email: 'Unable to verify email availability. Please try again.' }))
+        setIsCheckingEmail(false)
+        return
+      }
+      setIsCheckingEmail(false)
+    }
     
     // Update steps array if plan was selected
     if (currentStep === 'pricing' && formData.selectedPlan) {
@@ -199,8 +244,35 @@ export default function GetStartedPage() {
     const nextIndex = currentStepIndex + 1
     
     if (nextIndex < steps.length) {
-      // If this is the last step before confirmation, submit the form
-      if (steps[nextIndex] === 'confirmation') {
+      // If moving TO payment step, create account and get payment intent
+      if (steps[nextIndex] === 'payment') {
+        setIsLoading(true)
+        try {
+          const response = await authService.signup({
+            email: formData.email,
+            password: formData.password,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            organizationName: formData.businessName,
+            phone: formData.phone,
+            acceptTerms: true,
+            acceptPrivacy: true,
+            subscriptionTier: formData.selectedPlan as 'starter' | 'pro' | 'enterprise'
+          })
+          
+          if (response.paymentIntentClientSecret) {
+            setPaymentIntentClientSecret(response.paymentIntentClientSecret)
+            setCurrentStep(steps[nextIndex])
+          } else {
+            setApiError('Unable to set up payment. Please try again.')
+          }
+        } catch (error: any) {
+          console.error('Signup error:', error)
+          setApiError(error.error || 'Failed to create account. Please try again.')
+        }
+        setIsLoading(false)
+      } else if (steps[nextIndex] === 'confirmation') {
+        // For non-payment flows, submit the form
         await handleSubmit()
         if (!apiError) {
           setCurrentStep(steps[nextIndex])
@@ -259,12 +331,12 @@ export default function GetStartedPage() {
               <span className="text-sm text-gray-400">
                 Already have an account?
               </span>
-              <Link 
-                href="/dashboard" 
+              <a 
+                href={process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'} 
                 className="text-sm font-medium text-primary hover:text-primary-400 transition-colors"
               >
                 Go to Dashboard
-              </Link>
+              </a>
               <Link href="/" className="text-gray-400 hover:text-white transition-colors ml-4">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
@@ -378,6 +450,15 @@ export default function GetStartedPage() {
                           type="email"
                           value={formData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
+                          onBlur={(e) => {
+                            const email = e.target.value.trim()
+                            if (email) {
+                              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                              if (!emailRegex.test(email)) {
+                                setErrors(prev => ({ ...prev, email: 'Please enter a valid email address' }))
+                              }
+                            }
+                          }}
                           className={`w-full pl-12 pr-4 py-2.5 rounded-xl border bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
                             errors.email ? 'border-red-500' : 'border-gray-700 focus:border-primary'
                           }`}
@@ -452,7 +533,10 @@ export default function GetStartedPage() {
                   {apiError && (
                     <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 flex items-start gap-3">
                       <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-red-400">{apiError}</p>
+                      <div>
+                        <p className="text-sm text-red-400">{apiError}</p>
+                        <p className="text-xs text-gray-400 mt-1">Please correct the error and try again.</p>
+                      </div>
                     </div>
                   )}
                   
@@ -606,84 +690,61 @@ export default function GetStartedPage() {
                     </div>
                   </div>
                   
-                  <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                          Card number
-                        </label>
-                        <div className="relative">
-                          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                          <input
-                            type="text"
-                            value={formData.cardNumber}
-                            onChange={(e) => handleInputChange('cardNumber', e.target.value)}
-                            className={`w-full pl-12 pr-4 py-2.5 rounded-xl border bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                              errors.cardNumber ? 'border-red-500' : 'border-gray-700 focus:border-primary'
-                            }`}
-                            placeholder="4242 4242 4242 4242"
-                          />
-                        </div>
-                        {errors.cardNumber && (
-                          <p className="text-red-500 text-sm mt-1">{errors.cardNumber}</p>
-                        )}
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Expiry date
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.expiryDate}
-                            onChange={(e) => handleInputChange('expiryDate', e.target.value)}
-                            className={`w-full px-4 py-2.5 rounded-xl border bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                              errors.expiryDate ? 'border-red-500' : 'border-gray-700 focus:border-primary'
-                            }`}
-                            placeholder="MM/YY"
-                          />
-                          {errors.expiryDate && (
-                            <p className="text-red-500 text-sm mt-1">{errors.expiryDate}</p>
-                          )}
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">
-                            CVV
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.cvv}
-                            onChange={(e) => handleInputChange('cvv', e.target.value)}
-                            className={`w-full px-4 py-2.5 rounded-xl border bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                              errors.cvv ? 'border-red-500' : 'border-gray-700 focus:border-primary'
-                            }`}
-                            placeholder="123"
-                          />
-                          {errors.cvv && (
-                            <p className="text-red-500 text-sm mt-1">{errors.cvv}</p>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                          Billing ZIP code
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.billingZip}
-                          onChange={(e) => handleInputChange('billingZip', e.target.value)}
-                          className={`w-full px-4 py-2.5 rounded-xl border bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                            errors.billingZip ? 'border-red-500' : 'border-gray-700 focus:border-primary'
-                          }`}
-                          placeholder="10001"
-                        />
-                        {errors.billingZip && (
-                          <p className="text-red-500 text-sm mt-1">{errors.billingZip}</p>
-                        )}
+                  {paymentIntentClientSecret ? (
+                    <Elements stripe={getStripe()} options={{
+                      clientSecret: paymentIntentClientSecret,
+                      appearance: {
+                        theme: 'night',
+                        variables: {
+                          colorPrimary: '#f97316',
+                          colorBackground: '#111827',
+                          colorText: '#f3f4f6',
+                          colorDanger: '#ef4444',
+                          fontFamily: 'system-ui, -apple-system, sans-serif',
+                          spacingUnit: '4px',
+                          borderRadius: '12px',
+                        },
+                        rules: {
+                          '.Tab': {
+                            border: '1px solid #374151',
+                            boxShadow: 'none',
+                          },
+                          '.Tab:hover': {
+                            border: '1px solid #4b5563',
+                          },
+                          '.Tab--selected': {
+                            borderColor: '#f97316',
+                            boxShadow: '0 0 0 1px #f97316',
+                          },
+                          '.Input': {
+                            border: '1px solid #374151',
+                            boxShadow: 'none',
+                          },
+                          '.Input:focus': {
+                            border: '1px solid #f97316',
+                            boxShadow: '0 0 0 1px #f97316',
+                          },
+                          '.Label': {
+                            fontWeight: '500',
+                          },
+                        },
+                      },
+                    }}>
+                      <StripePaymentForm
+                        onSuccess={handlePaymentSuccess}
+                        onError={handlePaymentError}
+                        isLoading={isLoading}
+                        setIsLoading={setIsLoading}
+                      />
+                    </Elements>
+                  ) : (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-center">
+                        <div className="h-8 w-8 mx-auto mb-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                        <p className="text-gray-400">Setting up payment...</p>
                       </div>
                     </div>
+                  )}
                 </div>
               )}
 
@@ -705,7 +766,7 @@ export default function GetStartedPage() {
                     Your account has been created successfully. We're setting up your dashboard and will redirect you in a moment.
                   </p>
                   
-                  <div className="space-y-2 max-w-sm mx-auto text-left bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                  <div className="space-y-2 max-w-sm mx-auto text-left bg-gray-800/50 rounded-xl p-4 border border-gray-700 mb-6">
                     <div className="flex items-center text-gray-300">
                       <Check className="h-5 w-5 text-green-500 mr-3" />
                       Account created
@@ -715,12 +776,19 @@ export default function GetStartedPage() {
                       {formData.selectedPlan === 'starter' ? 'Free plan activated' : 'Payment processed'}
                     </div>
                     <div className="flex items-center text-gray-300">
-                      <div className="h-5 w-5 mr-3">
-                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                      </div>
-                      Setting up your dashboard...
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      Dashboard ready
                     </div>
                   </div>
+                  
+                  <Button
+                    onClick={() => window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'}
+                    size="lg"
+                    className="mx-auto"
+                  >
+                    Go to Dashboard
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
                   </div>
                 </div>
               )}
@@ -731,33 +799,47 @@ export default function GetStartedPage() {
           <div className="flex items-center justify-between mt-8">
             {currentStep !== 'confirmation' ? (
               <>
-              <Button
-                variant="ghost"
-                onClick={handleBack}
-                disabled={(currentStepIndex === 0 && !selectedTier) || isLoading}
-                className="disabled:opacity-30"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
-              </Button>
+              {currentStep !== 'payment' && (
+                <Button
+                  variant="ghost"
+                  onClick={handleBack}
+                  disabled={(currentStepIndex === 0 && !selectedTier) || isLoading}
+                  className="disabled:opacity-30"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back
+                </Button>
+              )}
               
-              <Button
-                onClick={handleNext}
-                size="lg"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    {currentStepIndex === steps.length - 2 ? 'Complete Setup' : 'Continue'}
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </>
-                )}
-              </Button>
+              {currentStep === 'payment' ? (
+                <Button
+                  variant="ghost"
+                  onClick={handleBack}
+                  disabled={isLoading}
+                  className="disabled:opacity-30"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleNext}
+                  size="lg"
+                  disabled={isLoading || isCheckingEmail}
+                >
+                  {isLoading || isCheckingEmail ? (
+                    <>
+                      <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                      {isCheckingEmail ? 'Checking...' : 'Processing...'}
+                    </>
+                  ) : (
+                    <>
+                      {currentStepIndex === steps.length - 2 ? 'Complete Setup' : 'Continue'}
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </>
+                  )}
+                </Button>
+              )}
               </>
             ) : (
               <div className="flex-1" />

@@ -58,7 +58,7 @@ export default function CustomPlanRequestPage() {
       
       // Redirect to dashboard after 3 seconds
       setTimeout(() => {
-        router.push('/dashboard')
+        window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'
       }, 3000)
     } catch (error) {
       console.error('Failed to submit custom plan request:', error)
@@ -124,9 +124,9 @@ export default function CustomPlanRequestPage() {
               <span className="text-2xl font-bold text-primary">Luma</span>
               <span className="text-2xl font-bold text-white ml-1">POS</span>
             </Link>
-            <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors">
+            <a href={process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'} className="text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="h-5 w-5" />
-            </Link>
+            </a>
           </div>
         </header>
 

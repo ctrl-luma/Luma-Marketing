@@ -12,7 +12,7 @@ export default function OnboardingCompletePage() {
   useEffect(() => {
     // Auto-redirect to dashboard after 5 seconds
     const timer = setTimeout(() => {
-      router.push('/dashboard')
+      window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'
     }, 5000)
 
     return () => clearTimeout(timer)
@@ -51,7 +51,7 @@ export default function OnboardingCompletePage() {
           </p>
 
           <Button
-            onClick={() => router.push('/dashboard')}
+            onClick={() => window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'}
             size="lg"
             className="w-full max-w-xs mx-auto"
           >

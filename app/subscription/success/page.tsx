@@ -39,7 +39,7 @@ export default function SubscriptionSuccessPage() {
         } else {
           // Fallback to dashboard
           setTimeout(() => {
-            router.push('/dashboard')
+            window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'
           }, 3000)
         }
       } catch (err) {
@@ -65,7 +65,7 @@ export default function SubscriptionSuccessPage() {
           <div className="text-red-500 mb-6">
             <p className="text-xl font-semibold">{error}</p>
           </div>
-          <Button onClick={() => router.push('/dashboard')}>
+          <Button onClick={() => window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'}>
             Go to Dashboard
           </Button>
         </div>

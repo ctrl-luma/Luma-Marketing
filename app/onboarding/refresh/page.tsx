@@ -84,7 +84,7 @@ export default function OnboardingRefreshPage() {
               
               <Button
                 variant="ghost"
-                onClick={() => router.push('/dashboard')}
+                onClick={() => window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'}
                 className="w-full"
               >
                 Go to Dashboard

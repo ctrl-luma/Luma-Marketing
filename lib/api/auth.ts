@@ -61,6 +61,7 @@ export interface SignupResponse {
   tokens: AuthTokens;
   stripeOnboardingUrl?: string;
   stripeCheckoutUrl?: string;
+  paymentIntentClientSecret?: string;
   customPlanRequested?: boolean;
 }
 
@@ -122,6 +123,10 @@ class AuthService {
       this.clearAuthData();
       throw error;
     }
+  }
+
+  async checkEmailAvailability(email: string): Promise<{ inUse: boolean }> {
+    return await apiClient.post('/auth/check-email', { email });
   }
 
   async changePassword(currentPassword: string, newPassword: string): Promise<void> {

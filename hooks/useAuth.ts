@@ -40,7 +40,7 @@ export function useAuth(): UseAuthReturn {
     try {
       const response = await authService.login(credentials);
       setUser(response.user);
-      router.push('/dashboard');
+      window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard';
     } catch (error: any) {
       setError(error.error || 'Login failed');
       throw error;
@@ -56,7 +56,7 @@ export function useAuth(): UseAuthReturn {
     try {
       const response = await authService.signup(data);
       setUser(response.user);
-      router.push('/dashboard');
+      window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard';
     } catch (error: any) {
       setError(error.error || 'Signup failed');
       throw error;
