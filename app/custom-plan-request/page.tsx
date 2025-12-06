@@ -6,6 +6,7 @@ import { ArrowLeft, Send, Building, TrendingUp, FileText, MessageSquare } from '
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { apiClient } from '@/lib/api'
+import { redirectToVendorDashboard } from '@/lib/auth-handoff'
 import { useRouter } from 'next/navigation'
 
 export default function CustomPlanRequestPage() {
@@ -58,7 +59,7 @@ export default function CustomPlanRequestPage() {
       
       // Redirect to dashboard after 3 seconds
       setTimeout(() => {
-        window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'
+        redirectToVendorDashboard()
       }, 3000)
     } catch (error) {
       console.error('Failed to submit custom plan request:', error)

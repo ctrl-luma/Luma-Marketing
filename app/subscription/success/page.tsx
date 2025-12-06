@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { CheckCircle, CreditCard, Loader } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { apiClient } from '@/lib/api'
+import { redirectToVendorDashboard } from '@/lib/auth-handoff'
 
 export default function SubscriptionSuccessPage() {
   const router = useRouter()
@@ -39,7 +40,7 @@ export default function SubscriptionSuccessPage() {
         } else {
           // Fallback to dashboard
           setTimeout(() => {
-            window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'
+            redirectToVendorDashboard()
           }, 3000)
         }
       } catch (err) {
@@ -65,7 +66,7 @@ export default function SubscriptionSuccessPage() {
           <div className="text-red-500 mb-6">
             <p className="text-xl font-semibold">{error}</p>
           </div>
-          <Button onClick={() => window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'}>
+          <Button onClick={() => redirectToVendorDashboard()}>
             Go to Dashboard
           </Button>
         </div>

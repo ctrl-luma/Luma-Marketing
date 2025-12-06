@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, ArrowRight, Check, CreditCard, Mail, Lock, User, Building, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, CreditCard, Mail, Lock, User, Building, Eye, EyeOff, Phone, AlertCircle, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { authService } from '@/lib/api'
+import { redirectToVendorDashboard } from '@/lib/auth-handoff'
 import { Elements } from '@stripe/react-stripe-js'
 import { getStripe } from '@/lib/stripe'
 import StripePaymentForm from '@/components/StripePaymentForm'
@@ -36,7 +37,7 @@ const pricingTiers = [
   }
 ]
 
-type Step = 'account' | 'business' | 'pricing' | 'payment' | 'confirmation'
+type Step = 'account' | 'business' | 'usecase' | 'pricing' | 'payment' | 'confirmation'
 
 // Format phone number for display
 const formatPhoneDisplay = (phone: string): string => {
@@ -76,7 +77,11 @@ export default function GetStartedPage() {
     phone: '',
     selectedPlan: selectedTier || '',
     acceptTerms: false,
-    acceptPrivacy: false
+    acceptPrivacy: false,
+    useCase: '',
+    expectedVolume: '',
+    businessDescription: '',
+    additionalRequirements: ''
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showPassword, setShowPassword] = useState(false)
@@ -86,15 +91,23 @@ export default function GetStartedPage() {
   
   const getSteps = (): Step[] => {
     if (selectedTier) {
-      return selectedTier === 'starter' 
-        ? ['account', 'business', 'confirmation'] 
-        : ['account', 'business', 'payment', 'confirmation']
+      if (selectedTier === 'starter') {
+        return ['account', 'business', 'confirmation']
+      } else if (selectedTier === 'enterprise') {
+        return ['account', 'business', 'usecase', 'confirmation']
+      } else {
+        return ['account', 'business', 'payment', 'confirmation']
+      }
     }
     
     if (formData.selectedPlan) {
-      return formData.selectedPlan === 'starter'
-        ? ['pricing', 'account', 'business', 'confirmation']
-        : ['pricing', 'account', 'business', 'payment', 'confirmation']
+      if (formData.selectedPlan === 'starter') {
+        return ['pricing', 'account', 'business', 'confirmation']
+      } else if (formData.selectedPlan === 'enterprise') {
+        return ['pricing', 'account', 'business', 'usecase', 'confirmation']
+      } else {
+        return ['pricing', 'account', 'business', 'payment', 'confirmation']
+      }
     }
     
     return ['pricing', 'account', 'business', 'payment', 'confirmation']
@@ -133,6 +146,10 @@ export default function GetStartedPage() {
       case 'pricing':
         if (!formData.selectedPlan) newErrors.selectedPlan = 'Please select a plan'
         break
+      case 'usecase':
+        if (!formData.useCase) newErrors.useCase = 'Please describe your use case'
+        if (!formData.businessDescription) newErrors.businessDescription = 'Please describe your business needs'
+        break
       case 'payment':
         // Payment validation will be handled by Stripe Elements
         break
@@ -154,15 +171,19 @@ export default function GetStartedPage() {
       }
       
       const response = await authService.signup({
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        organizationName: formData.businessName,
-        phone: formData.phone,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        organizationName: formData.businessName.trim(),
+        phone: formData.phone.trim(),
         acceptTerms: true,
         acceptPrivacy: true,
-        subscriptionTier: formData.selectedPlan as 'starter' | 'pro' | 'enterprise'
+        subscriptionTier: formData.selectedPlan as 'starter' | 'pro' | 'enterprise',
+        useCase: formData.useCase?.trim() || undefined,
+        businessDescription: formData.businessDescription?.trim() || undefined,
+        expectedVolume: formData.expectedVolume?.trim() || undefined,
+        additionalRequirements: formData.additionalRequirements?.trim() || undefined
       })
       
       // Save auth tokens and user data
@@ -176,15 +197,11 @@ export default function GetStartedPage() {
         // Legacy checkout flow fallback
         window.location.href = response.stripeCheckoutUrl
       } else if (response.customPlanRequested) {
-        // Enterprise tier - show custom plan form
-        setCurrentStep('confirmation')
-        // Will redirect to custom plan form after confirmation
-        setTimeout(() => {
-          router.push('/custom-plan-request')
-        }, 3000)
+        // Enterprise tier - go to dashboard (custom plan request already submitted)
+        redirectToVendorDashboard()
       } else {
         // Fallback to dashboard
-        window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'
+        redirectToVendorDashboard()
       }
     } catch (error: any) {
       console.error('Signup error:', error)
@@ -199,7 +216,7 @@ export default function GetStartedPage() {
     
     // Auto-redirect after 5 seconds
     setTimeout(() => {
-      window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'
+      redirectToVendorDashboard()
     }, 5000)
   }
 
@@ -215,7 +232,7 @@ export default function GetStartedPage() {
     if (currentStep === 'account') {
       setIsCheckingEmail(true)
       try {
-        const result = await authService.checkEmailAvailability(formData.email)
+        const result = await authService.checkEmailAvailability(formData.email.trim())
         if (result.inUse) {
           setErrors(prev => ({ ...prev, email: 'Email address already in use' }))
           setIsCheckingEmail(false)
@@ -249,15 +266,19 @@ export default function GetStartedPage() {
         setIsLoading(true)
         try {
           const response = await authService.signup({
-            email: formData.email,
+            email: formData.email.trim(),
             password: formData.password,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            organizationName: formData.businessName,
-            phone: formData.phone,
+            firstName: formData.firstName.trim(),
+            lastName: formData.lastName.trim(),
+            organizationName: formData.businessName.trim(),
+            phone: formData.phone.trim(),
             acceptTerms: true,
             acceptPrivacy: true,
-            subscriptionTier: formData.selectedPlan as 'starter' | 'pro' | 'enterprise'
+            subscriptionTier: formData.selectedPlan as 'starter' | 'pro' | 'enterprise',
+            useCase: formData.useCase?.trim() || undefined,
+            businessDescription: formData.businessDescription?.trim() || undefined,
+            expectedVolume: formData.expectedVolume?.trim() || undefined,
+            additionalRequirements: formData.additionalRequirements?.trim() || undefined
           })
           
           if (response.paymentIntentClientSecret) {
@@ -629,8 +650,9 @@ export default function GetStartedPage() {
                       <label className="block text-sm font-medium text-gray-300 mb-2">
                         Phone number <span className="text-gray-500">(optional)</span>
                       </label>
-                      <div className="relative">
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                      <div className="relative flex items-center">
+                        <Phone className="absolute left-4 h-5 w-5 text-gray-500" />
+                        <span className="absolute left-12 text-gray-400">+1</span>
                         <input
                           type="tel"
                           value={formatPhoneDisplay(formData.phone)}
@@ -644,7 +666,7 @@ export default function GetStartedPage() {
                             // Store only digits
                             handleInputChange('phone', limited)
                           }}
-                          className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-gray-700 bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                          className="w-full pl-20 pr-4 py-2.5 rounded-xl border border-gray-700 bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                           placeholder="(555) 123-4567"
                         />
                       </div>
@@ -662,6 +684,80 @@ export default function GetStartedPage() {
                           I agree to the <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and acknowledge that I have read the <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
                         </span>
                       </label>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Use Case Information */}
+              {currentStep === 'usecase' && (
+                <div className="flex-1">
+                  <h1 className="text-2xl font-bold text-white mb-3">Tell us about your needs</h1>
+                  <p className="text-gray-400 text-sm mb-6">
+                    Help us understand your requirements for a custom enterprise plan
+                  </p>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Use case <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <MessageSquare className="absolute left-4 top-3 h-5 w-5 text-gray-500" />
+                        <textarea
+                          value={formData.useCase}
+                          onChange={(e) => handleInputChange('useCase', e.target.value)}
+                          className={`w-full pl-12 pr-4 py-2.5 rounded-xl border bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all min-h-[120px] resize-none ${
+                            errors.useCase ? 'border-red-500' : 'border-gray-700 focus:border-primary'
+                          }`}
+                          placeholder="Describe how you plan to use Luma POS for your business..."
+                        />
+                      </div>
+                      {errors.useCase && (
+                        <p className="text-red-500 text-sm mt-1">{errors.useCase}</p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Business description <span className="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        value={formData.businessDescription}
+                        onChange={(e) => handleInputChange('businessDescription', e.target.value)}
+                        className={`w-full px-4 py-2.5 rounded-xl border bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all min-h-[100px] resize-none ${
+                          errors.businessDescription ? 'border-red-500' : 'border-gray-700 focus:border-primary'
+                        }`}
+                        placeholder="Tell us more about your business and specific needs..."
+                      />
+                      {errors.businessDescription && (
+                        <p className="text-red-500 text-sm mt-1">{errors.businessDescription}</p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Expected monthly transaction volume
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.expectedVolume}
+                        onChange={(e) => handleInputChange('expectedVolume', e.target.value)}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-700 bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                        placeholder="e.g., $50,000+ per month"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Additional requirements
+                      </label>
+                      <textarea
+                        value={formData.additionalRequirements}
+                        onChange={(e) => handleInputChange('additionalRequirements', e.target.value)}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-700 bg-gray-900/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all min-h-[80px] resize-none"
+                        placeholder="Any special features or integrations you need..."
+                      />
                     </div>
                   </div>
                 </div>
@@ -782,7 +878,7 @@ export default function GetStartedPage() {
                   </div>
                   
                   <Button
-                    onClick={() => window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'}
+                    onClick={() => redirectToVendorDashboard()}
                     size="lg"
                     className="mx-auto"
                   >

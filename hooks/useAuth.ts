@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService, type User, type LoginCredentials, type SignupData } from '@/lib/api';
+import { redirectToVendorDashboard } from '@/lib/auth-handoff';
 
 interface UseAuthReturn {
   user: User | null;
@@ -40,7 +41,10 @@ export function useAuth(): UseAuthReturn {
     try {
       const response = await authService.login(credentials);
       setUser(response.user);
-      window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard';
+      // Small delay to ensure tokens are saved
+      setTimeout(() => {
+        redirectToVendorDashboard();
+      }, 100);
     } catch (error: any) {
       setError(error.error || 'Login failed');
       throw error;
@@ -56,7 +60,10 @@ export function useAuth(): UseAuthReturn {
     try {
       const response = await authService.signup(data);
       setUser(response.user);
-      window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard';
+      // Small delay to ensure tokens are saved
+      setTimeout(() => {
+        redirectToVendorDashboard();
+      }, 100);
     } catch (error: any) {
       setError(error.error || 'Signup failed');
       throw error;

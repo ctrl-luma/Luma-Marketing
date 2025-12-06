@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { redirectToVendorDashboard } from '@/lib/auth-handoff'
 
 export default function OnboardingCompletePage() {
   const router = useRouter()
@@ -12,7 +13,7 @@ export default function OnboardingCompletePage() {
   useEffect(() => {
     // Auto-redirect to dashboard after 5 seconds
     const timer = setTimeout(() => {
-      window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'
+      redirectToVendorDashboard()
     }, 5000)
 
     return () => clearTimeout(timer)

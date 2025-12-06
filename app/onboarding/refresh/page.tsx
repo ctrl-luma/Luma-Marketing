@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { apiClient } from '@/lib/api'
+import { redirectToVendorDashboard } from '@/lib/auth-handoff'
 
 export default function OnboardingRefreshPage() {
   const router = useRouter()
@@ -84,7 +85,7 @@ export default function OnboardingRefreshPage() {
               
               <Button
                 variant="ghost"
-                onClick={() => window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'}
+                onClick={() => redirectToVendorDashboard()}
                 className="w-full"
               >
                 Go to Dashboard
