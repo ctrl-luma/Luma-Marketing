@@ -1,25 +1,12 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
 import { CreditCard, Smartphone, Shield } from 'lucide-react'
 
 export default function TrustedBy() {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
-
   return (
     <section className="py-8 sm:py-12 bg-gray-950 border-y border-gray-900">
       <div className="container">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 md:gap-16"
-        >
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 md:gap-16">
           <div className="flex items-center gap-2 sm:gap-3 text-gray-400">
             <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             <span className="text-xs sm:text-sm">Powered by Stripe</span>
@@ -34,7 +21,7 @@ export default function TrustedBy() {
             <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             <span className="text-xs sm:text-sm">All Major Cards Accepted</span>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

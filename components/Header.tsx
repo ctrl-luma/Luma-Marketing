@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -93,53 +92,37 @@ export default function Header() {
         </div>
       </nav>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-gray-900 border-t border-gray-800"
-          >
-            <div className="px-4 py-4 space-y-2">
-              {navigation.map((item, index) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <Link
-                    href={item.href}
-                    className="block px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-800 font-medium transition-colors"
-                    onClick={(e) => {
-                      handleNavClick(e, item.href)
-                      setIsOpen(false)
-                    }}
-                  >
-                    {item.name}
-                  </Link>
-                </motion.div>
-              ))}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: navigation.length * 0.05 }}
-                className="mt-4"
-              >
-                <Link
-                  href="/get-started"
-                  className="block w-full text-center rounded-lg bg-primary px-3 py-3 font-semibold text-white transition-colors hover:bg-primary-600"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Get Started
-                </Link>
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Mobile menu - simple CSS transition instead of framer-motion */}
+      <div
+        className={`md:hidden bg-gray-900 border-t border-gray-800 overflow-hidden transition-all duration-200 ${
+          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="px-4 py-4 space-y-2">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="block px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-800 font-medium transition-colors"
+              onClick={(e) => {
+                handleNavClick(e, item.href)
+                setIsOpen(false)
+              }}
+            >
+              {item.name}
+            </Link>
+          ))}
+          <div className="mt-4">
+            <Link
+              href="/get-started"
+              className="block w-full text-center rounded-lg bg-primary px-3 py-3 font-semibold text-white transition-colors hover:bg-primary-600"
+              onClick={() => setIsOpen(false)}
+            >
+              Get Started
+            </Link>
+          </div>
+        </div>
+      </div>
     </header>
   )
 }

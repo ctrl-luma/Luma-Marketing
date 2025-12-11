@@ -1,17 +1,10 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
 import { Mail, Send, Check } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 
 export default function Newsletter() {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
-  
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
@@ -45,18 +38,12 @@ export default function Newsletter() {
 
   return (
     <section className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
-      {/* Static gradient background */}
-      <div className="absolute inset-0">
+      {/* Static gradient background - hidden on mobile for performance */}
+      <div className="hidden lg:block absolute inset-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-3xl" />
       </div>
       <div className="container relative z-10">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="max-w-4xl mx-auto text-center"
-        >
+        <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primary/10 rounded-xl sm:rounded-2xl mb-4 sm:mb-6">
             <Mail className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
           </div>
@@ -76,7 +63,7 @@ export default function Newsletter() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="flex-1 rounded-lg border border-gray-800 bg-gray-950/50 backdrop-blur-sm px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="flex-1 rounded-lg border border-gray-800 bg-gray-950/50 px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 required
                 disabled={status === 'loading' || status === 'success'}
               />
@@ -102,30 +89,22 @@ export default function Newsletter() {
             </div>
 
             {status === 'success' && (
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-2 sm:mt-3 text-xs sm:text-sm text-green-600"
-              >
-                Thanks for subscribing! Check your email for a confirmation.
-              </motion.p>
+              <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-primary">
+                Thanks for subscribing!
+              </p>
             )}
 
             {status === 'error' && (
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-2 sm:mt-3 text-xs sm:text-sm text-red-600"
-              >
+              <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-red-600">
                 Something went wrong. Please try again.
-              </motion.p>
+              </p>
             )}
 
             <p className="mt-3 sm:mt-4 text-[10px] sm:text-xs text-gray-400">
               By subscribing, you agree to our Privacy Policy and consent to receive updates.
             </p>
           </form>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

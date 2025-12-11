@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
+import { useState, useEffect } from 'react'
+import { useFadeIn } from '@/hooks/useFadeIn'
 import { Check, X, AlertTriangle } from 'lucide-react'
 
 const comparison = [
@@ -12,7 +14,9 @@ const comparison = [
     square: '$89/mo',
     clover: '$185/mo',
     toast: '$207/mo',
+    othersAvg: '$160/mo avg',
     isWarning: { square: true, clover: true, toast: true },
+    othersWarning: true,
   },
   {
     feature: 'Processing Rate',
@@ -20,8 +24,10 @@ const comparison = [
     square: '2.6% + $0.15',
     clover: '2.6% + $0.10',
     toast: '2.99% + $0.15',
+    othersAvg: '2.6-2.99%',
     isWarning: { square: false, clover: false, toast: false },
-    lumaHighlight: false, // Don't highlight green since we're not the lowest
+    othersWarning: false,
+    lumaHighlight: false,
   },
   {
     feature: 'Fund Holds',
@@ -30,7 +36,9 @@ const comparison = [
     square: '30% held 120 days',
     clover: '10% reserve',
     toast: 'Rolling reserve',
+    othersAvg: '10-30% held',
     isWarning: { square: true, clover: true, toast: true },
+    othersWarning: true,
   },
   {
     feature: 'Hardware Cost',
@@ -38,7 +46,9 @@ const comparison = [
     square: '$0-799',
     clover: '$599-1,799',
     toast: '$799-1,339',
+    othersAvg: '$600-1,800',
     isWarning: { square: false, clover: true, toast: true },
+    othersWarning: true,
   },
   {
     feature: 'Tip Pooling',
@@ -46,7 +56,9 @@ const comparison = [
     square: '+$35/mo extra',
     clover: '+$50/mo extra',
     toast: '+$69/mo extra',
+    othersAvg: '+$50/mo avg',
     isWarning: { square: true, clover: true, toast: true },
+    othersWarning: true,
   },
   {
     feature: 'Team Permissions',
@@ -54,7 +66,9 @@ const comparison = [
     square: '+$35/mo extra',
     clover: '+$45/mo extra',
     toast: '+$69/mo extra',
+    othersAvg: '+$50/mo avg',
     isWarning: { square: true, clover: true, toast: true },
+    othersWarning: true,
   },
   {
     feature: 'Instant Payout Fee',
@@ -62,7 +76,9 @@ const comparison = [
     square: '1.75%',
     clover: 'Not available',
     toast: 'Not available',
+    othersAvg: '1.75% or N/A',
     isWarning: { square: true, clover: true, toast: true },
+    othersWarning: true,
   },
   {
     feature: 'Contract Required',
@@ -70,11 +86,20 @@ const comparison = [
     square: 'None',
     clover: '3-4 year lock-in',
     toast: '2 year lock-in',
+    othersAvg: 'Up to 4 years',
     isWarning: { square: false, clover: true, toast: true },
+    othersWarning: true,
   },
 ]
 
 export default function Comparison() {
+  const [isMobile, setIsMobile] = useState(true)
+  const { ref: fadeRef, isVisible } = useFadeIn(0.1)
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 1024)
+  }, [])
+
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
@@ -149,32 +174,43 @@ export default function Comparison() {
 
   return (
     <section className="section-padding bg-black relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0">
+      {/* Animated background elements - hidden on mobile */}
+      <div className="hidden lg:block absolute inset-0">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="container relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-8 sm:mb-12"
-        >
-          <h2 className="heading-2 mb-3 sm:mb-4 text-white">
-            The hidden costs they don&apos;t tell you about
-          </h2>
-          <p className="text-base sm:text-lg text-gray-300">
-            Other POS systems nickel-and-dime you with extra fees. We don&apos;t.
-          </p>
-        </motion.div>
+      <div
+        ref={isMobile ? fadeRef : undefined}
+        className={`container relative z-10 ${isMobile ? `transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}` : ''}`}
+      >
+        {isMobile ? (
+          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+            <h2 className="heading-2 mb-3 sm:mb-4 text-white">
+              The hidden costs they don&apos;t tell you about
+            </h2>
+            <p className="text-base sm:text-lg text-gray-300">
+              Other POS systems nickel-and-dime you with extra fees. We don&apos;t.
+            </p>
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5 }}
+            className="text-center max-w-3xl mx-auto mb-8 sm:mb-12"
+          >
+            <h2 className="heading-2 mb-3 sm:mb-4 text-white">
+              The hidden costs they don&apos;t tell you about
+            </h2>
+            <p className="text-base sm:text-lg text-gray-300">
+              Other POS systems nickel-and-dime you with extra fees. We don&apos;t.
+            </p>
+          </motion.div>
+        )}
 
-        <motion.div
+        <div
           ref={ref}
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
           className="relative"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 blur-3xl -z-10" />
@@ -205,12 +241,9 @@ export default function Comparison() {
             </thead>
             <tbody>
               {comparison.map((row, index) => (
-                <motion.tr
+                <tr
                   key={row.feature}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.3 + index * 0.05 }}
-                  className={`border-b border-gray-700/50 transition-all hover:bg-gray-800/30 ${
+                  className={`border-b border-gray-700/50 transition-colors hover:bg-gray-800/30 ${
                     index % 2 === 0 ? 'bg-gray-900/20' : 'bg-transparent'
                   }`}
                 >
@@ -243,67 +276,69 @@ export default function Comparison() {
                       {renderValue(row.toast, row.isWarning?.toast)}
                     </div>
                   </td>
-                </motion.tr>
+                </tr>
               ))}
             </tbody>
           </table>
             </div>
 
-            {/* Mobile Cards */}
-            <div className="lg:hidden space-y-3 sm:space-y-4">
+            {/* Mobile Cards - Clean list format */}
+            <div className="lg:hidden">
+              <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl border border-gray-700/50 overflow-hidden">
+                {/* Header */}
+                <div className="grid grid-cols-2 border-b border-gray-700/50">
+                  <div className="p-3 sm:p-4 bg-primary/10 border-r border-gray-700/50">
+                    <div className="text-primary font-bold text-sm sm:text-base">Luma</div>
+                    <div className="text-[10px] sm:text-xs text-primary/70">Built for events</div>
+                  </div>
+                  <div className="p-3 sm:p-4">
+                    <div className="text-gray-400 font-medium text-sm sm:text-base">Others</div>
+                    <div className="text-[10px] sm:text-xs text-gray-500">Square, Clover, Toast</div>
+                  </div>
+                </div>
 
-              {comparison.map((row, index) => (
-                <motion.div
-                  key={row.feature}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.3 + index * 0.05 }}
-                  className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-700/50"
-                >
-                  <h3 className="font-semibold text-white text-sm sm:text-base mb-1 flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full" />
-                    {row.feature}
-                  </h3>
-                  {row.description && (
-                    <p className="text-[10px] sm:text-xs text-gray-500 mb-2 ml-3.5 sm:ml-4">{row.description}</p>
-                  )}
-
-                  <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-2">
-                    {/* Luma */}
-                    <div className={`rounded-md sm:rounded-lg p-2 sm:p-3 border ${row.lumaHighlight !== false ? 'bg-gradient-to-br from-green-500/20 to-green-500/10 border-green-500/30' : 'bg-gray-900/50 border-gray-700'}`}>
-                      <div className={`text-[10px] sm:text-xs font-semibold mb-0.5 sm:mb-1 ${row.lumaHighlight !== false ? 'text-green-400' : 'text-gray-300'}`}>Luma</div>
-                      {renderMobileValue(row.luma, false, row.lumaHighlight !== false)}
+                {/* Rows */}
+                {comparison.map((row, index) => (
+                  <div
+                    key={row.feature}
+                    className={`border-b border-gray-700/50 last:border-b-0 ${index % 2 === 0 ? 'bg-gray-900/20' : ''}`}
+                  >
+                    {/* Feature name */}
+                    <div className="px-3 sm:px-4 pt-3 sm:pt-4 pb-1">
+                      <div className="text-xs sm:text-sm font-medium text-white">{row.feature}</div>
+                      {row.description && (
+                        <div className="text-[10px] sm:text-xs text-gray-500">{row.description}</div>
+                      )}
                     </div>
 
-                    {/* Square */}
-                    <div className={`rounded-md sm:rounded-lg p-2 sm:p-3 border ${row.isWarning?.square ? 'bg-red-500/5 border-red-500/20' : 'bg-gray-900/50 border-gray-800'}`}>
-                      <div className="text-[10px] sm:text-xs text-gray-400 mb-0.5 sm:mb-1">Square</div>
-                      {renderMobileValue(row.square, row.isWarning?.square)}
-                    </div>
+                    {/* Values */}
+                    <div className="grid grid-cols-2">
+                      {/* Luma value */}
+                      <div className="px-3 sm:px-4 pb-3 sm:pb-4 border-r border-gray-700/50">
+                        <span className={`text-sm sm:text-base font-semibold ${row.lumaHighlight !== false ? 'text-green-400' : 'text-white'}`}>
+                          {row.luma}
+                        </span>
+                      </div>
 
-                    {/* Clover */}
-                    <div className={`rounded-md sm:rounded-lg p-2 sm:p-3 border ${row.isWarning?.clover ? 'bg-red-500/5 border-red-500/20' : 'bg-gray-900/50 border-gray-800'}`}>
-                      <div className="text-[10px] sm:text-xs text-gray-400 mb-0.5 sm:mb-1">Clover</div>
-                      {renderMobileValue(row.clover, row.isWarning?.clover)}
-                    </div>
-
-                    {/* Toast */}
-                    <div className={`rounded-md sm:rounded-lg p-2 sm:p-3 border ${row.isWarning?.toast ? 'bg-red-500/5 border-red-500/20' : 'bg-gray-900/50 border-gray-800'}`}>
-                      <div className="text-[10px] sm:text-xs text-gray-400 mb-0.5 sm:mb-1">Toast</div>
-                      {renderMobileValue(row.toast, row.isWarning?.toast)}
+                      {/* Competitors - show average */}
+                      <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+                        {row.othersWarning ? (
+                          <span className="text-xs sm:text-sm text-red-400 flex items-center gap-1">
+                            <AlertTriangle className="h-3 w-3 flex-shrink-0" />
+                            <span>{row.othersAvg}</span>
+                          </span>
+                        ) : (
+                          <span className="text-xs sm:text-sm text-gray-400">{row.othersAvg}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              ))}
+                ))}
+              </div>
             </div>
 
             {/* Bottom callout */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.8 }}
-              className="mt-6 sm:mt-8 p-4 sm:p-6 rounded-xl bg-gradient-to-r from-red-500/10 via-transparent to-red-500/10 border border-red-500/20"
-            >
+            <div className="mt-6 sm:mt-8 p-4 sm:p-6 rounded-xl bg-gradient-to-r from-red-500/10 via-transparent to-red-500/10 border border-red-500/20">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                 <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-500/20 flex items-center justify-center">
                   <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-red-400" />
@@ -315,9 +350,9 @@ export default function Comparison() {
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
 
       </div>
     </section>

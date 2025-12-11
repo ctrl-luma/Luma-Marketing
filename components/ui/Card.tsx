@@ -2,33 +2,29 @@
 
 import { forwardRef } from 'react'
 import { cn } from '@/lib/utils'
-import { motion, HTMLMotionProps } from 'framer-motion'
 
-export interface CardProps extends Omit<HTMLMotionProps<'div'>, 'children'> {
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'gradient' | 'outlined'
   hover?: boolean
   children?: React.ReactNode
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = 'default', hover = true, children, onDragStart, onDragEnd, onDrag, onDragEnter, onDragLeave, onDragOver, onDrop, ...props }, ref) => {
+  ({ className, variant = 'default', hover = true, children, ...props }, ref) => {
 
     const baseStyles = 'rounded-2xl transition-all duration-200'
 
     const variants = {
       default: 'bg-gray-800 border border-gray-700',
       gradient: 'bg-gradient-to-br from-gray-800 to-gray-850 border border-gray-700',
-      outlined: 'border-2 border-gray-700 bg-gray-900/50 backdrop-blur',
+      outlined: 'border-2 border-gray-700 bg-gray-900/50',
     }
 
     const hoverStyles = hover ? 'hover:border-gray-600 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5' : ''
 
     return (
-      <motion.div
+      <div
         ref={ref}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
         className={cn(
           baseStyles,
           variants[variant],
@@ -38,7 +34,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         {...props}
       >
         {children}
-      </motion.div>
+      </div>
     )
   }
 )

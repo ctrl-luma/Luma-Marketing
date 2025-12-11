@@ -51,8 +51,60 @@
   }
 }
 
+/* Mobile fade-in animations - GPU accelerated, no flickering */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+  will-change: opacity, transform;
+}
+
+.fade-in-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered delays for children */
+.fade-in-section.visible .fade-child:nth-child(1) { transition-delay: 0ms; }
+.fade-in-section.visible .fade-child:nth-child(2) { transition-delay: 50ms; }
+.fade-in-section.visible .fade-child:nth-child(3) { transition-delay: 100ms; }
+.fade-in-section.visible .fade-child:nth-child(4) { transition-delay: 150ms; }
+.fade-in-section.visible .fade-child:nth-child(5) { transition-delay: 200ms; }
+.fade-in-section.visible .fade-child:nth-child(6) { transition-delay: 250ms; }
+
+.fade-child {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.fade-in-section.visible .fade-child {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 html {
   scroll-behavior: smooth;
+}
+
+/* Remove expensive blur effects on mobile for better performance */
+@media (max-width: 1023px) {
+  .blur-3xl, .blur-2xl, .blur-xl {
+    filter: blur(20px) !important;
+  }
+
+  [class*="blur-[100px]"], [class*="blur-[80px]"] {
+    filter: blur(30px) !important;
+  }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 body {
@@ -76,7 +128,7 @@ body {
 }
 
 .btn-primary {
-  @apply inline-flex items-center justify-center rounded-full bg-primary px-8 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center rounded-full bg-primary px-8 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 cursor-pointer hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed;
   box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25);
 }
 
@@ -86,7 +138,7 @@ body {
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center rounded-full border border-gray-700 bg-gray-800/50 backdrop-blur px-8 py-3 text-sm font-semibold text-gray-100 shadow-sm transition-all duration-200 hover:bg-gray-700/50 hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center rounded-full border border-gray-700 bg-gray-800/50 backdrop-blur px-8 py-3 text-sm font-semibold text-gray-100 shadow-sm transition-all duration-200 cursor-pointer hover:bg-gray-700/50 hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 .btn-secondary:hover {
@@ -94,7 +146,7 @@ body {
 }
 
 .btn-ghost {
-  @apply inline-flex items-center justify-center rounded-lg px-8 py-3 text-sm font-semibold text-gray-300 transition-all hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center rounded-lg px-8 py-3 text-sm font-semibold text-gray-300 transition-all cursor-pointer hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 .section-padding {
