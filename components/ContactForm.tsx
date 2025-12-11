@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Send } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { apiClient } from '@/lib/api'
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -18,12 +19,28 @@ export default function ContactForm() {
     e.preventDefault()
     setStatus('loading')
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await apiClient.post('/contact', {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        company: formData.company.trim(),
+        message: formData.message.trim()
+      })
+      
+      console.log('Contact form submitted successfully:', response)
       setStatus('success')
       setFormData({ name: '', email: '', company: '', message: '' })
+      
+      // Reset to idle after 5 seconds
       setTimeout(() => setStatus('idle'), 5000)
-    }, 1500)
+    } catch (error: any) {
+      console.error('Contact form error:', error)
+      console.error('Error details:', error.details)
+      setStatus('error')
+      
+      // Reset to idle after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -46,12 +63,12 @@ export default function ContactForm() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-gray-800/50"
+            className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-5 sm:p-8 md:p-12 border border-gray-800/50"
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label htmlFor="name" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
                     Name *
                   </label>
                   <input
@@ -61,13 +78,13 @@ export default function ContactForm() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-4 py-3 text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     placeholder="John Doe"
                   />
                 </div>
-                
+
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
                     Email *
                   </label>
                   <input
@@ -77,14 +94,14 @@ export default function ContactForm() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-4 py-3 text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     placeholder="john@example.com"
                   />
                 </div>
               </div>
-              
+
               <div>
-                <label htmlFor="company" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="company" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
                   Company / Event Name
                 </label>
                 <input
@@ -93,13 +110,13 @@ export default function ContactForm() {
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-4 py-3 text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Mobile Bar Co."
                 />
               </div>
-              
+
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="message" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
                   Message *
                 </label>
                 <textarea
@@ -108,24 +125,24 @@ export default function ContactForm() {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  rows={6}
-                  className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-4 py-3 text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  rows={5}
+                  className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Tell us about your business and what you're looking for..."
                 />
               </div>
-              
+
               <Button
                 type="submit"
                 disabled={status === 'loading' || status === 'success'}
                 isLoading={status === 'loading'}
-                className="w-full"
+                className="w-full text-sm sm:text-base"
                 size="lg"
               >
                 {status === 'success' ? (
                   <>Message Sent!</>
                 ) : (
                   <>
-                    <Send className="mr-2 h-4 w-4" />
+                    <Send className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     Send Message
                   </>
                 )}
@@ -136,22 +153,22 @@ export default function ContactForm() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-6 p-4 bg-green-900/20 border border-green-700 rounded-lg"
+                className="mt-4 sm:mt-6 p-3 sm:p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
               >
-                <p className="text-sm text-green-400">
-                  Thank you! Your submission has been received. We'll get back to you within 24 hours.
+                <p className="text-xs sm:text-sm text-green-400 font-medium">
+                  Thank you for reaching out! We&apos;ve received your message and will get back to you within 24 hours.
                 </p>
               </motion.div>
             )}
-            
+
             {status === 'error' && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-6 p-4 bg-red-900/20 border border-red-700 rounded-lg"
+                className="mt-4 sm:mt-6 p-3 sm:p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
               >
-                <p className="text-sm text-red-400">
-                  Oops! Something went wrong while submitting the form. Please try again.
+                <p className="text-xs sm:text-sm text-red-400">
+                  Something went wrong while sending your message. Please try again or email us directly at support@lumapos.co
                 </p>
               </motion.div>
             )}

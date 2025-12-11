@@ -8,13 +8,12 @@ export default function ContactPage() {
     <>
       <Header />
       <main>
-        <section className="pt-32 pb-20 bg-gradient-to-br from-gray-900 via-gray-950 to-black">
+        <section className="pt-24 sm:pt-32 pb-6 sm:pb-8 bg-black">
           <div className="container">
-            <div className="max-w-3xl mx-auto text-center">
-              <h1 className="heading-1 mb-6">Get in touch</h1>
-              <p className="text-lead text-gray-300">
-                Have questions about Luma POS? Want to schedule a demo or discuss 
-                custom pricing? We're here to help your business grow.
+            <div className="max-w-2xl mx-auto text-center">
+              <h1 className="heading-1 mb-3 sm:mb-4">Get in touch</h1>
+              <p className="text-base sm:text-lg text-gray-400">
+                Questions about Luma? We&apos;re here to help.
               </p>
             </div>
           </div>

@@ -14,7 +14,15 @@
       "Bash(npm run build:dev:*)",
       "Bash(npm run build:*)",
       "Bash(npx tsc:*)",
-      "Bash(NODE_OPTIONS=\"--max-old-space-size=2048\" npm run build:dev)"
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=2048\" npm run build:dev)",
+      "WebSearch",
+      "WebFetch(domain:squareup.com)",
+      "WebFetch(domain:pos.toasttab.com)",
+      "WebFetch(domain:www.clover.com)",
+      "WebFetch(domain:www.shopify.com)",
+      "WebFetch(domain:stripe.com)",
+      "WebFetch(domain:support.stripe.com)",
+      "WebFetch(domain:www.swipesum.com)"
     ],
     "deny": []
   }

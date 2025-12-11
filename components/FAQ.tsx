@@ -1,0 +1,105 @@
+'use client'
+
+import { motion } from 'framer-motion'
+import { useInView } from 'react-intersection-observer'
+import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
+
+const faqs = [
+  {
+    question: 'Do I need special hardware?',
+    answer: 'No. Luma works on any iPhone, Android phone, or tablet. Just download the app and start accepting payments using Tap to Pay. No card readers, dongles, or proprietary hardware required.',
+  },
+  {
+    question: 'How do payouts work?',
+    answer: 'Payouts are handled by Stripe. You can get paid daily or set up instant payouts for a small fee. Funds go directly to your bank account.',
+  },
+  {
+    question: 'What are the fees?',
+    answer: 'Our Starter plan is free with 2.9% + $0.09 per transaction. Pro is $19/month with lower rates at 2.8% + $0.07. No hidden fees, no contracts.',
+  },
+  {
+    question: 'Can I use my existing phone?',
+    answer: 'Yes! Any iPhone with iOS 15.4+ or Android phone with NFC supports Tap to Pay. Most phones from the last 3-4 years will work.',
+  },
+  {
+    question: 'How do I track tips and split revenue?',
+    answer: 'Tips are tracked automatically per transaction and staff member. Revenue splits let you automatically divide payments between operators, venues, and promoters - no manual calculations needed.',
+  },
+  {
+    question: 'Can I cancel anytime?',
+    answer: 'Yes. No contracts, no commitments. You can cancel your subscription anytime from your account settings. Your Starter plan access continues even after canceling Pro.',
+  },
+]
+
+export default function FAQ() {
+  const { ref, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: true,
+  })
+
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+
+  return (
+    <section id="faq" className="section-padding bg-black relative overflow-hidden">
+      <div className="container relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+          <motion.h2
+            ref={ref}
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5 }}
+            className="heading-2 mb-3 sm:mb-4"
+          >
+            Frequently asked questions
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-base sm:text-lg text-gray-400"
+          >
+            Quick answers to common questions.
+          </motion.p>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="max-w-2xl mx-auto"
+        >
+          <div className="space-y-2 sm:space-y-3">
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className="border border-gray-800 rounded-lg sm:rounded-xl overflow-hidden bg-gray-900/50"
+              >
+                <button
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left"
+                >
+                  <span className="font-medium text-white text-sm sm:text-base pr-4">{faq.question}</span>
+                  <ChevronDown
+                    className={`h-4 w-4 sm:h-5 sm:w-5 text-gray-400 transition-transform duration-200 flex-shrink-0 ${
+                      openIndex === index ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-200 ${
+                    openIndex === index ? 'max-h-48' : 'max-h-0'
+                  }`}
+                >
+                  <p className="px-4 sm:px-6 pb-3 sm:pb-4 text-gray-400 text-xs sm:text-sm leading-relaxed">
+                    {faq.answer}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}

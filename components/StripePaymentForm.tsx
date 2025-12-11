@@ -36,7 +36,7 @@ export default function StripePaymentForm({
     setMessage(null);
 
     try {
-      // Confirm the payment
+      // Confirm the payment for the subscription
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -48,7 +48,7 @@ export default function StripePaymentForm({
 
       if (error) {
         // This point will only be reached if there is an immediate error when
-        // confirming the payment. Otherwise, your customer will be redirected to
+        // confirming the setup. Otherwise, your customer will be redirected to
         // your `return_url`.
         if (error.type === "card_error" || error.type === "validation_error") {
           setMessage(error.message || 'An error occurred');
@@ -58,7 +58,7 @@ export default function StripePaymentForm({
           onError('An unexpected error occurred');
         }
       } else {
-        // Payment succeeded
+        // Setup succeeded
         onSuccess();
       }
     } catch (err: any) {

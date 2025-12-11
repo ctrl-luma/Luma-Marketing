@@ -12,11 +12,24 @@ export default function SubscriptionSuccessPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
+  const paymentIntentId = searchParams.get('payment_intent')
   const [isProcessing, setIsProcessing] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const processSubscription = async () => {
+      // Handle subscription payment completion from signup flow
+      if (paymentIntentId) {
+        // Payment was successful, subscription should now be active
+        // Just redirect to dashboard
+        setTimeout(() => {
+          redirectToVendorDashboard()
+        }, 3000)
+        setIsProcessing(false)
+        return
+      }
+
+      // Handle regular checkout session flow
       if (!sessionId) {
         setError('Invalid session')
         setIsProcessing(false)
@@ -52,7 +65,7 @@ export default function SubscriptionSuccessPage() {
     }
 
     processSubscription()
-  }, [sessionId, router])
+  }, [sessionId, paymentIntentId, router])
 
   if (error) {
     return (

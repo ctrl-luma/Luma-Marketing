@@ -2,15 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-
-const partners = [
-  { name: 'Stripe', logo: 'STRIPE' },
-  { name: 'Apple Pay', logo: 'APPLE PAY' },
-  { name: 'Google Pay', logo: 'GOOGLE PAY' },
-  { name: 'Visa', logo: 'VISA' },
-  { name: 'Mastercard', logo: 'MASTERCARD' },
-  { name: 'Amex', logo: 'AMEX' },
-]
+import { CreditCard, Smartphone, Shield } from 'lucide-react'
 
 export default function TrustedBy() {
   const { ref, inView } = useInView({
@@ -19,33 +11,28 @@ export default function TrustedBy() {
   })
 
   return (
-    <section className="section-padding bg-gray-950">
+    <section className="py-8 sm:py-12 bg-gray-950 border-y border-gray-900">
       <div className="container">
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 md:gap-16"
         >
-          <h2 className="text-sm font-semibold text-gray-400 tracking-wide uppercase mb-8">
-            Powered by Stripe • Accept All Major Payment Methods
-          </h2>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center justify-center">
-            {partners.map((partner, index) => (
-              <motion.div
-                key={partner.name}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={inView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex items-center justify-center"
-              >
-                <div className="text-2xl font-bold text-gray-500 hover:text-gray-300 transition-colors">
-                  {partner.logo}
-                </div>
-              </motion.div>
-            ))}
+          <div className="flex items-center gap-2 sm:gap-3 text-gray-400">
+            <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <span className="text-xs sm:text-sm">Powered by Stripe</span>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3 text-gray-400">
+            <Smartphone className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <span className="text-xs sm:text-sm">Apple Pay & Google Pay</span>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3 text-gray-400">
+            <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <span className="text-xs sm:text-sm">All Major Cards Accepted</span>
           </div>
         </motion.div>
       </div>

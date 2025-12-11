@@ -4,19 +4,29 @@ import { motion } from 'framer-motion'
 
 export default function AboutHero() {
   return (
-    <section className="relative pt-32 pb-16 bg-gradient-to-br from-gray-900 to-gray-950">
-      <div className="container">
+    <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-16 bg-black overflow-hidden">
+      {/* Subtle gradient background */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] sm:w-[600px] h-[300px] sm:h-[400px] bg-primary/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="container relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <h1 className="heading-1 mb-6 text-white">About Luma</h1>
-          <p className="text-lead text-gray-300">
-            We're building the POS that mobile bars and event vendors actually want. 
-            No contracts, no proprietary hardware, just pure speed powered by Stripe. 
-            From pop-ups to festivals, we help you focus on serving customers, not fighting tech.
+          <p className="text-primary text-xs sm:text-sm font-medium tracking-wide uppercase mb-3 sm:mb-4">
+            About Luma
+          </p>
+          <h1 className="heading-1 mb-4 sm:mb-6 text-white">
+            Payments should be{' '}
+            <span className="text-primary">simple</span>
+          </h1>
+          <p className="text-base sm:text-lg md:text-xl text-gray-400 leading-relaxed">
+            We got tired of watching mobile vendors struggle with hardware that
+            wasn&apos;t built for them. So we built something better.
           </p>
         </motion.div>
       </div>

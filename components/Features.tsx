@@ -2,58 +2,62 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { 
-  Zap, 
-  Shield, 
+import {
   Smartphone,
   DollarSign,
   Calendar,
   Users,
-  Wifi,
+  Settings,
   Receipt,
   Split,
-  BarChart3
+  BarChart3,
 } from 'lucide-react'
 
-const features = [
-  {
-    name: 'Live Dashboard',
-    description: 'Watch transactions flow in real-time. Track sales, tips, and inventory as they happen. 100% live updates.',
-    icon: BarChart3,
-  },
+const heroFeatures = [
   {
     name: 'Tap to Pay',
     description: 'Accept payments directly on your iPhone or Android. No card readers, dongles, or proprietary hardware needed.',
     icon: Smartphone,
+    color: 'primary',
   },
   {
-    name: 'Stripe-Powered',
-    description: '2.7% + $0.05 per tap. Lower than Square, transparent pricing, instant payouts available.',
+    name: 'Transparent Pricing',
+    description: '2.7% + $0.15 per tap. No hidden fees, no fund holds, instant payouts available.',
     icon: DollarSign,
+    color: 'green',
   },
+  {
+    name: 'Live Dashboard',
+    description: 'Watch transactions flow in real-time. Track sales, tips, and inventory as they happen.',
+    icon: BarChart3,
+    color: 'purple',
+  },
+]
+
+const additionalFeatures = [
   {
     name: 'Event Mode',
-    description: 'Switch between events instantly. Track sales by location, date, and staff. Clone last week\'s setup in one tap.',
+    description: 'Switch between events instantly. Clone last week\'s setup in one tap.',
     icon: Calendar,
   },
   {
     name: 'Revenue Splits',
-    description: 'Auto-split payments between bar operators, venues, and promoters. No more manual calculations.',
+    description: 'Auto-split payments between operators, venues, and promoters.',
     icon: Split,
   },
   {
-    name: 'Offline Ready',
-    description: 'Keep selling when WiFi fails. Transactions queue locally and sync when you\'re back online.',
-    icon: Wifi,
+    name: 'Fully Customizable',
+    description: 'Add your own inventory, menu items, and subscriptions to sell.',
+    icon: Settings,
   },
   {
     name: 'Instant Reports',
-    description: 'See hourly sales, tips by staff, and best sellers. Export to PDF or Google Sheets instantly.',
+    description: 'Export sales, tips, and best sellers to PDF or Sheets.',
     icon: Receipt,
   },
   {
     name: 'Multi-Device Sync',
-    description: 'All devices stay in perfect sync. Add items on one device, see them everywhere instantly.',
+    description: 'All devices stay in sync. Updates appear everywhere instantly.',
     icon: Users,
   },
 ]
@@ -64,17 +68,43 @@ export default function Features() {
     triggerOnce: true,
   })
 
+  const getColorClasses = (color: string) => {
+    switch (color) {
+      case 'green':
+        return {
+          bg: 'from-green-500/20 to-green-500/10',
+          icon: 'text-green-500',
+          border: 'border-green-500/20',
+        }
+      case 'purple':
+        return {
+          bg: 'from-purple-500/20 to-purple-500/10',
+          icon: 'text-purple-500',
+          border: 'border-purple-500/20',
+        }
+      default:
+        return {
+          bg: 'from-primary/20 to-primary/10',
+          icon: 'text-primary',
+          border: 'border-primary/20',
+        }
+    }
+  }
+
   return (
     <section className="section-padding bg-black relative overflow-hidden" id="features">
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 to-black" />
+
       <div className="container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
           <motion.h2
+            ref={ref}
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
-            className="heading-2 mb-4"
+            className="heading-2 mb-3 sm:mb-4"
           >
             Built for Mobile Bars & Pop-ups
           </motion.h2>
@@ -82,45 +112,69 @@ export default function Features() {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-lead"
+            className="text-base sm:text-lg text-gray-400"
           >
-            Everything you need to run events efficiently. From setup to settlement 
-            in minutes, not hours. No contracts, no proprietary hardware, just pure speed.
+            Everything you need to run events efficiently. From setup to settlement
+            in minutes, not hours.
           </motion.p>
         </div>
 
-        <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => {
+        {/* Hero Features - 3 large cards */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-16">
+          {heroFeatures.map((feature, index) => {
             const Icon = feature.icon
+            const colors = getColorClasses(feature.color)
             return (
               <motion.div
                 key={feature.name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="relative p-8 rounded-2xl bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 hover:border-primary/30 transition-all duration-500 group overflow-hidden"
+                className={`relative p-5 sm:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group`}
               >
-                {/* Animated gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                
-                {/* Glow effect */}
-                <div className="absolute -inset-1 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent rounded-2xl blur-2xl opacity-0 group-hover:opacity-60 transition-opacity duration-700 -z-10" />
-                
-                <div className="relative z-10">
-                  <div className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                    <Icon className="h-7 w-7 text-primary group-hover:text-primary-400 transition-colors duration-300" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-primary-100 transition-colors duration-300">
-                    {feature.name}
-                  </h3>
-                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
-                    {feature.description}
-                  </p>
+                <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${colors.bg} flex items-center justify-center mb-4 sm:mb-6`}>
+                  <Icon className={`h-5 w-5 sm:h-7 sm:w-7 ${colors.icon}`} />
                 </div>
+                <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">
+                  {feature.name}
+                </h3>
+                <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
+                  {feature.description}
+                </p>
               </motion.div>
             )
           })}
         </div>
+
+        {/* Additional Features - Compact list with two columns */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="max-w-4xl mx-auto"
+        >
+          <div className="rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-950/80 border border-gray-800 p-5 sm:p-8 md:p-10">
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-5 sm:mb-6 text-center">
+              Everything else you need
+            </h3>
+            <div className="grid sm:grid-cols-2 gap-x-8 sm:gap-x-12 gap-y-4 sm:gap-y-6">
+              {additionalFeatures.map((feature) => {
+                const Icon = feature.icon
+                return (
+                  <div key={feature.name} className="flex gap-3 sm:gap-4">
+                    <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gray-800 flex items-center justify-center">
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-white text-sm sm:text-base mb-0.5 sm:mb-1">{feature.name}</h4>
+                      <p className="text-xs sm:text-sm text-gray-500">{feature.description}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

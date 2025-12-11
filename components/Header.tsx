@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -10,13 +11,14 @@ const navigation = [
   { name: 'Features', href: '/#features' },
   { name: 'Pricing', href: '/#pricing' },
   { name: 'About', href: '/about' },
-  { name: 'Blog', href: '/blog' },
   { name: 'Contact', href: '/contact' },
 ]
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,6 +27,23 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('/#')) {
+      const hash = href.substring(1)
+
+      if (pathname === '/') {
+        // Already on home page, just scroll smoothly
+        e.preventDefault()
+        const element = document.querySelector(hash)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }
+      }
+      // If on different page, let normal navigation happen
+      // ScrollToTop component handles scrolling to hash
+    }
+  }
 
   return (
     <header
@@ -48,6 +67,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
                   className="text-gray-300 hover:text-primary font-medium transition-colors duration-200"
                 >
                   {item.name}
@@ -93,7 +113,10 @@ export default function Header() {
                   <Link
                     href={item.href}
                     className="block px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-800 font-medium transition-colors"
-                    onClick={() => setIsOpen(false)}
+                    onClick={(e) => {
+                      handleNavClick(e, item.href)
+                      setIsOpen(false)
+                    }}
                   >
                     {item.name}
                   </Link>

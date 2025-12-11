@@ -2,65 +2,75 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { Check, X, Sparkles, TrendingUp } from 'lucide-react'
-import { useRef, useEffect, useState } from 'react'
+import { Check, X, AlertTriangle } from 'lucide-react'
 
 const comparison = [
   {
-    feature: 'Monthly Fees',
-    luma: 'Free starter plan',
-    square: '$60+ for Plus',
-    clover: '$15+ with contract',
-    toast: '$69+ minimum',
+    feature: 'Typical Monthly Cost',
+    description: 'With tip pooling & team permissions',
+    luma: '$19/mo',
+    square: '$89/mo',
+    clover: '$185/mo',
+    toast: '$207/mo',
+    isWarning: { square: true, clover: true, toast: true },
   },
   {
     feature: 'Processing Rate',
-    luma: '2.7% + $0.05',
-    square: '2.6% + $0.10',
-    clover: '2.3% + $0.10',
-    toast: '2.75% + $0.15',
+    luma: '2.7% + $0.15',
+    square: '2.6% + $0.15',
+    clover: '2.6% + $0.10',
+    toast: '2.99% + $0.15',
+    isWarning: { square: false, clover: false, toast: false },
+    lumaHighlight: false, // Don't highlight green since we're not the lowest
   },
   {
-    feature: 'Tap to Pay',
-    luma: true,
-    square: true,
-    clover: false,
-    toast: false,
+    feature: 'Fund Holds',
+    description: 'Can they freeze your money?',
+    luma: 'Never',
+    square: '30% held 120 days',
+    clover: '10% reserve',
+    toast: 'Rolling reserve',
+    isWarning: { square: true, clover: true, toast: true },
   },
   {
-    feature: 'No Hardware Required',
-    luma: true,
-    square: false,
-    clover: false,
-    toast: false,
+    feature: 'Hardware Cost',
+    luma: '$0',
+    square: '$0-799',
+    clover: '$599-1,799',
+    toast: '$799-1,339',
+    isWarning: { square: false, clover: true, toast: true },
   },
   {
-    feature: 'Event Mode',
-    luma: true,
-    square: false,
-    clover: false,
-    toast: false,
+    feature: 'Tip Pooling',
+    luma: 'Included',
+    square: '+$35/mo extra',
+    clover: '+$50/mo extra',
+    toast: '+$69/mo extra',
+    isWarning: { square: true, clover: true, toast: true },
   },
   {
-    feature: 'Revenue Splits',
-    luma: true,
-    square: false,
-    clover: false,
-    toast: false,
+    feature: 'Team Permissions',
+    luma: 'Included',
+    square: '+$35/mo extra',
+    clover: '+$45/mo extra',
+    toast: '+$69/mo extra',
+    isWarning: { square: true, clover: true, toast: true },
   },
   {
-    feature: 'No Contracts',
-    luma: true,
-    square: true,
-    clover: false,
-    toast: false,
+    feature: 'Instant Payout Fee',
+    luma: '1%',
+    square: '1.75%',
+    clover: 'Not available',
+    toast: 'Not available',
+    isWarning: { square: true, clover: true, toast: true },
   },
   {
-    feature: 'Same-Day Payouts',
-    luma: true,
-    square: 'Extra fee',
-    clover: false,
-    toast: false,
+    feature: 'Contract Required',
+    luma: 'None',
+    square: 'None',
+    clover: '3-4 year lock-in',
+    toast: '2 year lock-in',
+    isWarning: { square: false, clover: true, toast: true },
   },
 ]
 
@@ -69,28 +79,73 @@ export default function Comparison() {
     threshold: 0.1,
     triggerOnce: true,
   })
-  
-  const lumaColumnRef = useRef<HTMLTableCellElement>(null)
-  const [badgePosition, setBadgePosition] = useState<number | null>(null)
-  
-  useEffect(() => {
-    const updatePosition = () => {
-      if (lumaColumnRef.current) {
-        const rect = lumaColumnRef.current.getBoundingClientRect()
-        const parentRect = lumaColumnRef.current.offsetParent?.getBoundingClientRect()
-        if (parentRect) {
-          setBadgePosition(rect.left - parentRect.left + rect.width / 2)
-        }
-      }
+
+  const renderValue = (value: string | boolean, isWarning?: boolean, isLuma?: boolean) => {
+    if (typeof value === 'boolean') {
+      return value ? (
+        <div className="flex justify-center items-center">
+          <div className="relative">
+            {isLuma && <div className="absolute inset-0 bg-green-500/20 rounded-full blur-xl" />}
+            <Check className={`h-5 w-5 ${isLuma ? 'text-green-500' : 'text-gray-400'} relative z-10`} />
+          </div>
+        </div>
+      ) : (
+        <div className="flex justify-center items-center">
+          <X className="h-5 w-5 text-gray-600 opacity-50" />
+        </div>
+      )
     }
-    
-    updatePosition()
-    window.addEventListener('resize', updatePosition)
-    
-    return () => {
-      window.removeEventListener('resize', updatePosition)
+
+    if (isLuma) {
+      return (
+        <span className="text-sm font-semibold text-green-400 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
+          {value}
+        </span>
+      )
     }
-  }, [inView])
+
+    if (isWarning) {
+      return (
+        <span className="text-sm font-medium text-red-400 bg-red-500/10 px-3 py-1.5 rounded-full border border-red-500/20 flex items-center gap-1.5 justify-center">
+          <AlertTriangle className="h-3.5 w-3.5" />
+          {value}
+        </span>
+      )
+    }
+
+    return <span className="text-sm text-gray-400">{value}</span>
+  }
+
+  const renderMobileValue = (value: string | boolean, isWarning?: boolean, isLuma?: boolean) => {
+    if (typeof value === 'boolean') {
+      return value ? (
+        <div className="flex items-center">
+          <Check className={`h-3 w-3 sm:h-4 sm:w-4 ${isLuma ? 'text-green-500' : 'text-gray-500'} mr-1`} />
+          <span className={`text-[10px] sm:text-xs ${isLuma ? 'text-green-400' : 'text-gray-500'}`}>Yes</span>
+        </div>
+      ) : (
+        <div className="flex items-center">
+          <X className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600 mr-1" />
+          <span className="text-[10px] sm:text-xs text-gray-600">No</span>
+        </div>
+      )
+    }
+
+    if (isLuma) {
+      return <span className="text-[10px] sm:text-xs font-semibold text-green-400">{value}</span>
+    }
+
+    if (isWarning) {
+      return (
+        <span className="text-[10px] sm:text-xs font-medium text-red-400 flex items-center gap-0.5">
+          <AlertTriangle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+          {value}
+        </span>
+      )
+    }
+
+    return <span className="text-[10px] sm:text-xs text-gray-400">{value}</span>
+  }
 
   return (
     <section className="section-padding bg-black relative overflow-hidden">
@@ -99,24 +154,19 @@ export default function Comparison() {
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       </div>
-      
+
       <div className="container relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-3xl mx-auto mb-8 sm:mb-12"
         >
-          <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-2 mb-4">
-            <TrendingUp className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Industry Leading</span>
-          </div>
-          <h2 className="heading-2 mb-4 text-white">
-            Why mobile bars choose Luma
+          <h2 className="heading-2 mb-3 sm:mb-4 text-white">
+            The hidden costs they don&apos;t tell you about
           </h2>
-          <p className="text-lead text-gray-300">
-            Compare Luma to Square, Clover, and Toast. See why event vendors 
-            are switching to the POS built specifically for their needs.
+          <p className="text-base sm:text-lg text-gray-300">
+            Other POS systems nickel-and-dime you with extra fees. We don&apos;t.
           </p>
         </motion.div>
 
@@ -128,44 +178,35 @@ export default function Comparison() {
           className="relative"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 blur-3xl -z-10" />
-          <div className="mt-16 relative">
-            {badgePosition && (
-              <span 
-                className="absolute top-0 -translate-y-1/2 bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-2 rounded-full text-sm font-semibold text-white shadow-lg shadow-primary/20 z-20 whitespace-nowrap flex items-center gap-1.5"
-                style={{ left: `${badgePosition}px`, transform: 'translate(-50%, -50%)' }}
-              >
-                <Sparkles className="h-4 w-4" />
-                Winner
-              </span>
-            )}
+          <div className="relative">
             {/* Desktop Table */}
             <div className="hidden lg:block overflow-x-auto rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 p-1">
               <table className="w-full">
               <thead>
                 <tr>
                   <th className="text-left p-6 font-semibold text-gray-100">Features</th>
-                  <th ref={lumaColumnRef} className="text-center p-6">
+                  <th className="text-center p-6">
                       <div className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary-600 text-xl mt-2">Luma</div>
-                      <div className="text-xs text-gray-400 mt-1">Built for Events</div>
+                      <div className="text-xs text-green-400 mt-1">Built for Events</div>
                     </th>
                 <th className="text-center p-6">
                   <div className="font-semibold text-gray-400">Square</div>
-                  <div className="text-xs text-gray-500 mt-1 opacity-60">Retail Focus</div>
+                  <div className="text-xs text-gray-500 mt-1 opacity-60">Hidden fees</div>
                 </th>
                 <th className="text-center p-6">
                   <div className="font-semibold text-gray-400">Clover</div>
-                  <div className="text-xs text-gray-500 mt-1 opacity-60">Legacy Hardware</div>
+                  <div className="text-xs text-gray-500 mt-1 opacity-60">Hardware lock-in</div>
                 </th>
                 <th className="text-center p-6">
                   <div className="font-semibold text-gray-400">Toast</div>
-                  <div className="text-xs text-gray-500 mt-1 opacity-60">Restaurant Only</div>
+                  <div className="text-xs text-gray-500 mt-1 opacity-60">Long contracts</div>
                 </th>
               </tr>
             </thead>
             <tbody>
               {comparison.map((row, index) => (
-                <motion.tr 
-                  key={row.feature} 
+                <motion.tr
+                  key={row.feature}
                   initial={{ opacity: 0, x: -20 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.05 }}
@@ -174,66 +215,32 @@ export default function Comparison() {
                   }`}
                 >
                   <td className="p-6 font-medium text-gray-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                      {row.feature}
+                    <div className="flex flex-col gap-0.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-primary rounded-full" />
+                        {row.feature}
+                      </div>
+                      {row.description && (
+                        <span className="text-xs text-gray-500 ml-5">{row.description}</span>
+                      )}
                     </div>
                   </td>
                   <td className="p-6 text-center">
-                    {typeof row.luma === 'boolean' ? (
-                      row.luma ? (
-                        <div className="flex justify-center items-center">
-                          <div className="relative">
-                            <div className="absolute inset-0 bg-green-500/20 rounded-full blur-xl" />
-                            <Check className="h-5 w-5 text-green-500 relative z-10" />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex justify-center items-center">
-                          <X className="h-5 w-5 text-gray-600 opacity-50" />
-                        </div>
-                      )
-                    ) : (
-                      <span className="text-sm font-semibold text-primary-400 bg-primary/10 px-3 py-1 rounded-full">{row.luma}</span>
-                    )}
+                    {renderValue(row.luma, false, row.lumaHighlight !== false)}
                   </td>
                   <td className="p-6">
                     <div className="flex justify-center items-center">
-                      {typeof row.square === 'boolean' ? (
-                        row.square ? (
-                          <Check className="h-5 w-5 text-gray-400" />
-                        ) : (
-                          <X className="h-5 w-5 text-gray-600 opacity-50" />
-                        )
-                      ) : (
-                        <span className="text-sm text-gray-400">{row.square}</span>
-                      )}
+                      {renderValue(row.square, row.isWarning?.square)}
                     </div>
                   </td>
                   <td className="p-6">
                     <div className="flex justify-center items-center">
-                      {typeof row.clover === 'boolean' ? (
-                        row.clover ? (
-                          <Check className="h-5 w-5 text-gray-400" />
-                        ) : (
-                          <X className="h-5 w-5 text-gray-600 opacity-50" />
-                        )
-                      ) : (
-                        <span className="text-sm text-gray-400">{row.clover}</span>
-                      )}
+                      {renderValue(row.clover, row.isWarning?.clover)}
                     </div>
                   </td>
                   <td className="p-6">
                     <div className="flex justify-center items-center">
-                      {typeof row.toast === 'boolean' ? (
-                        row.toast ? (
-                          <Check className="h-5 w-5 text-gray-400" />
-                        ) : (
-                          <X className="h-5 w-5 text-gray-600 opacity-50" />
-                        )
-                      ) : (
-                        <span className="text-sm text-gray-400">{row.toast}</span>
-                      )}
+                      {renderValue(row.toast, row.isWarning?.toast)}
                     </div>
                   </td>
                 </motion.tr>
@@ -243,155 +250,75 @@ export default function Comparison() {
             </div>
 
             {/* Mobile Cards */}
-            <div className="lg:hidden space-y-4">
-              <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-4 py-2 rounded-lg text-sm font-semibold text-white shadow-lg shadow-primary/20 text-center">
-                <Sparkles className="inline h-4 w-4 mr-1" />
-                Luma Wins in Every Category
-              </div>
-              
+            <div className="lg:hidden space-y-3 sm:space-y-4">
+
               {comparison.map((row, index) => (
                 <motion.div
                   key={row.feature}
                   initial={{ opacity: 0, y: 20 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.05 }}
-                  className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50"
+                  className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-700/50"
                 >
-                  <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                  <h3 className="font-semibold text-white text-sm sm:text-base mb-1 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full" />
                     {row.feature}
                   </h3>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    {/* Luma - Always prominent */}
-                    <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg p-3 border border-primary/30">
-                      <div className="text-xs text-primary-400 font-semibold mb-1">Luma</div>
-                      {typeof row.luma === 'boolean' ? (
-                        row.luma ? (
-                          <div className="flex items-center">
-                            <Check className="h-4 w-4 text-green-500 mr-1" />
-                            <span className="text-xs text-green-400">Yes</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center">
-                            <X className="h-4 w-4 text-gray-600 mr-1" />
-                            <span className="text-xs text-gray-500">No</span>
-                          </div>
-                        )
-                      ) : (
-                        <span className="text-xs font-medium text-primary-300">{row.luma}</span>
-                      )}
+                  {row.description && (
+                    <p className="text-[10px] sm:text-xs text-gray-500 mb-2 ml-3.5 sm:ml-4">{row.description}</p>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-2">
+                    {/* Luma */}
+                    <div className={`rounded-md sm:rounded-lg p-2 sm:p-3 border ${row.lumaHighlight !== false ? 'bg-gradient-to-br from-green-500/20 to-green-500/10 border-green-500/30' : 'bg-gray-900/50 border-gray-700'}`}>
+                      <div className={`text-[10px] sm:text-xs font-semibold mb-0.5 sm:mb-1 ${row.lumaHighlight !== false ? 'text-green-400' : 'text-gray-300'}`}>Luma</div>
+                      {renderMobileValue(row.luma, false, row.lumaHighlight !== false)}
                     </div>
-                    
+
                     {/* Square */}
-                    <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-800">
-                      <div className="text-xs text-gray-400 mb-1">Square</div>
-                      {typeof row.square === 'boolean' ? (
-                        row.square ? (
-                          <div className="flex items-center">
-                            <Check className="h-4 w-4 text-gray-500 mr-1" />
-                            <span className="text-xs text-gray-500">Yes</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center">
-                            <X className="h-4 w-4 text-gray-600 mr-1" />
-                            <span className="text-xs text-gray-600">No</span>
-                          </div>
-                        )
-                      ) : (
-                        <span className="text-xs text-gray-400">{row.square}</span>
-                      )}
+                    <div className={`rounded-md sm:rounded-lg p-2 sm:p-3 border ${row.isWarning?.square ? 'bg-red-500/5 border-red-500/20' : 'bg-gray-900/50 border-gray-800'}`}>
+                      <div className="text-[10px] sm:text-xs text-gray-400 mb-0.5 sm:mb-1">Square</div>
+                      {renderMobileValue(row.square, row.isWarning?.square)}
                     </div>
-                    
+
                     {/* Clover */}
-                    <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-800">
-                      <div className="text-xs text-gray-400 mb-1">Clover</div>
-                      {typeof row.clover === 'boolean' ? (
-                        row.clover ? (
-                          <div className="flex items-center">
-                            <Check className="h-4 w-4 text-gray-500 mr-1" />
-                            <span className="text-xs text-gray-500">Yes</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center">
-                            <X className="h-4 w-4 text-gray-600 mr-1" />
-                            <span className="text-xs text-gray-600">No</span>
-                          </div>
-                        )
-                      ) : (
-                        <span className="text-xs text-gray-400">{row.clover}</span>
-                      )}
+                    <div className={`rounded-md sm:rounded-lg p-2 sm:p-3 border ${row.isWarning?.clover ? 'bg-red-500/5 border-red-500/20' : 'bg-gray-900/50 border-gray-800'}`}>
+                      <div className="text-[10px] sm:text-xs text-gray-400 mb-0.5 sm:mb-1">Clover</div>
+                      {renderMobileValue(row.clover, row.isWarning?.clover)}
                     </div>
-                    
+
                     {/* Toast */}
-                    <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-800">
-                      <div className="text-xs text-gray-400 mb-1">Toast</div>
-                      {typeof row.toast === 'boolean' ? (
-                        row.toast ? (
-                          <div className="flex items-center">
-                            <Check className="h-4 w-4 text-gray-500 mr-1" />
-                            <span className="text-xs text-gray-500">Yes</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center">
-                            <X className="h-4 w-4 text-gray-600 mr-1" />
-                            <span className="text-xs text-gray-600">No</span>
-                          </div>
-                        )
-                      ) : (
-                        <span className="text-xs text-gray-400">{row.toast}</span>
-                      )}
+                    <div className={`rounded-md sm:rounded-lg p-2 sm:p-3 border ${row.isWarning?.toast ? 'bg-red-500/5 border-red-500/20' : 'bg-gray-900/50 border-gray-800'}`}>
+                      <div className="text-[10px] sm:text-xs text-gray-400 mb-0.5 sm:mb-1">Toast</div>
+                      {renderMobileValue(row.toast, row.isWarning?.toast)}
                     </div>
                   </div>
                 </motion.div>
               ))}
             </div>
+
+            {/* Bottom callout */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              className="mt-6 sm:mt-8 p-4 sm:p-6 rounded-xl bg-gradient-to-r from-red-500/10 via-transparent to-red-500/10 border border-red-500/20"
+            >
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                  <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-red-400" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white text-sm sm:text-base mb-1">Watch out for fund holds</h4>
+                  <p className="text-xs sm:text-sm text-gray-400">
+                    Many payment processors can hold <span className="text-red-400 font-medium">up to 30% of your earnings for months</span> if they consider you &quot;high risk&quot; — which often includes event vendors with irregular sales patterns. Luma never holds your funds.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
 
-        {/* Summary cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6"
-        >
-          <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-6 border border-primary/20">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-primary" />
-              </div>
-              <h3 className="font-semibold text-white">30% Lower Costs</h3>
-            </div>
-            <p className="text-sm text-gray-300">
-              Save thousands annually with our transparent pricing and no monthly fees on starter plan.
-            </p>
-          </div>
-          
-          <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-xl p-6 border border-green-500/20">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-green-500" />
-              </div>
-              <h3 className="font-semibold text-white">Built for Events</h3>
-            </div>
-            <p className="text-sm text-gray-300">
-              The only POS designed specifically for mobile bars, pop-ups, and event vendors.
-            </p>
-          </div>
-          
-          <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 rounded-xl p-6 border border-purple-500/20">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                <Check className="h-5 w-5 text-purple-500" />
-              </div>
-              <h3 className="font-semibold text-white">No Contracts</h3>
-            </div>
-            <p className="text-sm text-gray-300">
-              Start free, cancel anytime. No hardware to buy, no contracts to sign.
-            </p>
-          </div>
-        </motion.div>
       </div>
     </section>
   )

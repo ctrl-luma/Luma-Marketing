@@ -7,26 +7,39 @@ export default function ScrollToTop() {
   const pathname = usePathname()
 
   useEffect(() => {
-    // Scroll to top on route change
-    window.scrollTo(0, 0)
+    // Check for hash in URL
+    const hash = window.location.hash
+
+    if (hash) {
+      // If there's a hash, scroll to that element
+      const element = document.querySelector(hash)
+      if (element) {
+        element.scrollIntoView()
+      }
+    } else {
+      // No hash, scroll to top
+      window.scrollTo(0, 0)
+    }
   }, [pathname])
 
-  // Force scroll to top on page load/refresh
+  // Handle initial page load
   useEffect(() => {
-    // Disable restoration of scroll position
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
     }
-    
-    // Force immediate scroll to top
-    window.scrollTo(0, 0)
-    
-    // Also scroll after a tiny delay to ensure it takes effect
-    const timer = setTimeout(() => {
+
+    const hash = window.location.hash
+    if (hash) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        const element = document.querySelector(hash)
+        if (element) {
+          element.scrollIntoView()
+        }
+      }, 0)
+    } else {
       window.scrollTo(0, 0)
-    }, 0)
-    
-    return () => clearTimeout(timer)
+    }
   }, [])
 
   return null
