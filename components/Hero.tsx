@@ -38,7 +38,7 @@ export default function Hero() {
 
               <p className="text-base sm:text-lg text-gray-400 mb-6 sm:mb-8 max-w-xl mx-auto lg:mx-0">
                 Accept payments in seconds on iPhone, Android, or tablet. Powered by
-                Stripe, built for speed. Lower fees than Square, no contracts, no
+                Stripe, built for speed. Lower fees, no contracts, no
                 proprietary hardware.
               </p>
 
@@ -204,7 +204,7 @@ export default function Hero() {
 
             <p className="text-base sm:text-lg text-gray-400 mb-6 sm:mb-8 max-w-xl mx-auto lg:mx-0">
               Accept payments in seconds on iPhone, Android, or tablet. Powered by
-              Stripe, built for speed. Lower fees than Square, no contracts, no
+              Stripe, built for speed. Lower fees, no contracts, no
               proprietary hardware.
             </p>
 

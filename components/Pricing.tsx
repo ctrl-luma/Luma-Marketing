@@ -151,7 +151,7 @@ export default function Pricing() {
         >
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
             <h2 className="heading-2 mb-3 sm:mb-4 text-white">
-              Lower fees than Square. No contracts.
+              Lower Fees. No Contracts.
             </h2>
             <p className="text-base sm:text-lg text-gray-300">
               Start free, scale as you grow. Powered by Stripe with transparent,
@@ -186,7 +186,7 @@ export default function Pricing() {
             transition={{ duration: 0.5 }}
             className="heading-2 mb-3 sm:mb-4 text-white"
           >
-            Lower fees than Square. No contracts.
+            Lower Fees. No Contracts.
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
