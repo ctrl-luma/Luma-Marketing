@@ -529,6 +529,12 @@ export default function GetStartedPage() {
                           type={showPassword ? "text" : "password"}
                           value={formData.confirmPassword}
                           onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              handleNext()
+                            }
+                          }}
                           className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 rounded-lg sm:rounded-xl border bg-gray-900/50 text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
                             errors.confirmPassword ? 'border-red-500' : 'border-gray-700 focus:border-primary'
                           }`}

@@ -4,8 +4,9 @@ import { motion, HTMLMotionProps } from 'framer-motion'
 import { useEffect, useState, ReactNode } from 'react'
 
 // Simple mobile detection - runs once on mount
+// Returns null until mounted, then true/false
 function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState<boolean | null>(null)
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 1024)

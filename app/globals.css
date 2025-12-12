@@ -36,6 +36,8 @@
   --animate-fade-in: fadeIn 0.5s ease-in-out;
   --animate-fade-up: fadeUp 0.5s ease-out;
   --animate-slide-in: slideIn 0.3s ease-out;
+  --animate-spin: spin 1s linear infinite;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
   @keyframes fadeIn {
     0% { opacity: 0; }
@@ -48,6 +50,14 @@
   @keyframes slideIn {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(0); }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
   }
 }
 
@@ -115,9 +125,11 @@ html {
   }
 }
 
-/* Respect user's motion preferences */
+/* Respect user's motion preferences - but keep essential UI feedback */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *:not(.animate-spin):not(.animate-pulse),
+  *:not(.animate-spin):not(.animate-pulse)::before,
+  *:not(.animate-spin):not(.animate-pulse)::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -232,4 +244,13 @@ body {
 @utility blur-lighter {
   filter: blur(20px);
   will-change: transform;
+}
+
+/* Explicit animation classes for Tailwind v4 compatibility */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
