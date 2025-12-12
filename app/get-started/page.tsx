@@ -457,12 +457,21 @@ export default function GetStartedPage() {
 
               {/* Account Creation */}
               {currentStep === 'account' && (
-                <div className="flex-1">
+                <form
+                  className="flex-1"
+                  onSubmit={(e) => { e.preventDefault(); handleNext(); }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !(e.target instanceof HTMLTextAreaElement)) {
+                      e.preventDefault();
+                      handleNext();
+                    }
+                  }}
+                >
                   <h1 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Create your account</h1>
                   <p className="text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6">
                     Get started with Luma in less than 2 minutes
                   </p>
-                  
+
                   <div className="space-y-3 sm:space-y-4">
                     <div>
                       <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
@@ -532,12 +541,6 @@ export default function GetStartedPage() {
                           type={showPassword ? "text" : "password"}
                           value={formData.confirmPassword}
                           onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault()
-                              handleNext()
-                            }
-                          }}
                           className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 rounded-lg sm:rounded-xl border bg-gray-900/50 text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
                             errors.confirmPassword ? 'border-red-500' : 'border-gray-700 focus:border-primary'
                           }`}
@@ -549,12 +552,21 @@ export default function GetStartedPage() {
                       )}
                     </div>
                   </div>
-                </div>
+                </form>
               )}
 
               {/* Business Information */}
               {currentStep === 'business' && (
-                <div className="flex-1">
+                <form
+                  className="flex-1"
+                  onSubmit={(e) => { e.preventDefault(); handleNext(); }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !(e.target instanceof HTMLTextAreaElement)) {
+                      e.preventDefault();
+                      handleNext();
+                    }
+                  }}
+                >
                   <h1 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Tell us about your business</h1>
                   <p className="text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6">
                     We'll use this to customize your Luma experience
@@ -695,7 +707,7 @@ export default function GetStartedPage() {
                       </label>
                     </div>
                   </div>
-                </div>
+                </form>
               )}
 
               {/* Use Case Information */}
