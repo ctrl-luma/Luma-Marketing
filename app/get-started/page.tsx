@@ -63,9 +63,10 @@ const formatPhoneDisplay = (phone: string): string => {
 export default function GetStartedPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const selectedTier = searchParams.get('tier')
-  
-  const [currentStep, setCurrentStep] = useState<Step>(selectedTier ? 'account' : 'pricing')
+  const initialTier = searchParams.get('tier')
+
+  const [currentStep, setCurrentStep] = useState<Step>(initialTier ? 'account' : 'pricing')
+  const [tierFromUrl, setTierFromUrl] = useState<string | null>(initialTier)
   const [paymentIntentClientSecret, setPaymentIntentClientSecret] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     email: '',
@@ -76,7 +77,7 @@ export default function GetStartedPage() {
     businessName: '',
     businessType: '',
     phone: '',
-    selectedPlan: selectedTier || '',
+    selectedPlan: initialTier || '',
     acceptTerms: false,
     acceptPrivacy: false,
     useCase: '',
@@ -91,16 +92,17 @@ export default function GetStartedPage() {
   const [apiError, setApiError] = useState<string | null>(null)
   
   const getSteps = (): Step[] => {
-    if (selectedTier) {
-      if (selectedTier === 'starter') {
+    // If we came from URL with tier and haven't gone back to pricing yet
+    if (tierFromUrl) {
+      if (tierFromUrl === 'starter') {
         return ['account', 'business', 'confirmation']
-      } else if (selectedTier === 'enterprise') {
+      } else if (tierFromUrl === 'enterprise') {
         return ['account', 'business', 'usecase', 'confirmation']
       } else {
         return ['account', 'business', 'payment', 'confirmation']
       }
     }
-    
+
     if (formData.selectedPlan) {
       if (formData.selectedPlan === 'starter') {
         return ['pricing', 'account', 'business', 'confirmation']
@@ -110,7 +112,7 @@ export default function GetStartedPage() {
         return ['pricing', 'account', 'business', 'payment', 'confirmation']
       }
     }
-    
+
     return ['pricing', 'account', 'business', 'payment', 'confirmation']
   }
   
@@ -306,16 +308,17 @@ export default function GetStartedPage() {
   }
 
   const handleBack = () => {
-    // Special case: if we're on account step and came from a pricing tier
-    if (currentStep === 'account' && selectedTier) {
-      // Clear the selected tier and go to pricing selection
-      setFormData(prev => ({ ...prev, selectedPlan: '' }))
+    // Special case: if we're on account step and came from a pricing tier URL
+    if (currentStep === 'account' && tierFromUrl) {
+      // Clear the URL tier tracking so getSteps() includes pricing step
+      setTierFromUrl(null)
+      // Keep the selected plan so it shows as selected on pricing page
       setCurrentStep('pricing')
       // Update URL to remove the tier parameter
       window.history.pushState({}, '', '/get-started')
       return
     }
-    
+
     const prevIndex = currentStepIndex - 1
     if (prevIndex >= 0) {
       setCurrentStep(steps[prevIndex])
@@ -904,7 +907,7 @@ export default function GetStartedPage() {
                 <Button
                   variant="ghost"
                   onClick={handleBack}
-                  disabled={(currentStepIndex === 0 && !selectedTier) || isLoading}
+                  disabled={(currentStepIndex === 0 && !tierFromUrl) || isLoading}
                   className="disabled:opacity-30 text-sm sm:text-base"
                 >
                   <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />

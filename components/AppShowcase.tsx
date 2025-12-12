@@ -112,9 +112,10 @@ export default function AppShowcase() {
               ) : (
                 <motion.div
                   key={i}
-                  initial={{ height: 0 }}
-                  animate={inView ? { height: `${height}%` } : {}}
-                  transition={{ duration: 0.5, delay: 0.3 + i * 0.05 }}
+                  style={{ height: `${height}%`, originY: 1 }}
+                  initial={{ scaleY: 0 }}
+                  animate={inView ? { scaleY: 1 } : {}}
+                  transition={{ duration: 0.6, delay: 0.2 + i * 0.04, ease: [0.25, 0.46, 0.45, 0.94] }}
                   className="flex-1 bg-gradient-to-t from-primary/80 to-primary/40 rounded-t"
                 />
               )
