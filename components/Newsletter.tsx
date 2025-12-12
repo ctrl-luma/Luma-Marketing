@@ -40,70 +40,73 @@ export default function Newsletter() {
     <section className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
       {/* Static gradient background - hidden on mobile for performance */}
       <div className="hidden lg:block absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
       </div>
       <div className="container relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primary/10 rounded-xl sm:rounded-2xl mb-4 sm:mb-6">
-            <Mail className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-          </div>
-
-          <h2 className="heading-3 mb-3 sm:mb-4 text-white">
-            Stay in the loop
-          </h2>
-
-          <p className="text-base sm:text-lg text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto">
-            Product updates, tips for event vendors, and the occasional deal.
-          </p>
-
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="flex-1 rounded-lg border border-gray-800 bg-gray-950/50 px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                required
-                disabled={status === 'loading' || status === 'success'}
-              />
-
-              <Button
-                type="submit"
-                disabled={status === 'loading' || status === 'success'}
-                isLoading={status === 'loading'}
-                className="text-sm sm:text-base"
-              >
-                {status === 'success' ? (
-                  <>
-                    <Check className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    Subscribed!
-                  </>
-                ) : (
-                  <>
-                    <Send className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    Subscribe
-                  </>
-                )}
-              </Button>
+        <div className="max-w-2xl mx-auto">
+          {/* Card container */}
+          <div className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 rounded-2xl sm:rounded-3xl p-6 sm:p-10 border border-gray-800 text-center">
+            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-primary to-blue-600 rounded-xl sm:rounded-2xl mb-5 sm:mb-6 shadow-lg shadow-primary/20">
+              <Mail className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
             </div>
 
-            {status === 'success' && (
-              <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-primary">
-                Thanks for subscribing!
-              </p>
-            )}
+            <h2 className="heading-3 mb-2 sm:mb-3 text-white">
+              Stay in the loop
+            </h2>
 
-            {status === 'error' && (
-              <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-red-600">
-                Something went wrong. Please try again.
-              </p>
-            )}
-
-            <p className="mt-3 sm:mt-4 text-[10px] sm:text-xs text-gray-400">
-              By subscribing, you agree to our Privacy Policy and consent to receive updates.
+            <p className="text-sm sm:text-base text-gray-400 mb-6 sm:mb-8 max-w-md mx-auto">
+              Product updates, tips for event vendors, and the occasional deal.
             </p>
-          </form>
+
+            <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="flex-1 rounded-xl border border-gray-700 bg-gray-900/80 px-4 sm:px-5 py-3 sm:py-3.5 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  required
+                  disabled={status === 'loading' || status === 'success'}
+                />
+
+                <Button
+                  type="submit"
+                  disabled={status === 'loading' || status === 'success'}
+                  isLoading={status === 'loading'}
+                  className="text-sm sm:text-base px-6"
+                >
+                  {status === 'success' ? (
+                    <>
+                      <Check className="mr-2 h-4 w-4" />
+                      Done!
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Subscribe
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {status === 'success' && (
+                <p className="mt-3 sm:mt-4 text-sm text-green-500">
+                  Thanks for subscribing!
+                </p>
+              )}
+
+              {status === 'error' && (
+                <p className="mt-3 sm:mt-4 text-sm text-red-500">
+                  Something went wrong. Please try again.
+                </p>
+              )}
+
+              <p className="mt-4 sm:mt-5 text-[10px] sm:text-xs text-gray-500">
+                By subscribing, you agree to our Privacy Policy.
+              </p>
+            </form>
+          </div>
         </div>
       </div>
     </section>

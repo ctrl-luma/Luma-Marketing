@@ -46,36 +46,44 @@ export default function AppShowcase() {
       <div className="bg-gray-950 rounded-b-lg sm:rounded-b-xl border border-gray-800 border-t-0 p-4 sm:p-6 md:p-8">
         {/* Top stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
-          <div className="bg-gray-900/50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-800">
-            <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-              <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+          <div className="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
+            <div className="flex items-center gap-2 sm:gap-2.5 mb-2 sm:mb-3">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-md shadow-primary/20">
+                <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+              </div>
               <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Today&apos;s Sales</span>
             </div>
             <div className="text-lg sm:text-2xl font-bold text-white">$4,287</div>
             <div className="text-[10px] sm:text-xs text-green-500 mt-0.5 sm:mt-1">+12% vs yesterday</div>
           </div>
 
-          <div className="bg-gray-900/50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-800">
-            <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-              <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
+          <div className="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
+            <div className="flex items-center gap-2 sm:gap-2.5 mb-2 sm:mb-3">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-md shadow-green-500/20">
+                <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+              </div>
               <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Tips</span>
             </div>
             <div className="text-lg sm:text-2xl font-bold text-white">$847</div>
             <div className="text-[10px] sm:text-xs text-green-500 mt-0.5 sm:mt-1">+8% vs yesterday</div>
           </div>
 
-          <div className="bg-gray-900/50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-800">
-            <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-              <Users className="h-3 w-3 sm:h-4 sm:w-4 text-purple-500" />
+          <div className="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
+            <div className="flex items-center gap-2 sm:gap-2.5 mb-2 sm:mb-3">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-md shadow-purple-500/20">
+                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+              </div>
               <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Transactions</span>
             </div>
             <div className="text-lg sm:text-2xl font-bold text-white">312</div>
             <div className="text-[10px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1">Avg $13.74</div>
           </div>
 
-          <div className="bg-gray-900/50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-800">
-            <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-              <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
+          <div className="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
+            <div className="flex items-center gap-2 sm:gap-2.5 mb-2 sm:mb-3">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center shadow-md shadow-blue-500/20">
+                <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+              </div>
               <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Avg Time</span>
             </div>
             <div className="text-lg sm:text-2xl font-bold text-white">2.3s</div>

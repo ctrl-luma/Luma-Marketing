@@ -81,21 +81,24 @@ export default function Features() {
     switch (color) {
       case 'green':
         return {
-          bg: 'from-green-500/20 to-green-500/10',
-          icon: 'text-green-500',
-          border: 'border-green-500/20',
+          bg: 'from-green-500 to-emerald-600',
+          icon: 'text-white',
+          border: 'border-green-500/30',
+          shadow: 'shadow-lg shadow-green-500/20',
         }
       case 'purple':
         return {
-          bg: 'from-purple-500/20 to-purple-500/10',
-          icon: 'text-purple-500',
-          border: 'border-purple-500/20',
+          bg: 'from-purple-500 to-violet-600',
+          icon: 'text-white',
+          border: 'border-purple-500/30',
+          shadow: 'shadow-lg shadow-purple-500/20',
         }
       default:
         return {
-          bg: 'from-primary/20 to-primary/10',
-          icon: 'text-primary',
-          border: 'border-primary/20',
+          bg: 'from-primary to-blue-600',
+          icon: 'text-white',
+          border: 'border-primary/30',
+          shadow: 'shadow-lg shadow-primary/20',
         }
     }
   }
@@ -127,10 +130,10 @@ export default function Features() {
               return (
                 <div
                   key={feature.name}
-                  className={`relative p-5 sm:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group`}
+                  className={`relative p-5 sm:p-8 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
                 >
-                  <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${colors.bg} flex items-center justify-center mb-4 sm:mb-6`}>
-                    <Icon className={`h-5 w-5 sm:h-7 sm:w-7 ${colors.icon}`} />
+                  <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center mb-4 sm:mb-6`}>
+                    <Icon className={`h-6 w-6 sm:h-7 sm:w-7 ${colors.icon}`} />
                   </div>
                   <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">
                     {feature.name}
@@ -208,10 +211,10 @@ export default function Features() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`relative p-5 sm:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group`}
+                className={`relative p-5 sm:p-8 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
               >
-                <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${colors.bg} flex items-center justify-center mb-4 sm:mb-6`}>
-                  <Icon className={`h-5 w-5 sm:h-7 sm:w-7 ${colors.icon}`} />
+                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center mb-4 sm:mb-6`}>
+                  <Icon className={`h-6 w-6 sm:h-7 sm:w-7 ${colors.icon}`} />
                 </div>
                 <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">
                   {feature.name}

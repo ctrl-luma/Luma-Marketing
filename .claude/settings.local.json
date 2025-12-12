@@ -22,7 +22,8 @@
       "WebFetch(domain:www.shopify.com)",
       "WebFetch(domain:stripe.com)",
       "WebFetch(domain:support.stripe.com)",
-      "WebFetch(domain:www.swipesum.com)"
+      "WebFetch(domain:www.swipesum.com)",
+      "Bash(xargs ls:*)"
     ],
     "deny": []
   }

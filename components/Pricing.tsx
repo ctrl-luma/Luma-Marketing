@@ -68,10 +68,10 @@ export default function Pricing() {
 
   const PricingCard = ({ tier, index }: { tier: typeof tiers[0], index: number }) => (
     <div
-      className={`relative rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 overflow-visible flex flex-col ${
+      className={`relative rounded-2xl p-6 sm:p-7 md:p-8 overflow-visible flex flex-col transition-all duration-300 ${
         tier.highlighted
-          ? 'bg-gradient-to-br from-primary-800 to-primary-900 text-white shadow-2xl shadow-primary/20 border-2 border-primary-600 md:scale-105'
-          : 'bg-gradient-to-br from-gray-800/90 to-gray-900/90 border border-gray-700/50'
+          ? 'bg-gradient-to-br from-primary/20 via-primary/10 to-gray-900 text-white shadow-xl shadow-primary/10 border-2 border-primary/50 ring-1 ring-primary/20'
+          : 'bg-gradient-to-br from-gray-800/80 to-gray-900/80 border border-gray-700/50 hover:border-gray-600'
       }`}
     >
       {tier.highlighted && (
@@ -207,10 +207,10 @@ export default function Pricing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`relative rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 overflow-visible transition-all duration-500 group flex flex-col ${
+                className={`relative rounded-2xl p-6 sm:p-7 md:p-8 overflow-visible transition-all duration-300 group flex flex-col ${
                   tier.highlighted
-                    ? 'bg-gradient-to-br from-primary-800 to-primary-900 text-white shadow-2xl shadow-primary/20 border-2 border-primary-600 md:scale-105'
-                    : 'bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm border border-gray-700/50 hover:border-gray-600'
+                    ? 'bg-gradient-to-br from-primary/20 via-primary/10 to-gray-900 text-white shadow-xl shadow-primary/10 border-2 border-primary/50 ring-1 ring-primary/20'
+                    : 'bg-gradient-to-br from-gray-800/80 to-gray-900/80 border border-gray-700/50 hover:border-gray-600'
                 }`}
               >
                 {tier.highlighted && (

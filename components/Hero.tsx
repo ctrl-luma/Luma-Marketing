@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, Smartphone, CreditCard, Zap } from 'lucide-react'
+import { ArrowRight, Smartphone, CreditCard, Zap, Clock, DollarSign } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from './ui'
 import { useEffect, useState, useRef } from 'react'
@@ -87,17 +87,25 @@ export default function Hero() {
               </div>
 
               {/* Stats row */}
-              <div className="mt-8 sm:mt-10 grid grid-cols-3 gap-4 sm:gap-6 max-w-sm sm:max-w-md mx-auto lg:mx-0">
+              <div className="mt-8 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 max-w-lg mx-auto lg:mx-0">
                 {[
-                  { label: 'Processing', value: '<3s' },
-                  { label: 'Setup', value: '2 min' },
-                  { label: 'Hardware Cost', value: '$0' },
-                ].map((stat) => (
-                  <div key={stat.label} className="text-center lg:text-left">
-                    <p className="text-xl sm:text-2xl font-bold text-white">{stat.value}</p>
-                    <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1">{stat.label}</p>
-                  </div>
-                ))}
+                  { label: 'Processing', value: '<3s', icon: Zap, gradient: 'from-green-500 to-emerald-600' },
+                  { label: 'Setup', value: '2 min', icon: Clock, gradient: 'from-primary to-blue-600' },
+                  { label: 'Hardware', value: '$0', icon: DollarSign, gradient: 'from-purple-500 to-violet-600' },
+                ].map((stat) => {
+                  const Icon = stat.icon
+                  return (
+                    <div key={stat.label} className="flex items-center gap-2.5 sm:gap-3 bg-gray-900/60 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-800">
+                      <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-md`}>
+                        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-base sm:text-lg font-bold text-white leading-tight">{stat.value}</p>
+                        <p className="text-[10px] sm:text-xs text-gray-500">{stat.label}</p>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
 
@@ -262,18 +270,26 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              className="mt-8 sm:mt-10 grid grid-cols-3 gap-4 sm:gap-6 max-w-sm sm:max-w-md mx-auto lg:mx-0"
+              className="mt-8 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 max-w-lg mx-auto lg:mx-0"
             >
               {[
-                { label: 'Processing', value: '<3s' },
-                { label: 'Setup', value: '2 min' },
-                { label: 'Hardware Cost', value: '$0' },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center lg:text-left">
-                  <p className="text-xl sm:text-2xl font-bold text-white">{stat.value}</p>
-                  <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1">{stat.label}</p>
-                </div>
-              ))}
+                { label: 'Processing', value: '<3s', icon: Zap, gradient: 'from-green-500 to-emerald-600' },
+                { label: 'Setup', value: '2 min', icon: Clock, gradient: 'from-primary to-blue-600' },
+                { label: 'Hardware', value: '$0', icon: DollarSign, gradient: 'from-purple-500 to-violet-600' },
+              ].map((stat) => {
+                const Icon = stat.icon
+                return (
+                  <div key={stat.label} className="flex items-center gap-2.5 sm:gap-3 bg-gray-900/60 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-800 hover:border-gray-700 transition-colors">
+                    <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-md`}>
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-base sm:text-lg font-bold text-white leading-tight">{stat.value}</p>
+                      <p className="text-[10px] sm:text-xs text-gray-500">{stat.label}</p>
+                    </div>
+                  </div>
+                )
+              })}
             </motion.div>
           </motion.div>
 
@@ -353,39 +369,32 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Desktop floating badges */}
+              {/* Floating icon accents */}
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
-                className="hidden lg:block absolute -left-16 top-1/4 bg-gray-900/90 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-gray-800"
+                className="hidden lg:flex absolute -left-8 top-1/3 w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 items-center justify-center shadow-xl shadow-green-500/30"
               >
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <Zap className="w-4 h-4 text-green-500" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400">Processing</p>
-                    <p className="text-sm font-semibold text-white">&lt;3 seconds</p>
-                  </div>
-                </div>
+                <Zap className="w-7 h-7 text-white" />
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1, duration: 0.5 }}
-                className="hidden lg:block absolute -right-24 top-1/2 bg-gray-900/90 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-gray-800"
+                className="hidden lg:flex absolute -right-8 top-1/2 w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-blue-600 items-center justify-center shadow-xl shadow-primary/30"
               >
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Smartphone className="w-4 h-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400">Works on</p>
-                    <p className="text-sm font-semibold text-white">iPhone, Android & iPad</p>
-                  </div>
-                </div>
+                <Smartphone className="w-7 h-7 text-white" />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.2, duration: 0.5 }}
+                className="hidden lg:flex absolute -right-4 top-1/4 w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 items-center justify-center shadow-lg shadow-purple-500/30"
+              >
+                <CreditCard className="w-5 h-5 text-white" />
               </motion.div>
             </div>
           </motion.div>

@@ -73,7 +73,7 @@ export default function Header() {
               ))}
               <Link
                 href="/get-started"
-                className="ml-8 inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="nav-btn-primary ml-8 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/20 hover:from-primary-400 hover:to-primary-500 hover:shadow-lg hover:shadow-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900"
               >
                 Get Started
               </Link>
@@ -91,18 +91,21 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* Mobile menu - simple CSS transition instead of framer-motion */}
+      {/* Mobile menu - smooth slide down animation */}
       <div
-        className={`md:hidden bg-gray-900 border-t border-gray-800 overflow-hidden transition-all duration-200 ${
-          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${
+          isOpen ? 'max-h-[400px]' : 'max-h-0'
         }`}
       >
-        <div className="px-4 py-4 space-y-2">
-          {navigation.map((item) => (
+        <div className={`bg-gray-900/95 backdrop-blur-md border-t border-gray-800 px-4 py-4 space-y-1 transition-all duration-300 ${
+          isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+        }`}>
+          {navigation.map((item, index) => (
             <Link
               key={item.name}
               href={item.href}
-              className="block px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-800 font-medium transition-colors"
+              className="block px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-800/80 hover:text-white font-medium transition-all duration-200"
+              style={{ transitionDelay: isOpen ? `${index * 50}ms` : '0ms' }}
               onClick={(e) => {
                 handleNavClick(e, item.href)
                 setIsOpen(false)
@@ -111,10 +114,10 @@ export default function Header() {
               {item.name}
             </Link>
           ))}
-          <div className="mt-4">
+          <div className="pt-3 mt-2 border-t border-gray-800">
             <Link
               href="/get-started"
-              className="block w-full text-center rounded-lg bg-primary px-3 py-3 font-semibold text-white transition-colors hover:bg-primary-600"
+              className="block w-full text-center rounded-xl bg-primary px-4 py-3.5 font-semibold text-white transition-all duration-200 hover:bg-primary-600 hover:-translate-y-0.5"
               onClick={() => setIsOpen(false)}
             >
               Get Started
