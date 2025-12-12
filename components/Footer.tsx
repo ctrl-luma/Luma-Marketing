@@ -51,7 +51,6 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center mb-3 sm:mb-4">
               <span className="text-xl sm:text-2xl font-bold text-primary">Luma</span>
-              <span className="text-xl sm:text-2xl font-bold text-gray-100 ml-1">POS</span>
             </Link>
             <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">
               The mobile POS for events. Lower fees, no contracts.
@@ -123,7 +122,7 @@ export default function Footer() {
 
         <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-800">
           <p className="text-center text-xs sm:text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} Luma POS. All rights reserved.
+            &copy; {new Date().getFullYear()} Luma. All rights reserved.
           </p>
         </div>
       </div>

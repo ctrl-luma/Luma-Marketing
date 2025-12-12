@@ -56,7 +56,6 @@ export default function Header() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
               <span className="text-2xl font-bold text-primary">Luma</span>
-              <span className="text-2xl font-bold text-gray-100 ml-1">POS</span>
             </Link>
           </div>
 

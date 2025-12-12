@@ -347,7 +347,6 @@ export default function GetStartedPage() {
           <div className="container py-3 sm:py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center">
               <span className="text-xl sm:text-2xl font-bold text-primary">Luma</span>
-              <span className="text-xl sm:text-2xl font-bold text-white ml-1">POS</span>
             </Link>
             <div className="flex items-center gap-2 sm:gap-4">
               <span className="hidden sm:inline text-sm text-gray-400">
@@ -458,7 +457,7 @@ export default function GetStartedPage() {
                 <div className="flex-1">
                   <h1 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Create your account</h1>
                   <p className="text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6">
-                    Get started with Luma POS in less than 2 minutes
+                    Get started with Luma in less than 2 minutes
                   </p>
                   
                   <div className="space-y-3 sm:space-y-4">
@@ -711,7 +710,7 @@ export default function GetStartedPage() {
                           className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 rounded-lg sm:rounded-xl border bg-gray-900/50 text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all min-h-[100px] sm:min-h-[120px] resize-none ${
                             errors.useCase ? 'border-red-500' : 'border-gray-700 focus:border-primary'
                           }`}
-                          placeholder="Describe how you plan to use Luma POS for your business..."
+                          placeholder="Describe how you plan to use Luma for your business..."
                         />
                       </div>
                       {errors.useCase && (
@@ -858,7 +857,7 @@ export default function GetStartedPage() {
                     <Check className="h-9 w-9 sm:h-12 sm:w-12 text-white" />
                   </motion.div>
 
-                  <h1 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Welcome to Luma POS!</h1>
+                  <h1 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Welcome to Luma!</h1>
                   <p className="text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6 max-w-md mx-auto px-4">
                     Your account has been created successfully. We're setting up your dashboard and will redirect you in a moment.
                   </p>
