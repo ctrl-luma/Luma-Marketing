@@ -17,7 +17,7 @@ export default function AboutHero() {
           transition={{ duration: 0.5 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <p className="text-primary text-xs sm:text-sm font-medium tracking-wide uppercase mb-3 sm:mb-4">
+          <p className="text-primary text-base sm:text-lg font-semibold tracking-wide uppercase mb-3 sm:mb-4">
             About Luma
           </p>
           <h1 className="heading-1 mb-4 sm:mb-6 text-white">

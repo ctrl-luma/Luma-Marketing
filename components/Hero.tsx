@@ -18,6 +18,14 @@ export default function Hero() {
     return () => clearTimeout(timer)
   }, [])
 
+  const handlePricingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const element = document.querySelector('#pricing')
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   // Mobile content with subtle CSS fade-in
   if (isMobile) {
     return (
@@ -50,11 +58,11 @@ export default function Hero() {
                   </Button>
                 </Link>
 
-                <Link href="#pricing" className="w-full sm:w-auto">
+                <a href="#pricing" onClick={handlePricingClick} className="w-full sm:w-auto">
                   <Button variant="secondary" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
                     View Pricing
                   </Button>
-                </Link>
+                </a>
               </div>
 
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-4 sm:gap-x-6 gap-y-2 text-xs sm:text-sm text-gray-400">
@@ -216,11 +224,11 @@ export default function Hero() {
                 </Button>
               </Link>
 
-              <Link href="#pricing" className="w-full sm:w-auto">
+              <a href="#pricing" onClick={handlePricingClick} className="w-full sm:w-auto">
                 <Button variant="secondary" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
                   View Pricing
                 </Button>
-              </Link>
+              </a>
             </div>
 
             <motion.div

@@ -394,7 +394,7 @@ export default function GetStartedPage() {
                     Start free, upgrade anytime. No contracts, no proprietary hardware.
                   </p>
                   
-                  <div className="grid gap-2 sm:gap-3">
+                  <div className="grid gap-6 sm:gap-8">
                     {pricingTiers.map((tier) => (
                       <label
                         key={tier.id}

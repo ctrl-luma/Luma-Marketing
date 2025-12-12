@@ -87,6 +87,23 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Scroll offset for anchor links to account for fixed header */
+/* Mobile: 64px header + 24px extra padding = 88px */
+/* Desktop: 80px header + 16px extra padding = 96px */
+[id="features"],
+[id="pricing"],
+[id="faq"] {
+  scroll-margin-top: 88px;
+}
+
+@media (min-width: 640px) {
+  [id="features"],
+  [id="pricing"],
+  [id="faq"] {
+    scroll-margin-top: 96px;
+  }
+}
+
 /* Remove expensive blur effects on mobile for better performance */
 @media (max-width: 1023px) {
   .blur-3xl, .blur-2xl, .blur-xl {

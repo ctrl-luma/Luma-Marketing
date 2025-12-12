@@ -16,6 +16,14 @@ export default function CTA() {
     setIsMobile(window.innerWidth < 1024)
   }, [])
 
+  const handlePricingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const element = document.querySelector('#pricing')
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
@@ -39,7 +47,7 @@ export default function CTA() {
           </Button>
         </Link>
 
-        <Link href="#pricing" className="w-full sm:w-auto">
+        <a href="#pricing" onClick={handlePricingClick} className="w-full sm:w-auto">
           <Button
             variant="secondary"
             size="lg"
@@ -47,7 +55,7 @@ export default function CTA() {
           >
             View Pricing
           </Button>
-        </Link>
+        </a>
       </div>
 
       <p className="mt-4 sm:mt-6 text-xs sm:text-sm text-primary-100/80">
