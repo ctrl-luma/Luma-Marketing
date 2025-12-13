@@ -347,21 +347,19 @@ export default function GetStartedPage() {
       <div className="relative z-10">
         {/* Header */}
         <header className="border-b border-gray-800 bg-black/50 backdrop-blur-sm">
-          <div className="container py-3 sm:py-4 flex items-center justify-between">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
             <Link href="/" className="flex items-center">
-              <span className="text-xl sm:text-2xl font-bold text-primary">Luma</span>
+              <span className="text-2xl font-bold text-primary">Luma</span>
             </Link>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <span className="hidden sm:inline text-sm text-gray-400">
-                Already have an account?
-              </span>
+            <div className="flex items-center gap-3 sm:gap-4">
               <a
                 href={process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'}
-                className="text-xs sm:text-sm font-medium text-primary hover:text-primary-400 transition-colors"
+                className="text-sm text-gray-400 hover:text-white transition-colors"
               >
-                Dashboard
+                <span className="hidden sm:inline">Already have an account? </span>
+                <span className="font-medium text-primary hover:text-primary-400">Sign in</span>
               </a>
-              <Link href="/" className="text-gray-400 hover:text-white transition-colors ml-2 sm:ml-4">
+              <Link href="/" className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
                 <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
             </div>
