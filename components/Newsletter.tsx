@@ -2,6 +2,7 @@
 
 import { Mail, Send, Check } from 'lucide-react'
 import { useState } from 'react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 
 export default function Newsletter() {
@@ -103,7 +104,7 @@ export default function Newsletter() {
               )}
 
               <p className="mt-4 sm:mt-5 text-[10px] sm:text-xs text-gray-500">
-                By subscribing, you agree to our Privacy Policy.
+                By subscribing, you agree to our <Link href="/privacy" className="text-gray-400 hover:text-primary transition-colors underline">Privacy Policy</Link>.
               </p>
             </form>
           </div>
