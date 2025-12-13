@@ -125,8 +125,8 @@ html {
   }
 }
 
-/* Respect user's motion preferences - but keep essential UI feedback */
-@media (prefers-reduced-motion: reduce) {
+/* Reduce motion on mobile only for performance */
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
   *:not(.animate-spin):not(.animate-pulse),
   *:not(.animate-spin):not(.animate-pulse)::before,
   *:not(.animate-spin):not(.animate-pulse)::after {
@@ -279,4 +279,14 @@ body {
 
 .nav-btn-primary:active {
   transform: scale(0.97);
+}
+
+/* Header background fade */
+.header-bg {
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}
+
+.header-bg.visible {
+  opacity: 1;
 }

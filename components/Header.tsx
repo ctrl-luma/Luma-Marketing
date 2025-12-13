@@ -16,13 +16,17 @@ const navigation = [
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
   useEffect(() => {
+    setMounted(true)
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
     }
+    // Check initial scroll position
+    handleScroll()
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -45,13 +49,25 @@ export default function Header() {
   }
 
   return (
-    <header
-      className={cn(
-        'fixed top-0 z-50 w-full transition-all duration-300',
-        scrolled ? 'bg-gray-900/95 backdrop-blur-md shadow-sm' : 'bg-transparent'
-      )}
-    >
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="fixed top-0 z-50 w-full">
+      {/* Background that fades in */}
+      <div
+        style={{
+          opacity: scrolled ? 1 : 0,
+          transition: 'opacity 0.5s ease',
+          willChange: 'opacity',
+        }}
+        className="absolute inset-0 bg-gray-900 shadow-lg shadow-black/10 pointer-events-none"
+      />
+      {/* Separate blur layer */}
+      <div
+        style={{
+          opacity: scrolled ? 1 : 0,
+          transition: 'opacity 0.5s ease',
+        }}
+        className="absolute inset-0 backdrop-blur-md pointer-events-none"
+      />
+      <nav className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
