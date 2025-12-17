@@ -35,13 +35,13 @@ export default function CTA() {
         Ready to get started?
       </h2>
 
-      <p className="text-base sm:text-lg text-primary-100 mb-8 sm:mb-10">
+      <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10">
         Set up in 2 minutes. No credit card required.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
         <Link href="/get-started" className="w-full sm:w-auto">
-          <Button size="lg" variant="white" className="w-full sm:w-auto group text-sm sm:text-base">
+          <Button size="lg" variant="primary" className="w-full sm:w-auto group text-sm sm:text-base">
             Start Free Today
             <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
           </Button>
@@ -51,14 +51,14 @@ export default function CTA() {
           <Button
             variant="secondary"
             size="lg"
-            className="border-white/30 bg-white/10 hover:bg-white/20 text-white w-full sm:w-auto text-sm sm:text-base"
+            className="w-full sm:w-auto text-sm sm:text-base"
           >
             View Pricing
           </Button>
         </a>
       </div>
 
-      <p className="mt-4 sm:mt-6 text-xs sm:text-sm text-primary-100/80">
+      <p className="mt-4 sm:mt-6 text-xs sm:text-sm text-gray-500">
         No credit card required • Cancel anytime
       </p>
     </div>
@@ -67,7 +67,7 @@ export default function CTA() {
   // Mobile version - with subtle CSS fade-in
   if (isMobile) {
     return (
-      <GradientBackground variant="primary" className="section-padding">
+      <GradientBackground variant="subtle" className="section-padding">
         <div
           ref={fadeRef}
           className={`container transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
@@ -82,7 +82,7 @@ export default function CTA() {
 
   // Desktop version - with animations
   return (
-    <GradientBackground variant="primary" className="section-padding">
+    <GradientBackground variant="subtle" className="section-padding">
       <div className="container">
         <motion.div
           ref={ref}

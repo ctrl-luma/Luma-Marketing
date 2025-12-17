@@ -11,32 +11,7 @@ import { redirectToVendorDashboard } from '@/lib/auth-handoff'
 import { Elements } from '@stripe/react-stripe-js'
 import { getStripePromise } from '@/lib/stripe'
 import StripePaymentForm from '@/components/StripePaymentForm'
-
-const pricingTiers = [
-  {
-    id: 'starter',
-    name: 'Starter',
-    price: 'Free',
-    description: 'Perfect for new mobile bars and pop-ups',
-    features: ['2.7% + $0.15 per tap', 'Tap to Pay on iPhone/Android', 'Basic features']
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: '$19/month',
-    description: 'For established mobile bars running regular events',
-    features: ['2.7% + $0.15 per tap', 'Unlimited devices', 'Revenue splits'],
-    recommended: true
-  },
-  // Custom plan - commented out for now, may add back later
-  // {
-  //   id: 'enterprise',
-  //   name: 'Enterprise',
-  //   price: 'Custom',
-  //   description: 'For multi-bar operators and festival organizers',
-  //   features: ['As low as 2.6% + $0.05', 'Unlimited devices', 'Priority support']
-  // }
-]
+import { pricingTiers, getTierById } from '@/lib/pricing'
 
 type Step = 'account' | 'business' | 'usecase' | 'pricing' | 'payment' | 'confirmation'
 
@@ -376,7 +351,7 @@ export default function GetStartedPage() {
           />
         </div>
 
-        <div className="container max-w-2xl py-6 sm:py-8 px-4 sm:px-6 min-h-[calc(100vh-200px)] flex flex-col">
+        <div className="max-w-xl mx-auto py-6 sm:py-8 px-4 sm:px-6 min-h-[calc(100vh-200px)] flex flex-col">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -422,11 +397,15 @@ export default function GetStartedPage() {
                         <div className="flex-1">
                           <div className="flex items-baseline gap-2 mb-1">
                             <h3 className="text-lg sm:text-xl font-semibold text-white">{tier.name}</h3>
-                            <span className="text-xl sm:text-2xl font-bold text-primary">{tier.price}</span>
+                            <span className="text-xl sm:text-2xl font-bold text-primary">{tier.price}{tier.period}</span>
                           </div>
                           <p className="text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3">{tier.description}</p>
                           <ul className="space-y-0.5">
-                            {tier.features.map((feature, i) => (
+                            <li className="flex items-center text-xs sm:text-sm text-gray-300 font-medium">
+                              <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary mr-1.5 sm:mr-2 flex-shrink-0" />
+                              {tier.transactionFee}
+                            </li>
+                            {tier.features.slice(0, 2).map((feature, i) => (
                               <li key={i} className="flex items-center text-xs sm:text-sm text-gray-300">
                                 <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary mr-1.5 sm:mr-2 flex-shrink-0" />
                                 {feature}
@@ -792,13 +771,13 @@ export default function GetStartedPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs sm:text-sm text-gray-400 mb-0.5 sm:mb-1">You're subscribing to:</p>
-                        <h3 className="text-base sm:text-lg font-semibold text-white">{pricingTiers.find(t => t.id === formData.selectedPlan)?.name} Plan</h3>
+                        <h3 className="text-base sm:text-lg font-semibold text-white">{getTierById(formData.selectedPlan)?.name} Plan</h3>
                       </div>
                       <div className="text-right">
                         <p className="text-xl sm:text-2xl font-bold text-primary">
-                          {pricingTiers.find(t => t.id === formData.selectedPlan)?.price}
+                          {getTierById(formData.selectedPlan)?.price}{getTierById(formData.selectedPlan)?.period}
                         </p>
-                        {formData.selectedPlan !== 'high-volume' && (
+                        {formData.selectedPlan !== 'starter' && (
                           <p className="text-[10px] sm:text-xs text-gray-400">billed monthly</p>
                         )}
                       </div>

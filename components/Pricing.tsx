@@ -7,51 +7,7 @@ import { useFadeIn } from '@/hooks/useFadeIn'
 import { Check, X } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-
-const tiers = [
-  {
-    name: 'Starter',
-    price: 'Free',
-    period: '',
-    description: 'Perfect for new mobile bars and pop-ups',
-    features: [
-      '2.7% + $0.15 per tap',
-      'Tap to Pay on iPhone/Android',
-      'Simple menu builder',
-      'Basic tip tracking',
-      'Event mode',
-      'Daily payout summary',
-      '1-2 devices',
-    ],
-    notIncluded: [
-      'Revenue splits',
-      'Multi-device support',
-      'Advanced analytics',
-    ],
-    cta: 'Start Free',
-    highlighted: false,
-  },
-  {
-    name: 'Pro',
-    price: '$19',
-    period: '/month',
-    description: 'For established mobile bars running regular events',
-    features: [
-      '2.7% + $0.15 per tap',
-      'Everything in Starter',
-      'Unlimited events & locations',
-      'Unlimited devices',
-      'Revenue splits (venue/promoter)',
-      'Tip pooling & tip-out rules',
-      'Analytics dashboard',
-      'Export to CSV/PDF',
-      'Event templates',
-    ],
-    notIncluded: [],
-    cta: 'Get Pro',
-    highlighted: true,
-  },
-]
+import { pricingTiers, type PricingTier } from '@/lib/pricing'
 
 export default function Pricing() {
   const [isMobile, setIsMobile] = useState(true)
@@ -66,7 +22,7 @@ export default function Pricing() {
     triggerOnce: true,
   })
 
-  const PricingCard = ({ tier, index }: { tier: typeof tiers[0], index: number }) => (
+  const PricingCard = ({ tier, index }: { tier: PricingTier, index: number }) => (
     <div
       className={`relative rounded-2xl p-6 sm:p-7 md:p-8 overflow-visible flex flex-col transition-all duration-300 ${
         tier.highlighted
@@ -107,6 +63,16 @@ export default function Pricing() {
         </div>
 
         <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8 flex-grow">
+          <li className="flex items-start">
+            <Check className={`h-4 w-4 sm:h-5 sm:w-5 mr-2.5 sm:mr-3 mt-0.5 flex-shrink-0 ${
+              tier.highlighted ? 'text-primary-100' : 'text-primary'
+            }`} />
+            <span className={`text-xs sm:text-sm font-medium ${
+              tier.highlighted ? 'text-primary-50' : 'text-gray-300'
+            }`}>
+              {tier.transactionFee}
+            </span>
+          </li>
           {tier.features.map((feature) => (
             <li key={feature} className="flex items-start">
               <Check className={`h-4 w-4 sm:h-5 sm:w-5 mr-2.5 sm:mr-3 mt-0.5 flex-shrink-0 ${
@@ -161,7 +127,7 @@ export default function Pricing() {
 
           <div className="relative max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 px-0">
-              {tiers.map((tier, index) => (
+              {pricingTiers.map((tier, index) => (
                 <PricingCard key={tier.name} tier={tier} index={index} />
               ))}
             </div>
@@ -201,7 +167,7 @@ export default function Pricing() {
 
         <div ref={ref} className="relative max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 px-0">
-            {tiers.map((tier, index) => (
+            {pricingTiers.map((tier, index) => (
               <motion.div
                 key={tier.name}
                 initial={{ opacity: 0, y: 20 }}
@@ -256,6 +222,16 @@ export default function Pricing() {
                   </div>
 
                   <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8 flex-grow">
+                    <li className="flex items-start">
+                      <Check className={`h-4 w-4 sm:h-5 sm:w-5 mr-2.5 sm:mr-3 mt-0.5 flex-shrink-0 ${
+                        tier.highlighted ? 'text-primary-100' : 'text-primary'
+                      }`} />
+                      <span className={`text-xs sm:text-sm font-medium ${
+                        tier.highlighted ? 'text-primary-50' : 'text-gray-300'
+                      }`}>
+                        {tier.transactionFee}
+                      </span>
+                    </li>
                     {tier.features.map((feature) => (
                       <li key={feature} className="flex items-start">
                         <Check className={`h-4 w-4 sm:h-5 sm:w-5 mr-2.5 sm:mr-3 mt-0.5 flex-shrink-0 ${

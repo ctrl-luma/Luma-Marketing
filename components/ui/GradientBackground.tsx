@@ -1,12 +1,12 @@
 import { cn } from '@/lib/utils'
 
 export interface GradientBackgroundProps {
-  variant?: 'primary' | 'secondary' | 'hero'
+  variant?: 'primary' | 'secondary' | 'hero' | 'subtle'
   className?: string
   children?: React.ReactNode
 }
 
-export function GradientBackground({ 
+export function GradientBackground({
   variant = 'primary',
   className,
   children
@@ -15,6 +15,7 @@ export function GradientBackground({
     primary: 'bg-gradient-to-br from-primary-900/90 via-primary-950 to-gray-950',
     secondary: 'bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950',
     hero: 'bg-gradient-to-br from-gray-900 via-gray-950 to-black',
+    subtle: 'bg-gradient-to-br from-primary-950/50 via-gray-950 to-black',
   }
   
   return (

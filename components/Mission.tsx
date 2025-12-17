@@ -9,18 +9,44 @@ const principles = [
     title: 'Speed First',
     description: 'Every feature is optimized for high-volume environments. No lag, no delays.',
     icon: Zap,
+    color: 'green',
   },
   {
     title: 'No Lock-in',
     description: 'No contracts, no proprietary hardware. Use your own devices, cancel anytime.',
     icon: Shield,
+    color: 'primary',
   },
   {
     title: 'Built for Operators',
     description: 'Revenue splits, tip tracking, multi-location support—features real vendors need.',
     icon: Users,
+    color: 'purple',
   },
 ]
+
+const getColorClasses = (color: string) => {
+  switch (color) {
+    case 'green':
+      return {
+        bg: 'from-green-500 to-emerald-600',
+        border: 'border-green-500/30',
+        shadow: 'shadow-lg shadow-green-500/20',
+      }
+    case 'purple':
+      return {
+        bg: 'from-purple-500 to-violet-600',
+        border: 'border-purple-500/30',
+        shadow: 'shadow-lg shadow-purple-500/20',
+      }
+    default:
+      return {
+        bg: 'from-primary to-blue-600',
+        border: 'border-primary/30',
+        shadow: 'shadow-lg shadow-primary/20',
+      }
+  }
+}
 
 export default function Mission() {
   const { ref, inView } = useInView({
@@ -60,24 +86,25 @@ export default function Mission() {
         </motion.div>
 
         {/* Principles Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
           {principles.map((principle, index) => {
             const Icon = principle.icon
+            const colors = getColorClasses(principle.color)
             return (
               <motion.div
                 key={principle.title}
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-                className="text-center p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-gray-800 bg-gray-900/30"
+                className={`relative p-5 sm:p-8 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
               >
-                <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-lg sm:rounded-xl mb-3 sm:mb-4">
-                  <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center mb-4 sm:mb-6 mx-auto`}>
+                  <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-1.5 sm:mb-2">
+                <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 text-center">
                   {principle.title}
                 </h3>
-                <p className="text-gray-400 text-xs sm:text-sm">
+                <p className="text-sm sm:text-base text-gray-400 leading-relaxed text-center">
                   {principle.description}
                 </p>
               </motion.div>

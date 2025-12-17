@@ -5,12 +5,15 @@ import { useInView } from 'react-intersection-observer'
 import { useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { Check, X, AlertTriangle } from 'lucide-react'
+import { getTierById } from '@/lib/pricing'
+
+const proTier = getTierById('pro')
 
 const comparison = [
   {
     feature: 'Typical Monthly Cost',
     description: 'With tip pooling & team permissions',
-    luma: '$19/mo',
+    luma: proTier ? `${proTier.price}${proTier.period.replace('/', '/').replace('month', 'mo')}` : '$19/mo',
     square: '$89/mo',
     clover: '$185/mo',
     toast: '$207/mo',
@@ -20,7 +23,7 @@ const comparison = [
   },
   {
     feature: 'Processing Rate',
-    luma: '2.7% + $0.15',
+    luma: proTier?.transactionFee,
     square: '2.6% + $0.15',
     clover: '2.6% + $0.10',
     toast: '2.99% + $0.15',

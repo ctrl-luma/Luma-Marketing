@@ -5,6 +5,11 @@ import { useInView } from 'react-intersection-observer'
 import { useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { ChevronDown } from 'lucide-react'
+import Link from 'next/link'
+import { getTierById } from '@/lib/pricing'
+
+const starterTier = getTierById('starter')
+const proTier = getTierById('pro')
 
 const faqs = [
   {
@@ -17,7 +22,9 @@ const faqs = [
   },
   {
     question: 'What are the fees?',
-    answer: 'Our Starter plan is free with 2.9% + $0.09 per transaction. Pro is $19/month with lower rates at 2.8% + $0.07. No hidden fees, no contracts.',
+    answer: `Our Starter plan is free with ${starterTier?.transactionFee.replace(' per tap', '')} per transaction. Pro is ${proTier?.price}${proTier?.period} with lower rates at ${proTier?.transactionFee.replace(' per tap', '')}. No hidden fees, no contracts. High-volume businesses can `,
+    answerSuffix: ' for custom pricing.',
+    hasContactLink: true,
   },
   {
     question: 'Can I use my existing phone?',
@@ -73,6 +80,12 @@ export default function FAQ() {
           >
             <p className="px-4 sm:px-6 pb-3 sm:pb-4 text-gray-400 text-xs sm:text-sm leading-relaxed">
               {faq.answer}
+              {faq.hasContactLink && (
+                <>
+                  <Link href="/contact" className="text-primary hover:text-primary-400 underline">contact us</Link>
+                  {faq.answerSuffix}
+                </>
+              )}
             </p>
           </div>
         </div>
