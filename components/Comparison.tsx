@@ -23,7 +23,7 @@ const comparison = [
   },
   {
     feature: 'Processing Rate',
-    luma: proTier?.transactionFee,
+    luma: proTier?.transactionFee || '2.8% + $0.07 per tap',
     square: '2.6% + $0.15',
     clover: '2.6% + $0.10',
     toast: '2.99% + $0.15',
