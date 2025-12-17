@@ -14,6 +14,9 @@ import {
   Split,
   BarChart3,
 } from 'lucide-react'
+import { getTierById } from '@/lib/pricing'
+
+const proTier = getTierById('pro')
 
 const heroFeatures = [
   {
@@ -24,7 +27,7 @@ const heroFeatures = [
   },
   {
     name: 'Transparent Pricing',
-    description: '2.7% + $0.15 per tap. No hidden fees, no fund holds, instant payouts available.',
+    description: `${proTier?.transactionFee?.replace(' per tap', '')}. No hidden fees, no fund holds, instant payouts available.`,
     icon: DollarSign,
     color: 'green',
   },
@@ -48,8 +51,8 @@ const additionalFeatures = [
     icon: Split,
   },
   {
-    name: 'Fully Customizable',
-    description: 'Add your own inventory, menu items, and subscriptions to sell.',
+    name: 'Custom Catalogs',
+    description: 'Create different menus for each venue. Switch pricing, inventory, and items with one tap.',
     icon: Settings,
   },
   {

@@ -23,6 +23,7 @@ export const pricingTiers: PricingTier[] = [
     features: [
       'Tap to Pay on iPhone/Android',
       'Simple menu builder',
+      '1 custom catalog',
       'Basic tip tracking',
       'Event mode',
       'Daily payout summary',
@@ -45,6 +46,7 @@ export const pricingTiers: PricingTier[] = [
     transactionFee: '2.8% + $0.07 per tap',
     features: [
       'Everything in Starter',
+      'Unlimited custom catalogs',
       'Unlimited events & locations',
       'Unlimited devices',
       'Revenue splits (venue/promoter)',

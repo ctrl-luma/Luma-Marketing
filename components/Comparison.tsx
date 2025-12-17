@@ -8,6 +8,7 @@ import { Check, X, AlertTriangle } from 'lucide-react'
 import { getTierById } from '@/lib/pricing'
 
 const proTier = getTierById('pro')
+const proTransactionFee = proTier?.transactionFee?.replace(' per tap', '') ?? '2.8% + $0.07'
 
 const comparison = [
   {
@@ -23,7 +24,7 @@ const comparison = [
   },
   {
     feature: 'Processing Rate',
-    luma: proTier?.transactionFee || '2.8% + $0.07 per tap',
+    luma: proTransactionFee,
     square: '2.6% + $0.15',
     clover: '2.6% + $0.10',
     toast: '2.99% + $0.15',
@@ -91,6 +92,17 @@ const comparison = [
     toast: '2 year lock-in',
     othersAvg: 'Up to 4 years',
     isWarning: { square: false, clover: true, toast: true },
+    othersWarning: true,
+  },
+  {
+    feature: 'Custom Catalogs',
+    description: 'Switch menus & pricing per venue instantly',
+    luma: 'Unlimited',
+    square: 'Not available',
+    clover: 'Not available',
+    toast: 'Not available',
+    othersAvg: 'Not available',
+    isWarning: { square: true, clover: true, toast: true },
     othersWarning: true,
   },
 ]
