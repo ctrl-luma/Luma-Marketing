@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, Smartphone, CreditCard, Zap, Clock, DollarSign } from 'lucide-react'
+import { ArrowRight, Smartphone, CreditCard, Zap, Clock, DollarSign, Home, History, Settings, Grid3X3 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from './ui'
 import { useEffect, useState, useRef } from 'react'
@@ -123,15 +123,22 @@ export default function Hero() {
 
                     {/* App content */}
                     <div className="pt-12 sm:pt-16 p-4 sm:p-5 h-full bg-gradient-to-b from-gray-900 to-gray-950 flex flex-col">
-                      {/* Header */}
-                      <div className="flex items-center justify-between mb-4 sm:mb-6">
-                        <div>
-                          <p className="text-[10px] sm:text-xs text-gray-500">Ready to accept</p>
-                          <p className="text-base sm:text-lg font-semibold text-white">Tap to Pay</p>
+                      {/* Luma Logo */}
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-primary flex items-center justify-center">
+                          <svg viewBox="0 0 32 32" className="w-4 h-4 sm:w-5 sm:h-5">
+                            <path d="M9 8H13V20H23V24H9V8Z" fill="white"/>
+                          </svg>
                         </div>
                         <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center">
                           <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                         </div>
+                      </div>
+
+                      {/* Header */}
+                      <div className="mb-4 sm:mb-6">
+                        <p className="text-base sm:text-lg font-semibold text-white leading-tight">Tap to Pay</p>
+                        <p className="text-[10px] sm:text-xs text-gray-500">Ready to accept</p>
                       </div>
 
                       {/* Amount display */}
@@ -153,11 +160,26 @@ export default function Hero() {
                         <p className="text-gray-500 text-xs sm:text-sm mt-4 sm:mt-6">Hold card near phone</p>
                       </div>
 
-                      {/* Bottom button */}
-                      <div className="mt-auto">
-                        <button className="w-full bg-primary text-white font-semibold py-3 sm:py-4 rounded-xl sm:rounded-2xl text-base sm:text-lg">
-                          Cancel
-                        </button>
+                      {/* Bottom navigation */}
+                      <div className="mt-auto pt-2">
+                        <div className="flex items-center justify-around py-2 sm:py-3 border-t border-gray-800">
+                          <button className="flex flex-col items-center gap-0.5">
+                            <Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                            <span className="text-[8px] sm:text-[10px] text-primary">Home</span>
+                          </button>
+                          <button className="flex flex-col items-center gap-0.5">
+                            <Grid3X3 className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
+                            <span className="text-[8px] sm:text-[10px] text-gray-500">Catalog</span>
+                          </button>
+                          <button className="flex flex-col items-center gap-0.5">
+                            <History className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
+                            <span className="text-[8px] sm:text-[10px] text-gray-500">History</span>
+                          </button>
+                          <button className="flex flex-col items-center gap-0.5">
+                            <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
+                            <span className="text-[8px] sm:text-[10px] text-gray-500">Settings</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -312,15 +334,22 @@ export default function Hero() {
 
                   {/* App content */}
                   <div className="pt-12 sm:pt-16 p-4 sm:p-5 h-full bg-gradient-to-b from-gray-900 to-gray-950 flex flex-col">
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-4 sm:mb-6">
-                      <div>
-                        <p className="text-[10px] sm:text-xs text-gray-500">Ready to accept</p>
-                        <p className="text-base sm:text-lg font-semibold text-white">Tap to Pay</p>
+                    {/* Luma Logo */}
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-primary flex items-center justify-center">
+                        <svg viewBox="0 0 32 32" className="w-4 h-4 sm:w-5 sm:h-5">
+                          <path d="M9 8H13V20H23V24H9V8Z" fill="white"/>
+                        </svg>
                       </div>
                       <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center">
                         <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                       </div>
+                    </div>
+
+                    {/* Header */}
+                    <div className="mb-4 sm:mb-6">
+                      <p className="text-base sm:text-lg font-semibold text-white leading-tight">Tap to Pay</p>
+                      <p className="text-[10px] sm:text-xs text-gray-500">Ready to accept</p>
                     </div>
 
                     {/* Amount display */}
@@ -359,11 +388,26 @@ export default function Hero() {
                       <p className="text-gray-500 text-xs sm:text-sm mt-4 sm:mt-6">Hold card near phone</p>
                     </div>
 
-                    {/* Bottom button */}
-                    <div className="mt-auto">
-                      <button className="w-full bg-primary text-white font-semibold py-3 sm:py-4 rounded-xl sm:rounded-2xl text-base sm:text-lg">
-                        Cancel
-                      </button>
+                    {/* Bottom navigation */}
+                    <div className="mt-auto pt-2">
+                      <div className="flex items-center justify-around py-2 sm:py-3 border-t border-gray-800">
+                        <button className="flex flex-col items-center gap-0.5">
+                          <Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                          <span className="text-[8px] sm:text-[10px] text-primary">Home</span>
+                        </button>
+                        <button className="flex flex-col items-center gap-0.5">
+                          <Grid3X3 className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
+                          <span className="text-[8px] sm:text-[10px] text-gray-500">Catalog</span>
+                        </button>
+                        <button className="flex flex-col items-center gap-0.5">
+                          <History className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
+                          <span className="text-[8px] sm:text-[10px] text-gray-500">History</span>
+                        </button>
+                        <button className="flex flex-col items-center gap-0.5">
+                          <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
+                          <span className="text-[8px] sm:text-[10px] text-gray-500">Settings</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
