@@ -23,7 +23,8 @@
       "WebFetch(domain:stripe.com)",
       "WebFetch(domain:support.stripe.com)",
       "WebFetch(domain:www.swipesum.com)",
-      "Bash(xargs ls:*)"
+      "Bash(xargs ls:*)",
+      "Bash(wc:*)"
     ],
     "deny": []
   }

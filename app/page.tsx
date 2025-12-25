@@ -1,6 +1,7 @@
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
 import TrustedBy from '@/components/TrustedBy'
+import HowItWorks from '@/components/HowItWorks'
 import UseCases from '@/components/UseCases'
 import Features from '@/components/Features'
 import AppShowcase from '@/components/AppShowcase'
@@ -31,6 +32,7 @@ export default function Home() {
         <main>
           <Hero />
           <TrustedBy />
+          <HowItWorks />
           <UseCases />
           <Features />
           <AppShowcase />

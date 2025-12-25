@@ -36,9 +36,14 @@ export default function AppShowcase() {
           <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500/80" />
         </div>
         <div className="flex-1 mx-2 sm:mx-4">
-          <div className="bg-gray-800 rounded-md sm:rounded-lg px-2 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm text-gray-400 max-w-md mx-auto">
-            portal.lumapos.co
-          </div>
+          <a
+            href={process.env.NEXT_PUBLIC_DASHBOARD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block bg-gray-800 rounded-md sm:rounded-lg px-2 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm text-gray-400 max-w-md mx-auto hover:text-gray-200 hover:underline transition-colors cursor-pointer"
+          >
+            {process.env.NEXT_PUBLIC_DASHBOARD_URL}
+          </a>
         </div>
       </div>
 
