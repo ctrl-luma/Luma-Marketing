@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import {
   Smartphone,
@@ -13,6 +13,7 @@ import {
   Receipt,
   Split,
   BarChart3,
+  Zap,
 } from 'lucide-react'
 import { getTierById } from '@/lib/pricing'
 
@@ -23,19 +24,16 @@ const heroFeatures = [
     name: 'Tap to Pay',
     description: 'Accept payments directly on your iPhone or Android. No card readers, dongles, or proprietary hardware needed.',
     icon: Smartphone,
-    color: 'primary',
   },
   {
     name: 'Transparent Pricing',
     description: `${proTier?.transactionFee?.replace(' per tap', '')}. No hidden fees, no fund holds, instant payouts available.`,
     icon: DollarSign,
-    color: 'green',
   },
   {
     name: 'Live Dashboard',
     description: 'Watch transactions flow in real-time. Track sales, tips, and inventory as they happen.',
     icon: BarChart3,
-    color: 'purple',
   },
 ]
 
@@ -65,6 +63,11 @@ const additionalFeatures = [
     description: 'All devices stay in sync. Updates appear everywhere instantly.',
     icon: Users,
   },
+  {
+    name: 'Instant Payouts',
+    description: 'Get your money fast. Access funds within minutes instead of waiting days.',
+    icon: Zap,
+  },
 ]
 
 export default function Features() {
@@ -80,33 +83,7 @@ export default function Features() {
     triggerOnce: true,
   })
 
-  const getColorClasses = (color: string) => {
-    switch (color) {
-      case 'green':
-        return {
-          bg: 'from-green-500 to-emerald-600',
-          icon: 'text-white',
-          border: 'border-green-500/30',
-          shadow: 'shadow-lg shadow-green-500/20',
-        }
-      case 'purple':
-        return {
-          bg: 'from-purple-500 to-violet-600',
-          icon: 'text-white',
-          border: 'border-purple-500/30',
-          shadow: 'shadow-lg shadow-purple-500/20',
-        }
-      default:
-        return {
-          bg: 'from-primary to-blue-600',
-          icon: 'text-white',
-          border: 'border-primary/30',
-          shadow: 'shadow-lg shadow-primary/20',
-        }
-    }
-  }
-
-  // Mobile version - with subtle CSS fade-in
+  // Mobile version
   if (isMobile) {
     return (
       <section className="section-padding bg-black relative overflow-hidden" id="features">
@@ -126,22 +103,24 @@ export default function Features() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-16">
+          {/* Hero features - larger cards */}
+          <div className="grid sm:grid-cols-3 gap-4 sm:gap-5 mb-12 sm:mb-16">
             {heroFeatures.map((feature) => {
               const Icon = feature.icon
-              const colors = getColorClasses(feature.color)
               return (
                 <div
                   key={feature.name}
-                  className={`relative p-5 sm:p-8 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
+                  className="relative p-5 sm:p-6 rounded-2xl bg-gray-900/80 border border-gray-800 group"
                 >
-                  <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center mb-4 sm:mb-6`}>
-                    <Icon className={`h-6 w-6 sm:h-7 sm:w-7 ${colors.icon}`} />
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                      <Icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
+                      {feature.name}
+                    </h3>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">
-                    {feature.name}
-                  </h3>
-                  <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
+                  <p className="text-sm text-gray-400 leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -149,27 +128,25 @@ export default function Features() {
             })}
           </div>
 
+          {/* Additional features - clean grid */}
           <div className="max-w-4xl mx-auto">
-            <div className="rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-950/80 border border-gray-800 p-5 sm:p-8 md:p-10">
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-5 sm:mb-6 text-center">
-                Everything else you need
-              </h3>
-              <div className="grid sm:grid-cols-2 gap-x-8 sm:gap-x-12 gap-y-4 sm:gap-y-6">
-                {additionalFeatures.map((feature) => {
-                  const Icon = feature.icon
-                  return (
-                    <div key={feature.name} className="flex gap-3 sm:gap-4">
-                      <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gray-800 flex items-center justify-center">
-                        <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-white text-sm sm:text-base mb-0.5 sm:mb-1">{feature.name}</h4>
-                        <p className="text-xs sm:text-sm text-gray-500">{feature.description}</p>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-6 text-center">
+              Everything else you need
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
+              {additionalFeatures.map((feature) => {
+                const Icon = feature.icon
+                return (
+                  <div
+                    key={feature.name}
+                    className="p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors"
+                  >
+                    <Icon className="h-5 w-5 text-primary mb-2" />
+                    <h4 className="font-medium text-white text-sm mb-1">{feature.name}</h4>
+                    <p className="text-xs text-gray-500 leading-relaxed">{feature.description}</p>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -177,10 +154,13 @@ export default function Features() {
     )
   }
 
-  // Desktop version - with animations
+  // Desktop version
   return (
     <section className="section-padding bg-black relative overflow-hidden" id="features">
       <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 to-black" />
+
+      {/* Subtle background accent */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="container relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
@@ -204,58 +184,70 @@ export default function Features() {
           </motion.p>
         </div>
 
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-16">
+        {/* Hero features - prominent cards with glow */}
+        <div className="grid md:grid-cols-3 gap-5 sm:gap-6 mb-16">
           {heroFeatures.map((feature, index) => {
             const Icon = feature.icon
-            const colors = getColorClasses(feature.color)
             return (
               <motion.div
                 key={feature.name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`relative p-5 sm:p-8 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
+                className="group relative"
               >
-                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center mb-4 sm:mb-6`}>
-                  <Icon className={`h-6 w-6 sm:h-7 sm:w-7 ${colors.icon}`} />
+                {/* Hover glow */}
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-primary/0 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <div className="relative p-6 sm:p-8 rounded-2xl bg-gray-900/90 border border-gray-800 group-hover:border-primary/30 transition-colors duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white">
+                      {feature.name}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">
-                  {feature.name}
-                </h3>
-                <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
-                  {feature.description}
-                </p>
               </motion.div>
             )
           })}
         </div>
 
+        {/* Additional features - 3x2 grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="max-w-4xl mx-auto"
+          className="max-w-5xl mx-auto"
         >
-          <div className="rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-950/80 border border-gray-800 p-5 sm:p-8 md:p-10">
-            <h3 className="text-base sm:text-lg font-semibold text-white mb-5 sm:mb-6 text-center">
-              Everything else you need
-            </h3>
-            <div className="grid sm:grid-cols-2 gap-x-8 sm:gap-x-12 gap-y-4 sm:gap-y-6">
-              {additionalFeatures.map((feature) => {
-                const Icon = feature.icon
-                return (
-                  <div key={feature.name} className="flex gap-3 sm:gap-4">
-                    <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gray-800 flex items-center justify-center">
-                      <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
-                    </div>
+          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-8 text-center">
+            Everything else you need
+          </h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            {additionalFeatures.map((feature, index) => {
+              const Icon = feature.icon
+              return (
+                <motion.div
+                  key={feature.name}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.5 + index * 0.05 }}
+                  className="group p-5 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 hover:bg-gray-900/80 transition-all duration-300"
+                >
+                  <div className="flex items-start gap-3">
+                    <Icon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                     <div>
-                      <h4 className="font-medium text-white text-sm sm:text-base mb-0.5 sm:mb-1">{feature.name}</h4>
-                      <p className="text-xs sm:text-sm text-gray-500">{feature.description}</p>
+                      <h4 className="font-medium text-white text-sm mb-1">{feature.name}</h4>
+                      <p className="text-xs text-gray-500 leading-relaxed">{feature.description}</p>
                     </div>
                   </div>
-                )
-              })}
-            </div>
+                </motion.div>
+              )
+            })}
           </div>
         </motion.div>
       </div>

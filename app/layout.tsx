@@ -15,8 +15,8 @@ const robotoMono = Roboto_Mono({
 })
 
 export const metadata: Metadata = {
-  title: `${process.env.NEXT_PUBLIC_APP_NAME} - Modern Point of Sale System`,
-  description: 'A highly scalable, fast and secure POS platform for modern businesses',
+  title: `${process.env.NEXT_PUBLIC_APP_NAME} - Mobile POS for Bars, Food Trucks & Events`,
+  description: 'Accept payments anywhere with Tap to Pay on your phone. Built for mobile bars, food trucks, and event vendors. No hardware needed, lower fees, instant payouts.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3333'),
   manifest: '/manifest.json',
   icons: {
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     apple: '/luma-icon-512x512.png',
   },
   openGraph: {
-    title: 'Luma POS - Modern Point of Sale System',
-    description: 'A highly scalable, fast and secure POS platform for event vendors and mobile merchants',
+    title: 'Luma POS - Mobile Payments for Bars, Food Trucks & Events',
+    description: 'Accept payments anywhere with Tap to Pay on your phone. Built for mobile bars, food trucks, and event vendors. No hardware, lower fees, instant payouts.',
     url: process.env.NEXT_PUBLIC_APP_URL || 'https://lumapos.co',
     siteName: 'Luma POS',
     images: [
@@ -41,8 +41,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'Luma POS - Modern Point of Sale System',
-    description: 'A highly scalable, fast and secure POS platform for event vendors and mobile merchants',
+    title: 'Luma POS - Mobile Payments for Bars, Food Trucks & Events',
+    description: 'Accept payments anywhere with Tap to Pay. Built for mobile bars, food trucks, and event vendors. No hardware, lower fees.',
     images: ['/luma-icon-512x512.png'],
   },
   appleWebApp: {

@@ -8,28 +8,28 @@ import { Download, LayoutGrid, CreditCard, Banknote, ArrowRight } from 'lucide-r
 
 const steps = [
   {
-    number: '01',
+    number: '1',
     title: 'Download the App',
     description: 'Get Luma on your iPhone or Android. No hardware needed.',
     icon: Download,
     gradient: 'from-primary to-blue-600',
   },
   {
-    number: '02',
+    number: '2',
     title: 'Create Your Menu',
     description: 'Set up products, prices, and categories in minutes.',
     icon: LayoutGrid,
     gradient: 'from-purple-500 to-violet-600',
   },
   {
-    number: '03',
+    number: '3',
     title: 'Accept Payments',
     description: 'Tap to pay with any card. Apple Pay & Google Pay included.',
     icon: CreditCard,
     gradient: 'from-green-500 to-emerald-600',
   },
   {
-    number: '04',
+    number: '4',
     title: 'Get Paid',
     description: 'Money hits your bank daily. Instant payouts available.',
     icon: Banknote,

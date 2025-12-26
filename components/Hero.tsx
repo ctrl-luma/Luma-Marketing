@@ -89,15 +89,15 @@ export default function Hero() {
               {/* Stats row */}
               <div className="mt-8 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 max-w-lg mx-auto lg:mx-0">
                 {[
-                  { label: 'Processing', value: '<3s', icon: Zap, gradient: 'from-green-500 to-emerald-600' },
-                  { label: 'Setup', value: '2 min', icon: Clock, gradient: 'from-primary to-blue-600' },
-                  { label: 'Hardware', value: '$0', icon: DollarSign, gradient: 'from-purple-500 to-violet-600' },
+                  { label: 'Processing', value: '<3s', icon: Zap },
+                  { label: 'Setup', value: '2 min', icon: Clock },
+                  { label: 'Hardware', value: '$0', icon: DollarSign },
                 ].map((stat) => {
                   const Icon = stat.icon
                   return (
                     <div key={stat.label} className="flex items-center gap-2.5 sm:gap-3 bg-gray-900/60 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-800">
-                      <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-md`}>
-                        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gray-800 flex items-center justify-center">
+                        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                       </div>
                       <div>
                         <p className="text-base sm:text-lg font-bold text-white leading-tight">{stat.value}</p>
@@ -295,15 +295,15 @@ export default function Hero() {
               className="mt-8 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 max-w-lg mx-auto lg:mx-0"
             >
               {[
-                { label: 'Processing', value: '<3s', icon: Zap, gradient: 'from-green-500 to-emerald-600' },
-                { label: 'Setup', value: '2 min', icon: Clock, gradient: 'from-primary to-blue-600' },
-                { label: 'Hardware', value: '$0', icon: DollarSign, gradient: 'from-purple-500 to-violet-600' },
+                { label: 'Processing', value: '<3s', icon: Zap },
+                { label: 'Setup', value: '2 min', icon: Clock },
+                { label: 'Hardware', value: '$0', icon: DollarSign },
               ].map((stat) => {
                 const Icon = stat.icon
                 return (
                   <div key={stat.label} className="flex items-center gap-2.5 sm:gap-3 bg-gray-900/60 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-800 hover:border-gray-700 transition-colors">
-                    <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-md`}>
-                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gray-800 flex items-center justify-center">
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     </div>
                     <div>
                       <p className="text-base sm:text-lg font-bold text-white leading-tight">{stat.value}</p>
