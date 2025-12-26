@@ -50,7 +50,7 @@ const additionalFeatures = [
   },
   {
     name: 'Custom Catalogs',
-    description: 'Create different menus for each venue. Switch pricing, inventory, and items with one tap.',
+    description: 'Different menus and pricing for each venue. Switch with one tap.',
     icon: Settings,
   },
   {
@@ -104,13 +104,13 @@ export default function Features() {
           </div>
 
           {/* Hero features - larger cards */}
-          <div className="grid sm:grid-cols-3 gap-4 sm:gap-5 mb-12 sm:mb-16">
+          <div className="grid sm:grid-cols-3 gap-4 sm:gap-5 mb-12 sm:mb-16 items-stretch">
             {heroFeatures.map((feature) => {
               const Icon = feature.icon
               return (
                 <div
                   key={feature.name}
-                  className="relative p-5 sm:p-6 rounded-2xl bg-gray-900/80 border border-gray-800 group"
+                  className="relative p-5 sm:p-6 rounded-2xl bg-gray-900/80 border border-gray-800 group h-full"
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
@@ -133,13 +133,13 @@ export default function Features() {
             <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-6 text-center">
               Everything else you need
             </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 items-stretch">
               {additionalFeatures.map((feature) => {
                 const Icon = feature.icon
                 return (
                   <div
                     key={feature.name}
-                    className="p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors"
+                    className="p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors h-full"
                   >
                     <Icon className="h-5 w-5 text-primary mb-2" />
                     <h4 className="font-medium text-white text-sm mb-1">{feature.name}</h4>
@@ -185,7 +185,7 @@ export default function Features() {
         </div>
 
         {/* Hero features - prominent cards with glow */}
-        <div className="grid md:grid-cols-3 gap-5 sm:gap-6 mb-16">
+        <div className="grid md:grid-cols-3 gap-5 sm:gap-6 mb-16 items-stretch">
           {heroFeatures.map((feature, index) => {
             const Icon = feature.icon
             return (
@@ -194,12 +194,12 @@ export default function Features() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative"
+                className="group relative h-full"
               >
                 {/* Hover glow */}
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-primary/0 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                <div className="relative p-6 sm:p-8 rounded-2xl bg-gray-900/90 border border-gray-800 group-hover:border-primary/30 transition-colors duration-300">
+                <div className="relative p-6 sm:p-8 rounded-2xl bg-gray-900/90 border border-gray-800 group-hover:border-primary/30 transition-colors duration-300 h-full">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                       <Icon className="h-5 w-5 text-primary" />
@@ -227,7 +227,7 @@ export default function Features() {
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-8 text-center">
             Everything else you need
           </h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 items-stretch">
             {additionalFeatures.map((feature, index) => {
               const Icon = feature.icon
               return (
@@ -236,7 +236,7 @@ export default function Features() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.4, delay: 0.5 + index * 0.05 }}
-                  className="group p-5 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 hover:bg-gray-900/80 transition-all duration-300"
+                  className="group p-5 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 hover:bg-gray-900/80 transition-all duration-300 h-full"
                 >
                   <div className="flex items-start gap-3">
                     <Icon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
