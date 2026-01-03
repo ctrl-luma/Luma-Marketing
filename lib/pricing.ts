@@ -19,7 +19,7 @@ export const pricingTiers: PricingTier[] = [
     price: 'Free',
     period: '',
     description: 'Perfect for new mobile bars and pop-ups',
-    transactionFee: '2.9% + $0.09 per tap',
+    transactionFee: '2.9% + $0.18 per tap',
     features: [
       'Tap to Pay on iPhone/Android',
       'Simple menu builder',
@@ -43,7 +43,7 @@ export const pricingTiers: PricingTier[] = [
     price: '$19',
     period: '/month',
     description: 'For established mobile bars running regular events',
-    transactionFee: '2.8% + $0.07 per tap',
+    transactionFee: '2.8% + $0.16 per tap',
     features: [
       'Everything in Starter',
       'Unlimited custom catalogs',

@@ -116,8 +116,8 @@ authService.checkEmailAvailability(email)
 
 | Tier | Price | Transaction Fee |
 |------|-------|-----------------|
-| Starter | Free | 2.9% + $0.09 |
-| Pro | $19/mo | 2.8% + $0.07 |
+| Starter | Free | 2.9% + $0.18 |
+| Pro | $19/mo | 2.8% + $0.16 |
 | Enterprise | Custom | Custom |
 
 ## Environment Variables
