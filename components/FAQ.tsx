@@ -14,7 +14,7 @@ const proTier = getTierById('pro')
 const faqs = [
   {
     question: 'Do I need special hardware?',
-    answer: 'No. Luma works on any iPhone, Android phone, or tablet. Just download the app and start accepting payments using Tap to Pay. No card readers, dongles, or proprietary hardware required.',
+    answer: 'No. Luma works on your existing iPhone or Android phone. Just download the app and start accepting payments using Tap to Pay. No card readers, dongles, or proprietary hardware required.',
   },
   {
     question: 'How do payouts work?',
@@ -27,8 +27,8 @@ const faqs = [
     hasContactLink: true,
   },
   {
-    question: 'Can I use my existing phone?',
-    answer: 'Yes! Any iPhone with iOS 15.4+ or Android phone with NFC supports Tap to Pay. Most phones from the last 3-4 years will work.',
+    question: 'What devices are supported?',
+    answer: 'For iPhone: iPhone XS or later running iOS 16.4 or newer. For Android: Any phone with NFC running Android 8.0 (Oreo) or later. This includes most phones from 2018 onwards.',
   },
   {
     question: 'How do I track tips and split revenue?',

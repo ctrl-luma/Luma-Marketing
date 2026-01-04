@@ -45,7 +45,7 @@ export default function Hero() {
               </h1>
 
               <p className="text-base sm:text-lg text-gray-400 mb-6 sm:mb-8 max-w-xl mx-auto lg:mx-0">
-                Accept payments in seconds on iPhone, Android, or tablet. Powered by
+                Accept payments in seconds on your iPhone or Android. Powered by
                 Stripe, built for speed. Lower fees, no contracts, no
                 proprietary hardware.
               </p>
@@ -241,7 +241,7 @@ export default function Hero() {
             </h1>
 
             <p className="text-base sm:text-lg text-gray-400 mb-6 sm:mb-8 max-w-xl mx-auto lg:mx-0">
-              Accept payments in seconds on iPhone, Android, or tablet. Powered by
+              Accept payments in seconds on your iPhone or Android. Powered by
               Stripe, built for speed. Lower fees, no contracts, no
               proprietary hardware.
             </p>
