@@ -2,9 +2,34 @@
 FROM joseluisq/static-web-server:2-alpine
 
 ENV SERVER_ROOT="/www"
+ENV SERVER_FALLBACK_PAGE="/index.html"
+ENV SERVER_CACHE_CONTROL_HEADERS="true"
 WORKDIR /www
 
 # Copy the static Next.js export
 COPY out .
+
+# Cache config: HTML = no-cache, hashed assets = long cache
+COPY <<EOF /etc/static-web-server/config.toml
+[general]
+cache-control-headers = true
+
+[[advanced.headers]]
+source = "**/*.html"
+[advanced.headers.headers]
+Cache-Control = "no-cache"
+
+[[advanced.headers]]
+source = "**/*.txt"
+[advanced.headers.headers]
+Cache-Control = "no-cache"
+
+[[advanced.headers]]
+source = "/_next/static/**"
+[advanced.headers.headers]
+Cache-Control = "public, max-age=31536000, immutable"
+EOF
+
+ENV SERVER_CONFIG_FILE="/etc/static-web-server/config.toml"
 
 EXPOSE 80
