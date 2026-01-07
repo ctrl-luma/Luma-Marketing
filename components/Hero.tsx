@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, Smartphone, CreditCard, Zap, Clock, DollarSign, Home, History, Settings, Grid3X3 } from 'lucide-react'
+import { ArrowRight, Smartphone, CreditCard, Zap, Clock, DollarSign, Home, History, Settings, Grid3X3, Wifi } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from './ui'
 import { useEffect, useState, useRef } from 'react'
@@ -124,14 +124,11 @@ export default function Hero() {
                     {/* App content */}
                     <div className="pt-12 sm:pt-16 p-4 sm:p-5 h-full bg-gradient-to-b from-gray-900 to-gray-950 flex flex-col">
                       {/* Luma Logo */}
-                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <div className="flex items-center mb-3 sm:mb-4">
                         <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-primary flex items-center justify-center">
                           <svg viewBox="0 0 32 32" className="w-4 h-4 sm:w-5 sm:h-5">
                             <path d="M9 8H13V20H23V24H9V8Z" fill="white"/>
                           </svg>
-                        </div>
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                          <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                         </div>
                       </div>
 
@@ -152,7 +149,7 @@ export default function Hero() {
                         <div className="relative">
                           <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-primary/50 flex items-center justify-center">
                             <div className="w-18 h-18 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center">
-                              <CreditCard className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+                              <Wifi className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
                             </div>
                           </div>
                         </div>
@@ -335,14 +332,11 @@ export default function Hero() {
                   {/* App content */}
                   <div className="pt-12 sm:pt-16 p-4 sm:p-5 h-full bg-gradient-to-b from-gray-900 to-gray-950 flex flex-col">
                     {/* Luma Logo */}
-                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <div className="flex items-center mb-3 sm:mb-4">
                       <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-primary flex items-center justify-center">
                         <svg viewBox="0 0 32 32" className="w-4 h-4 sm:w-5 sm:h-5">
                           <path d="M9 8H13V20H23V24H9V8Z" fill="white"/>
                         </svg>
-                      </div>
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                        <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                       </div>
                     </div>
 
@@ -374,7 +368,7 @@ export default function Hero() {
                       >
                         <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-primary/50 flex items-center justify-center">
                           <div className="w-18 h-18 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center">
-                            <CreditCard className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+                            <Wifi className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
                           </div>
                         </div>
                         {/* Ripple effect */}

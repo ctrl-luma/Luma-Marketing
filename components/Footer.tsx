@@ -10,6 +10,7 @@ const footerLinks = {
     { name: 'Pricing', href: '/#pricing' },
     { name: 'FAQ', href: '/#faq' },
     { name: 'Get Started', href: '/get-started' },
+    { name: 'Download App', href: '/download' },
   ],
   company: [
     { name: 'About', href: '/about' },

@@ -8,7 +8,6 @@ import { Check, X, AlertTriangle } from 'lucide-react'
 import { getTierById } from '@/lib/pricing'
 
 const proTier = getTierById('pro')
-const proTransactionFee = proTier?.transactionFee?.replace(' per tap', '') ?? '2.8% + $0.07'
 
 const comparison = [
   {
@@ -23,26 +22,15 @@ const comparison = [
     othersWarning: true,
   },
   {
-    feature: 'Processing Rate',
-    luma: proTransactionFee,
-    square: '2.6% + $0.15',
-    clover: '2.6% + $0.10',
-    toast: '2.99% + $0.15',
-    othersAvg: '2.6-2.99%',
+    feature: 'Payout Speed',
+    description: 'How fast you get your money',
+    luma: '2-day standard',
+    square: '1-2 days',
+    clover: '2-3 days',
+    toast: '2-3 days',
+    othersAvg: '1-3 days',
     isWarning: { square: false, clover: false, toast: false },
     othersWarning: false,
-    lumaHighlight: false,
-  },
-  {
-    feature: 'Fund Holds',
-    description: 'Can they freeze your money?',
-    luma: 'Never',
-    square: '30% held 120 days',
-    clover: '10% reserve',
-    toast: 'Rolling reserve',
-    othersAvg: '10-30% held',
-    isWarning: { square: true, clover: true, toast: true },
-    othersWarning: true,
   },
   {
     feature: 'Hardware Cost',
@@ -56,8 +44,9 @@ const comparison = [
   },
   {
     feature: 'Tip Pooling',
+    description: 'Split tips by hours, role, or custom rules',
     luma: 'Included',
-    square: '+$35/mo extra',
+    square: '+$4/employee/mo',
     clover: '+$50/mo extra',
     toast: '+$69/mo extra',
     othersAvg: '+$50/mo avg',
@@ -274,7 +263,7 @@ export default function Comparison() {
                     </div>
                   </td>
                   <td className="p-6 text-center">
-                    {renderValue(row.luma, false, row.lumaHighlight !== false)}
+                    {renderValue(row.luma, false, true)}
                   </td>
                   <td className="p-6">
                     <div className="flex justify-center items-center">
@@ -330,7 +319,7 @@ export default function Comparison() {
                     <div className="grid grid-cols-2">
                       {/* Luma value */}
                       <div className="px-3 sm:px-4 pb-3 sm:pb-4 border-r border-gray-700/50">
-                        <span className={`text-sm sm:text-base font-semibold ${row.lumaHighlight !== false ? 'text-green-400' : 'text-white'}`}>
+                        <span className="text-sm sm:text-base font-semibold text-green-400">
                           {row.luma}
                         </span>
                       </div>
@@ -352,20 +341,6 @@ export default function Comparison() {
               </div>
             </div>
 
-            {/* Bottom callout */}
-            <div className="mt-6 sm:mt-8 p-4 sm:p-6 rounded-xl bg-gradient-to-r from-red-500/10 via-transparent to-red-500/10 border border-red-500/20">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-                  <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-red-400" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-white text-sm sm:text-base mb-1">Watch out for fund holds</h4>
-                  <p className="text-xs sm:text-sm text-gray-400">
-                    Many payment processors can hold <span className="text-red-400 font-medium">up to 30% of your earnings for months</span> if they consider you &quot;high risk&quot; — which often includes event vendors with irregular sales patterns. Luma never holds your funds.
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 

@@ -21,9 +21,9 @@ export default function AppShowcase() {
 
   const chartHeights = [40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88]
   const transactions = [
-    { item: 'Espresso Martini x2', amount: '$28.00', time: 'Just now' },
-    { item: 'Margarita', amount: '$14.00', time: '2 min ago' },
-    { item: 'Old Fashioned x3', amount: '$48.00', time: '5 min ago' },
+    { item: 'Espresso Martini', quantity: 2, amount: '$28.00', time: 'Just now' },
+    { item: 'Margarita', quantity: 1, amount: '$14.00', time: '2 min ago' },
+    { item: 'Old Fashioned', quantity: 3, amount: '$48.00', time: '5 min ago' },
   ]
 
   const DashboardContent = () => (
@@ -149,7 +149,10 @@ export default function AppShowcase() {
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full" />
                     <div>
-                      <div className="text-xs sm:text-sm text-white">{tx.item}</div>
+                      <div className="text-xs sm:text-sm">
+                        <span className="text-white">{tx.item}</span>
+                        {tx.quantity > 1 && <span className="text-gray-500 ml-1">x{tx.quantity}</span>}
+                      </div>
                       <div className="text-[10px] sm:text-xs text-gray-500">{tx.time}</div>
                     </div>
                   </div>
@@ -166,7 +169,10 @@ export default function AppShowcase() {
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full" />
                     <div>
-                      <div className="text-xs sm:text-sm text-white">{tx.item}</div>
+                      <div className="text-xs sm:text-sm">
+                        <span className="text-white">{tx.item}</span>
+                        {tx.quantity > 1 && <span className="text-gray-500 ml-1">x{tx.quantity}</span>}
+                      </div>
                       <div className="text-[10px] sm:text-xs text-gray-500">{tx.time}</div>
                     </div>
                   </div>
