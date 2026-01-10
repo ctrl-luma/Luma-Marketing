@@ -64,6 +64,7 @@ export default function GetStartedPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isCheckingEmail, setIsCheckingEmail] = useState(false)
+  const [isCheckingPassword, setIsCheckingPassword] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
   
   const getSteps = (): Step[] => {
@@ -206,8 +207,9 @@ export default function GetStartedPage() {
   const handleNext = async () => {
     if (!validateStep()) return
     
-    // Check email availability when moving from account step
+    // Check email availability and password validity when moving from account step
     if (currentStep === 'account') {
+      // Check email availability
       setIsCheckingEmail(true)
       try {
         const result = await authService.checkEmailAvailability(formData.email.trim())
@@ -218,12 +220,28 @@ export default function GetStartedPage() {
         }
       } catch (error) {
         console.error('Email check error:', error)
-        // Show error message and prevent navigation
         setErrors(prev => ({ ...prev, email: 'Unable to verify email availability. Please try again.' }))
         setIsCheckingEmail(false)
         return
       }
       setIsCheckingEmail(false)
+
+      // Check password meets policy requirements
+      setIsCheckingPassword(true)
+      try {
+        const passwordResult = await authService.checkPassword(formData.password)
+        if (!passwordResult.valid) {
+          setErrors(prev => ({ ...prev, password: passwordResult.errors.join('. ') }))
+          setIsCheckingPassword(false)
+          return
+        }
+      } catch (error) {
+        console.error('Password check error:', error)
+        setErrors(prev => ({ ...prev, password: 'Unable to validate password. Please try again.' }))
+        setIsCheckingPassword(false)
+        return
+      }
+      setIsCheckingPassword(false)
     }
     
     // Update steps array if plan was selected
@@ -918,13 +936,13 @@ export default function GetStartedPage() {
                 <Button
                   onClick={handleNext}
                   size="lg"
-                  disabled={isLoading || isCheckingEmail}
+                  disabled={isLoading || isCheckingEmail || isCheckingPassword}
                   className="text-sm sm:text-base"
                 >
-                  {isLoading || isCheckingEmail ? (
+                  {isLoading || isCheckingEmail || isCheckingPassword ? (
                     <>
                       <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                      {isCheckingEmail ? 'Checking...' : 'Processing...'}
+                      {isCheckingEmail || isCheckingPassword ? 'Validating...' : 'Processing...'}
                     </>
                   ) : (
                     <>

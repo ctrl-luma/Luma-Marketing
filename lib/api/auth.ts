@@ -129,6 +129,10 @@ class AuthService {
     return await apiClient.post('/auth/check-email', { email });
   }
 
+  async checkPassword(password: string): Promise<{ valid: boolean; errors: string[] }> {
+    return await apiClient.post('/auth/check-password', { password });
+  }
+
   async changePassword(currentPassword: string, newPassword: string): Promise<void> {
     await apiClient.post('/auth/change-password', {
       currentPassword,
