@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, Smartphone, CreditCard, Zap, Clock, DollarSign, Home, History, Settings, Grid3X3, Wifi } from 'lucide-react'
+import { ArrowRight, Smartphone, CreditCard, Zap, Clock, DollarSign, LayoutGrid, Receipt, Settings, Wifi } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from './ui'
 import { useEffect, useState, useRef } from 'react'
@@ -87,7 +87,7 @@ export default function Hero() {
               </div>
 
               {/* Stats row */}
-              <div className="mt-8 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 max-w-lg mx-auto lg:mx-0">
+              <div className="mt-8 sm:mt-10 flex justify-center lg:justify-start gap-2 sm:gap-4">
                 {[
                   { label: 'Processing', value: '<3s', icon: Zap },
                   { label: 'Setup', value: '2 min', icon: Clock },
@@ -95,13 +95,13 @@ export default function Hero() {
                 ].map((stat) => {
                   const Icon = stat.icon
                   return (
-                    <div key={stat.label} className="flex items-center gap-2.5 sm:gap-3 bg-gray-900/60 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-800">
-                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gray-800 flex items-center justify-center">
-                        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                    <div key={stat.label} className="flex items-center gap-1.5 sm:gap-3 bg-gray-900/60 rounded-lg sm:rounded-xl px-2 sm:px-4 py-2 sm:py-3 border border-gray-800">
+                      <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-md sm:rounded-lg bg-gray-800 flex items-center justify-center shrink-0">
+                        <Icon className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-primary" />
                       </div>
-                      <div>
-                        <p className="text-base sm:text-lg font-bold text-white leading-tight">{stat.value}</p>
-                        <p className="text-[10px] sm:text-xs text-gray-500">{stat.label}</p>
+                      <div className="min-w-0">
+                        <p className="text-sm sm:text-lg font-bold text-white leading-tight">{stat.value}</p>
+                        <p className="text-[9px] sm:text-xs text-gray-500">{stat.label}</p>
                       </div>
                     </div>
                   )
@@ -123,11 +123,11 @@ export default function Hero() {
 
                     {/* App content */}
                     <div className="pt-12 sm:pt-16 p-4 sm:p-5 h-full bg-gradient-to-b from-gray-900 to-gray-950 flex flex-col">
-                      {/* Luma Logo */}
+                      {/* Luma Logo - Dark theme */}
                       <div className="flex items-center mb-3 sm:mb-4">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-primary flex items-center justify-center">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-black border border-gray-800 flex items-center justify-center">
                           <svg viewBox="0 0 32 32" className="w-4 h-4 sm:w-5 sm:h-5">
-                            <path d="M9 8H13V20H23V24H9V8Z" fill="white"/>
+                            <path d="M9 8H13V20H23V24H9V8Z" fill="#3B82F6"/>
                           </svg>
                         </div>
                       </div>
@@ -157,19 +157,19 @@ export default function Hero() {
                         <p className="text-gray-500 text-xs sm:text-sm mt-4 sm:mt-6">Hold card near phone</p>
                       </div>
 
-                      {/* Bottom navigation */}
+                      {/* Bottom navigation - matches app tabs */}
                       <div className="mt-auto pt-2">
                         <div className="flex items-center justify-around py-2 sm:py-3 border-t border-gray-800">
                           <button className="flex flex-col items-center gap-0.5">
-                            <Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                            <span className="text-[8px] sm:text-[10px] text-primary">Home</span>
+                            <LayoutGrid className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
+                            <span className="text-[8px] sm:text-[10px] text-gray-500">Menu</span>
                           </button>
                           <button className="flex flex-col items-center gap-0.5">
-                            <Grid3X3 className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
-                            <span className="text-[8px] sm:text-[10px] text-gray-500">Catalog</span>
+                            <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                            <span className="text-[8px] sm:text-[10px] text-primary">Charge</span>
                           </button>
                           <button className="flex flex-col items-center gap-0.5">
-                            <History className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
+                            <Receipt className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
                             <span className="text-[8px] sm:text-[10px] text-gray-500">History</span>
                           </button>
                           <button className="flex flex-col items-center gap-0.5">
@@ -289,7 +289,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              className="mt-8 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 max-w-lg mx-auto lg:mx-0"
+              className="mt-8 sm:mt-10 flex justify-center lg:justify-start gap-2 sm:gap-4"
             >
               {[
                 { label: 'Processing', value: '<3s', icon: Zap },
@@ -298,13 +298,13 @@ export default function Hero() {
               ].map((stat) => {
                 const Icon = stat.icon
                 return (
-                  <div key={stat.label} className="flex items-center gap-2.5 sm:gap-3 bg-gray-900/60 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-800 hover:border-gray-700 transition-colors">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gray-800 flex items-center justify-center">
-                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                  <div key={stat.label} className="flex items-center gap-1.5 sm:gap-3 bg-gray-900/60 rounded-lg sm:rounded-xl px-2 sm:px-4 py-2 sm:py-3 border border-gray-800 hover:border-gray-700 transition-colors">
+                    <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-md sm:rounded-lg bg-gray-800 flex items-center justify-center shrink-0">
+                      <Icon className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-primary" />
                     </div>
-                    <div>
-                      <p className="text-base sm:text-lg font-bold text-white leading-tight">{stat.value}</p>
-                      <p className="text-[10px] sm:text-xs text-gray-500">{stat.label}</p>
+                    <div className="min-w-0">
+                      <p className="text-sm sm:text-lg font-bold text-white leading-tight">{stat.value}</p>
+                      <p className="text-[9px] sm:text-xs text-gray-500">{stat.label}</p>
                     </div>
                   </div>
                 )
@@ -331,11 +331,11 @@ export default function Hero() {
 
                   {/* App content */}
                   <div className="pt-12 sm:pt-16 p-4 sm:p-5 h-full bg-gradient-to-b from-gray-900 to-gray-950 flex flex-col">
-                    {/* Luma Logo */}
+                    {/* Luma Logo - Dark theme */}
                     <div className="flex items-center mb-3 sm:mb-4">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-primary flex items-center justify-center">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-black border border-gray-800 flex items-center justify-center">
                         <svg viewBox="0 0 32 32" className="w-4 h-4 sm:w-5 sm:h-5">
-                          <path d="M9 8H13V20H23V24H9V8Z" fill="white"/>
+                          <path d="M9 8H13V20H23V24H9V8Z" fill="#3B82F6"/>
                         </svg>
                       </div>
                     </div>
@@ -382,19 +382,19 @@ export default function Hero() {
                       <p className="text-gray-500 text-xs sm:text-sm mt-4 sm:mt-6">Hold card near phone</p>
                     </div>
 
-                    {/* Bottom navigation */}
+                    {/* Bottom navigation - matches app tabs */}
                     <div className="mt-auto pt-2">
                       <div className="flex items-center justify-around py-2 sm:py-3 border-t border-gray-800">
                         <button className="flex flex-col items-center gap-0.5">
-                          <Home className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                          <span className="text-[8px] sm:text-[10px] text-primary">Home</span>
+                          <LayoutGrid className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
+                          <span className="text-[8px] sm:text-[10px] text-gray-500">Menu</span>
                         </button>
                         <button className="flex flex-col items-center gap-0.5">
-                          <Grid3X3 className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
-                          <span className="text-[8px] sm:text-[10px] text-gray-500">Catalog</span>
+                          <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                          <span className="text-[8px] sm:text-[10px] text-primary">Charge</span>
                         </button>
                         <button className="flex flex-col items-center gap-0.5">
-                          <History className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
+                          <Receipt className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
                           <span className="text-[8px] sm:text-[10px] text-gray-500">History</span>
                         </button>
                         <button className="flex flex-col items-center gap-0.5">

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import {
@@ -15,10 +16,13 @@ import {
   Clock,
 } from 'lucide-react'
 
-// Placeholder URLs - replace with actual app store links
-const APP_LINKS = {
-  ios: '#',
-  android: '#',
+const APP_LINKS_CACHE_KEY = 'luma_app_links'
+const APP_LINKS_CACHE_TTL = 1000 * 60 * 60 * 24 // 24 hours
+
+interface AppLinks {
+  ios: string | null
+  android: string | null
+  cachedAt?: number
 }
 
 const FEATURES = [
@@ -54,8 +58,94 @@ const FEATURES = [
   },
 ]
 
+// Detect mobile device type
+function getMobileOS(): 'ios' | 'android' | null {
+  if (typeof window === 'undefined') return null
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera
+  if (/android/i.test(userAgent)) return 'android'
+  if (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream) return 'ios'
+  return null
+}
+
 export default function DownloadPage() {
-  const qrUrl = typeof window !== 'undefined' ? `${window.location.origin}/download` : 'https://lumapos.co/download'
+  const [appLinks, setAppLinks] = useState<AppLinks>({ ios: null, android: null })
+  const [qrUrl, setQrUrl] = useState<string>('')
+  const [redirecting, setRedirecting] = useState(false)
+
+  // Set QR URL on client side only to avoid hydration mismatch
+  useEffect(() => {
+    setQrUrl(`${window.location.origin}/download`)
+  }, [])
+
+  // Auto-redirect mobile users to app store
+  useEffect(() => {
+    if (!appLinks.ios && !appLinks.android) return
+
+    const mobileOS = getMobileOS()
+    if (mobileOS === 'ios' && appLinks.ios) {
+      setRedirecting(true)
+      window.location.href = appLinks.ios
+    } else if (mobileOS === 'android' && appLinks.android) {
+      setRedirecting(true)
+      window.location.href = appLinks.android
+    }
+  }, [appLinks])
+
+  useEffect(() => {
+    const fetchAppLinks = async () => {
+      // Check cache first
+      try {
+        const cached = localStorage.getItem(APP_LINKS_CACHE_KEY)
+        console.log('[AppLinks] Cached value:', cached)
+        if (cached) {
+          const parsedCache: AppLinks = JSON.parse(cached)
+          if (parsedCache.cachedAt && Date.now() - parsedCache.cachedAt < APP_LINKS_CACHE_TTL) {
+            console.log('[AppLinks] Using cached links:', parsedCache)
+            setAppLinks(parsedCache)
+            return
+          }
+        }
+      } catch (e) {
+        console.error('[AppLinks] Cache error:', e)
+      }
+
+      // Fetch from API
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3334'
+        console.log('[AppLinks] Fetching from:', `${apiUrl}/marketing/app-links`)
+        const response = await fetch(`${apiUrl}/marketing/app-links`)
+        console.log('[AppLinks] Response status:', response.status)
+        if (response.ok) {
+          const data = await response.json()
+          console.log('[AppLinks] API response:', data)
+          const linksWithCache: AppLinks = {
+            ...data,
+            cachedAt: Date.now(),
+          }
+          setAppLinks(linksWithCache)
+          localStorage.setItem(APP_LINKS_CACHE_KEY, JSON.stringify(linksWithCache))
+        } else {
+          console.error('[AppLinks] Response not OK:', response.status, response.statusText)
+        }
+      } catch (e) {
+        console.error('[AppLinks] Failed to fetch app links:', e)
+      }
+    }
+
+    fetchAppLinks()
+  }, [])
+
+  // Show redirecting message on mobile
+  if (redirecting) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto mb-4" />
+          <p className="text-white text-lg">Redirecting to app store...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -93,10 +183,11 @@ export default function DownloadPage() {
               {/* Download Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
                 <a
-                  href={APP_LINKS.ios}
+                  href={appLinks.ios || undefined}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group w-full sm:w-auto"
+                  onClick={(e) => !appLinks.ios && e.preventDefault()}
+                  className={`group w-full sm:w-auto ${!appLinks.ios ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className="flex items-center gap-4 px-6 py-4 bg-gray-900 border border-gray-700 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg">
@@ -110,10 +201,11 @@ export default function DownloadPage() {
                 </a>
 
                 <a
-                  href={APP_LINKS.android}
+                  href={appLinks.android || undefined}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group w-full sm:w-auto"
+                  onClick={(e) => !appLinks.android && e.preventDefault()}
+                  className={`group w-full sm:w-auto ${!appLinks.android ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className="flex items-center gap-4 px-6 py-4 bg-gray-900 border border-gray-700 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg">
@@ -143,11 +235,17 @@ export default function DownloadPage() {
               <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                 <div className="flex-shrink-0">
                   <div className="bg-white p-4 rounded-xl shadow-inner">
-                    <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}&bgcolor=ffffff&color=000000&margin=0`}
-                      alt="Download QR Code"
-                      className="w-40 h-40"
-                    />
+                    {qrUrl ? (
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}&bgcolor=ffffff&color=000000&margin=0`}
+                        alt="Download QR Code"
+                        className="w-40 h-40"
+                      />
+                    ) : (
+                      <div className="w-40 h-40 flex items-center justify-center bg-gray-100 rounded">
+                        <QrCode className="w-12 h-12 text-gray-400" />
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="text-center md:text-left">

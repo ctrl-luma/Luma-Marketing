@@ -10,6 +10,10 @@ export interface PricingTier {
   cta: string
   highlighted: boolean
   recommended?: boolean
+  promoPrice?: string
+  promoPeriod?: string
+  regularPrice?: string
+  trialDays?: number
 }
 
 export const pricingTiers: PricingTier[] = [
@@ -40,8 +44,12 @@ export const pricingTiers: PricingTier[] = [
   {
     id: 'pro',
     name: 'Pro',
-    price: '$19',
-    period: '/month',
+    price: '$19.99',
+    period: ' first month',
+    regularPrice: '$29.99',
+    promoPrice: '$19.99',
+    promoPeriod: 'first month',
+    trialDays: 7,
     description: 'For established mobile bars running regular events',
     transactionFee: '2.8% + $0.16 per tap',
     features: [

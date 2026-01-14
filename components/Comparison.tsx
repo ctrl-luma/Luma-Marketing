@@ -13,7 +13,8 @@ const comparison = [
   {
     feature: 'Typical Monthly Cost',
     description: 'With tip pooling & team permissions',
-    luma: proTier ? `${proTier.price}${proTier.period.replace('/', '/').replace('month', 'mo')}` : '$19/mo',
+    luma: proTier?.promoPrice ? `${proTier.promoPrice} first mo` : '$19.99 first mo',
+    lumaSubtext: proTier?.regularPrice ? `then ${proTier.regularPrice}/mo` : 'then $29.99/mo',
     square: '$89/mo',
     clover: '$185/mo',
     toast: '$207/mo',
@@ -263,7 +264,12 @@ export default function Comparison() {
                     </div>
                   </td>
                   <td className="p-6 text-center">
-                    {renderValue(row.luma, false, true)}
+                    <div className="flex flex-col items-center gap-1">
+                      {renderValue(row.luma, false, true)}
+                      {row.lumaSubtext && (
+                        <span className="text-xs text-gray-400">{row.lumaSubtext}</span>
+                      )}
+                    </div>
                   </td>
                   <td className="p-6">
                     <div className="flex justify-center items-center">
@@ -305,36 +311,34 @@ export default function Comparison() {
                 {comparison.map((row, index) => (
                   <div
                     key={row.feature}
-                    className={`border-b border-gray-700/50 last:border-b-0 ${index % 2 === 0 ? 'bg-gray-900/20' : ''}`}
+                    className={`grid grid-cols-2 border-b border-gray-700/50 last:border-b-0 ${index % 2 === 0 ? 'bg-gray-900/20' : ''}`}
                   >
-                    {/* Feature name */}
-                    <div className="px-3 sm:px-4 pt-3 sm:pt-4 pb-1">
+                    {/* Luma column - feature name, description, and value */}
+                    <div className="p-3 sm:p-4 border-r border-gray-700/50">
                       <div className="text-xs sm:text-sm font-medium text-white">{row.feature}</div>
                       {row.description && (
-                        <div className="text-[10px] sm:text-xs text-gray-500">{row.description}</div>
+                        <div className="text-[10px] sm:text-xs text-gray-500 break-words">{row.description}</div>
                       )}
-                    </div>
-
-                    {/* Values */}
-                    <div className="grid grid-cols-2">
-                      {/* Luma value */}
-                      <div className="px-3 sm:px-4 pb-3 sm:pb-4 border-r border-gray-700/50">
+                      <div className="mt-1.5">
                         <span className="text-sm sm:text-base font-semibold text-green-400">
                           {row.luma}
                         </span>
-                      </div>
-
-                      {/* Competitors - show average */}
-                      <div className="px-3 sm:px-4 pb-3 sm:pb-4">
-                        {row.othersWarning ? (
-                          <span className="text-xs sm:text-sm text-red-400 flex items-center gap-1">
-                            <AlertTriangle className="h-3 w-3 flex-shrink-0" />
-                            <span>{row.othersAvg}</span>
-                          </span>
-                        ) : (
-                          <span className="text-xs sm:text-sm text-gray-400">{row.othersAvg}</span>
+                        {row.lumaSubtext && (
+                          <div className="text-[10px] sm:text-xs text-gray-400">{row.lumaSubtext}</div>
                         )}
                       </div>
+                    </div>
+
+                    {/* Others column - value only */}
+                    <div className="p-3 sm:p-4 flex items-end">
+                      {row.othersWarning ? (
+                        <span className="text-xs sm:text-sm text-red-400 flex items-center gap-1">
+                          <AlertTriangle className="h-3 w-3 flex-shrink-0" />
+                          <span className="break-words">{row.othersAvg}</span>
+                        </span>
+                      ) : (
+                        <span className="text-xs sm:text-sm text-gray-400">{row.othersAvg}</span>
+                      )}
                     </div>
                   </div>
                 ))}

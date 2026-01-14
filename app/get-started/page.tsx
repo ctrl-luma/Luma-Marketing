@@ -415,7 +415,15 @@ export default function GetStartedPage() {
                         <div className="flex-1">
                           <div className="flex items-baseline gap-2 mb-1">
                             <h3 className="text-lg sm:text-xl font-semibold text-white">{tier.name}</h3>
-                            <span className="text-xl sm:text-2xl font-bold text-primary">{tier.price}{tier.period}</span>
+                            <div className="flex flex-col">
+                              {tier.trialDays && (
+                                <span className="text-[10px] sm:text-xs text-green-400 font-medium">{tier.trialDays}-day free trial</span>
+                              )}
+                              <span className="text-xl sm:text-2xl font-bold text-primary">{tier.price}{tier.period}</span>
+                              {tier.regularPrice && (
+                                <span className="text-[10px] sm:text-xs text-gray-400">then {tier.regularPrice}/month</span>
+                              )}
+                            </div>
                           </div>
                           <p className="text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3">{tier.description}</p>
                           <ul className="space-y-0.5">
@@ -792,12 +800,19 @@ export default function GetStartedPage() {
                         <h3 className="text-base sm:text-lg font-semibold text-white">{getTierById(formData.selectedPlan)?.name} Plan</h3>
                       </div>
                       <div className="text-right">
+                        {getTierById(formData.selectedPlan)?.trialDays && (
+                          <p className="text-xs sm:text-sm text-green-400 font-medium mb-1">
+                            {getTierById(formData.selectedPlan)?.trialDays}-day free trial
+                          </p>
+                        )}
                         <p className="text-xl sm:text-2xl font-bold text-primary">
                           {getTierById(formData.selectedPlan)?.price}{getTierById(formData.selectedPlan)?.period}
                         </p>
-                        {formData.selectedPlan !== 'starter' && (
+                        {getTierById(formData.selectedPlan)?.regularPrice ? (
+                          <p className="text-[10px] sm:text-xs text-gray-400">then {getTierById(formData.selectedPlan)?.regularPrice}/month</p>
+                        ) : formData.selectedPlan !== 'starter' ? (
                           <p className="text-[10px] sm:text-xs text-gray-400">billed monthly</p>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -847,6 +862,7 @@ export default function GetStartedPage() {
                         onError={handlePaymentError}
                         isLoading={isLoading}
                         setIsLoading={setIsLoading}
+                        clientSecret={paymentIntentClientSecret}
                       />
                     </Elements>
                   ) : (

@@ -49,16 +49,47 @@ export default function Pricing() {
             {tier.description}
           </p>
           <div className="mt-3 sm:mt-4">
-            <span className={`text-4xl sm:text-5xl font-bold ${
-              tier.highlighted ? 'text-white' : 'text-gray-100'
-            }`}>
-              {tier.price}
-            </span>
-            <span className={`text-lg sm:text-xl ${
-              tier.highlighted ? 'text-primary-100' : 'text-gray-400'
-            }`}>
-              {tier.period}
-            </span>
+            {tier.trialDays && (
+              <div className="inline-block bg-green-500/20 text-green-400 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full mb-2 border border-green-500/30">
+                {tier.trialDays}-day free trial
+              </div>
+            )}
+            {tier.promoPrice ? (
+              <>
+                <div className="flex items-baseline gap-2">
+                  <span className={`text-4xl sm:text-5xl font-bold ${
+                    tier.highlighted ? 'text-white' : 'text-gray-100'
+                  }`}>
+                    {tier.promoPrice}
+                  </span>
+                  <span className={`text-base sm:text-lg line-through opacity-50 ${
+                    tier.highlighted ? 'text-gray-300' : 'text-gray-500'
+                  }`}>
+                    {tier.regularPrice}
+                  </span>
+                </div>
+                <div className={`text-xs sm:text-sm mt-1 ${
+                  tier.highlighted ? 'text-primary-100' : 'text-gray-400'
+                }`}>
+                  <span className="text-green-400 font-medium">{tier.promoPeriod}</span>
+                  <span className="mx-1">•</span>
+                  <span>then {tier.regularPrice}/month</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <span className={`text-4xl sm:text-5xl font-bold ${
+                  tier.highlighted ? 'text-white' : 'text-gray-100'
+                }`}>
+                  {tier.price}
+                </span>
+                <span className={`text-lg sm:text-xl ${
+                  tier.highlighted ? 'text-primary-100' : 'text-gray-400'
+                }`}>
+                  {tier.period}
+                </span>
+              </>
+            )}
           </div>
         </div>
 
@@ -208,16 +239,47 @@ export default function Pricing() {
                       {tier.description}
                     </p>
                     <div className="mt-3 sm:mt-4">
-                      <span className={`text-4xl sm:text-5xl font-bold ${
-                        tier.highlighted ? 'text-white' : 'text-gray-100'
-                      }`}>
-                        {tier.price}
-                      </span>
-                      <span className={`text-lg sm:text-xl ${
-                        tier.highlighted ? 'text-primary-100' : 'text-gray-400'
-                      }`}>
-                        {tier.period}
-                      </span>
+                      {tier.trialDays && (
+                        <div className="inline-block bg-green-500/20 text-green-400 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full mb-2 border border-green-500/30">
+                          {tier.trialDays}-day free trial
+                        </div>
+                      )}
+                      {tier.promoPrice ? (
+                        <>
+                          <div className="flex items-baseline gap-2">
+                            <span className={`text-4xl sm:text-5xl font-bold ${
+                              tier.highlighted ? 'text-white' : 'text-gray-100'
+                            }`}>
+                              {tier.promoPrice}
+                            </span>
+                            <span className={`text-base sm:text-lg line-through opacity-50 ${
+                              tier.highlighted ? 'text-gray-300' : 'text-gray-500'
+                            }`}>
+                              {tier.regularPrice}
+                            </span>
+                          </div>
+                          <div className={`text-xs sm:text-sm mt-1 ${
+                            tier.highlighted ? 'text-primary-100' : 'text-gray-400'
+                          }`}>
+                            <span className="text-green-400 font-medium">{tier.promoPeriod}</span>
+                            <span className="mx-1">•</span>
+                            <span>then {tier.regularPrice}/month</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <span className={`text-4xl sm:text-5xl font-bold ${
+                            tier.highlighted ? 'text-white' : 'text-gray-100'
+                          }`}>
+                            {tier.price}
+                          </span>
+                          <span className={`text-lg sm:text-xl ${
+                            tier.highlighted ? 'text-primary-100' : 'text-gray-400'
+                          }`}>
+                            {tier.period}
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
 

@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   icons: {
-    icon: '/icon.svg',
-    apple: '/luma-icon-512x512.png',
+    icon: '/favicon.svg',
+    apple: '/favicon.png',
   },
   openGraph: {
     title: 'Luma POS - Mobile Payments for Bars, Food Trucks & Events',

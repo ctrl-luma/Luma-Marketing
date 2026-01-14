@@ -13,17 +13,22 @@ interface StripePaymentFormProps {
   onError: (error: string) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
+  clientSecret?: string;
 }
 
-export default function StripePaymentForm({ 
-  onSuccess, 
-  onError, 
-  isLoading, 
-  setIsLoading 
+export default function StripePaymentForm({
+  onSuccess,
+  onError,
+  isLoading,
+  setIsLoading,
+  clientSecret
 }: StripePaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState<string | null>(null);
+
+  // Determine if this is a SetupIntent (for trials) or PaymentIntent
+  const isSetupIntent = clientSecret?.startsWith('seti_');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,20 +41,31 @@ export default function StripePaymentForm({
     setMessage(null);
 
     try {
-      // Confirm the payment for the subscription
-      const { error } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          // Return URL after successful payment
-          return_url: `${window.location.origin}/subscription/success`,
-        },
-        redirect: 'if_required'
-      });
+      let error;
+
+      if (isSetupIntent) {
+        // For trials: confirm the setup intent to save payment method
+        const result = await stripe.confirmSetup({
+          elements,
+          confirmParams: {
+            return_url: `${window.location.origin}/subscription/success`,
+          },
+          redirect: 'if_required'
+        });
+        error = result.error;
+      } else {
+        // For immediate payments: confirm the payment intent
+        const result = await stripe.confirmPayment({
+          elements,
+          confirmParams: {
+            return_url: `${window.location.origin}/subscription/success`,
+          },
+          redirect: 'if_required'
+        });
+        error = result.error;
+      }
 
       if (error) {
-        // This point will only be reached if there is an immediate error when
-        // confirming the setup. Otherwise, your customer will be redirected to
-        // your `return_url`.
         if (error.type === "card_error" || error.type === "validation_error") {
           setMessage(error.message || 'An error occurred');
           onError(error.message || 'Payment failed');
@@ -58,7 +74,6 @@ export default function StripePaymentForm({
           onError('An unexpected error occurred');
         }
       } else {
-        // Setup succeeded
         onSuccess();
       }
     } catch (err: any) {
@@ -101,6 +116,8 @@ export default function StripePaymentForm({
             <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             Processing...
           </>
+        ) : isSetupIntent ? (
+          'Start Free Trial'
         ) : (
           'Subscribe Now'
         )}
