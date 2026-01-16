@@ -70,24 +70,21 @@ function getMobileOS(): 'ios' | 'android' | null {
 export default function DownloadPage() {
   const [appLinks, setAppLinks] = useState<AppLinks>({ ios: null, android: null })
   const [qrUrl, setQrUrl] = useState<string>('')
-  const [redirecting, setRedirecting] = useState(false)
 
   // Set QR URL on client side only to avoid hydration mismatch
   useEffect(() => {
     setQrUrl(`${window.location.origin}/download`)
   }, [])
 
-  // Auto-redirect mobile users to app store
+  // Auto-open app store in new tab for mobile users
   useEffect(() => {
     if (!appLinks.ios && !appLinks.android) return
 
     const mobileOS = getMobileOS()
     if (mobileOS === 'ios' && appLinks.ios) {
-      setRedirecting(true)
-      window.location.href = appLinks.ios
+      window.open(appLinks.ios, '_blank')
     } else if (mobileOS === 'android' && appLinks.android) {
-      setRedirecting(true)
-      window.location.href = appLinks.android
+      window.open(appLinks.android, '_blank')
     }
   }, [appLinks])
 
@@ -134,18 +131,6 @@ export default function DownloadPage() {
 
     fetchAppLinks()
   }, [])
-
-  // Show redirecting message on mobile
-  if (redirecting) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto mb-4" />
-          <p className="text-white text-lg">Redirecting to app store...</p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <>
