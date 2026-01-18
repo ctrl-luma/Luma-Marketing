@@ -29,7 +29,8 @@ export function redirectToVendorDashboard() {
   });
   
   if (user) {
-    params.append('user', encodeURIComponent(JSON.stringify(user)));
+    // URLSearchParams handles encoding automatically, don't double-encode
+    params.append('user', JSON.stringify(user));
   }
   
   // Use hash fragment for cross-origin compatibility

@@ -121,6 +121,7 @@ export default function GetStartedPage() {
         if (!formData.lastName) newErrors.lastName = 'Last name is required'
         if (!formData.businessName) newErrors.businessName = 'Business name is required'
         if (!formData.businessType) newErrors.businessType = 'Business type is required'
+        if (!formData.acceptTerms) newErrors.acceptTerms = 'You must agree to the Terms of Service and Privacy Policy'
         break
       case 'pricing':
         if (!formData.selectedPlan) newErrors.selectedPlan = 'Please select a plan'
@@ -702,12 +703,17 @@ export default function GetStartedPage() {
                           type="checkbox"
                           checked={formData.acceptTerms}
                           onChange={(e) => handleInputChange('acceptTerms', e.target.checked)}
-                          className="mt-0.5 sm:mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-primary focus:ring-2 focus:ring-primary/50"
+                          className={`mt-0.5 sm:mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-primary focus:ring-2 focus:ring-primary/50 ${
+                            errors.acceptTerms ? 'border-red-500' : ''
+                          }`}
                         />
                         <span className="text-xs sm:text-sm text-gray-300 group-hover:text-white transition-colors">
                           I agree to the <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and acknowledge that I have read the <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
                         </span>
                       </label>
+                      {errors.acceptTerms && (
+                        <p className="text-red-500 text-xs sm:text-sm">{errors.acceptTerms}</p>
+                      )}
                     </div>
                   </div>
                 </form>
