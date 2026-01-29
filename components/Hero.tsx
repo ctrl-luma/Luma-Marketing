@@ -7,6 +7,7 @@ import { Button } from './ui'
 import PhoneShowcase from './PhoneShowcase'
 import StarryBackground from './StarryBackground'
 import { useEffect, useState, useRef } from 'react'
+import { event } from '@/lib/analytics'
 
 export default function Hero() {
   const [isMobile, setIsMobile] = useState(true) // Default to mobile to prevent flash
@@ -59,14 +60,14 @@ export default function Hero() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start items-center mb-6 sm:mb-8">
-                <Link href="/get-started" className="w-full sm:w-auto">
+                <Link href="/get-started" className="w-full sm:w-auto" onClick={() => event('cta_hero_get_started')}>
                   <Button size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
                     Start Your Free Account
                     <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </Link>
 
-                <a href="#pricing" onClick={handlePricingClick} className="w-full sm:w-auto">
+                <a href="#pricing" onClick={(e) => { handlePricingClick(e); event('cta_hero_view_pricing') }} className="w-full sm:w-auto">
                   <Button variant="secondary" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
                     View Pricing
                   </Button>
@@ -134,14 +135,14 @@ export default function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start items-center mb-6 sm:mb-8">
-              <Link href="/get-started" className="w-full sm:w-auto">
+              <Link href="/get-started" className="w-full sm:w-auto" onClick={() => event('cta_hero_get_started')}>
                 <Button size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
                   Start Your Free Account
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
 
-              <a href="#pricing" onClick={handlePricingClick} className="w-full sm:w-auto">
+              <a href="#pricing" onClick={(e) => { handlePricingClick(e); event('cta_hero_view_pricing') }} className="w-full sm:w-auto">
                 <Button variant="secondary" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
                   View Pricing
                 </Button>

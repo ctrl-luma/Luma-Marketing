@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Mail } from 'lucide-react'
+import { event } from '@/lib/analytics'
 
 const footerLinks = {
   product: [
@@ -58,6 +59,7 @@ export default function Footer() {
             </p>
             <a
               href="mailto:support@lumapos.co"
+              onClick={() => event('footer_click_email')}
               className="text-gray-500 hover:text-primary transition-colors text-xs sm:text-sm flex items-center gap-2"
             >
               <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -74,7 +76,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    onClick={(e) => handleNavClick(e, link.href)}
+                    onClick={(e) => { handleNavClick(e, link.href); event(`footer_click_${link.name.toLowerCase().replace(/\s+/g, '_')}`) }}
                     className="text-gray-400 hover:text-primary text-xs sm:text-sm transition-colors"
                   >
                     {link.name}
@@ -93,6 +95,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
+                    onClick={() => event(`footer_click_${link.name.toLowerCase().replace(/\s+/g, '_')}`)}
                     className="text-gray-400 hover:text-primary text-xs sm:text-sm transition-colors"
                   >
                     {link.name}
@@ -111,6 +114,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
+                    onClick={() => event(`footer_click_${link.name.toLowerCase().replace(/\s+/g, '_')}`)}
                     className="text-gray-400 hover:text-primary text-xs sm:text-sm transition-colors"
                   >
                     {link.name}

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { redirectToVendorDashboard } from '@/lib/auth-handoff'
+import { event } from '@/lib/analytics'
 
 export default function OnboardingCompletePage() {
   const router = useRouter()
@@ -52,7 +53,7 @@ export default function OnboardingCompletePage() {
           </p>
 
           <Button
-            onClick={() => window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'}
+            onClick={() => { event('onboarding_go_to_dashboard'); window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard' }}
             size="lg"
             className="w-full max-w-xs mx-auto"
           >

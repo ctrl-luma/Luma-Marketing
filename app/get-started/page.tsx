@@ -12,6 +12,7 @@ import { Elements } from '@stripe/react-stripe-js'
 import { getStripePromise } from '@/lib/stripe'
 import StripePaymentForm from '@/components/StripePaymentForm'
 import { pricingTiers, getTierById } from '@/lib/pricing'
+import { event } from '@/lib/analytics'
 
 type Step = 'account' | 'business' | 'usecase' | 'pricing' | 'payment' | 'confirmation'
 
@@ -43,6 +44,10 @@ export default function GetStartedPage() {
   const [currentStep, setCurrentStep] = useState<Step>(initialTier ? 'account' : 'pricing')
   const [tierFromUrl, setTierFromUrl] = useState<string | null>(initialTier)
   const [paymentIntentClientSecret, setPaymentIntentClientSecret] = useState<string | null>(null)
+  useEffect(() => {
+    event('onboarding_start')
+  }, [])
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -169,6 +174,8 @@ export default function GetStartedPage() {
       // Save auth tokens and user data
       // Auth service already handles this in the signup method
       
+      event('onboarding_complete', { tier: formData.selectedPlan })
+
       // Handle different tier-specific redirects
       if (response.stripeOnboardingUrl) {
         // Starter tier - go to Stripe Connect onboarding
@@ -185,12 +192,14 @@ export default function GetStartedPage() {
       }
     } catch (error: any) {
       console.error('Signup error:', error)
+      event('onboarding_error', { step: currentStep, error: error.error || 'signup_failed' })
       setApiError(error.error || 'Failed to create account. Please try again.')
       setIsLoading(false)
     }
   }
 
   const handlePaymentSuccess = () => {
+    event('onboarding_complete', { tier: formData.selectedPlan })
     // Payment was successful, move to confirmation
     setCurrentStep('confirmation')
     
@@ -201,6 +210,7 @@ export default function GetStartedPage() {
   }
 
   const handlePaymentError = (error: string) => {
+    event('onboarding_error', { step: currentStep, error })
     setApiError(error)
     setIsLoading(false)
   }
@@ -247,19 +257,24 @@ export default function GetStartedPage() {
     
     // Update steps array if plan was selected
     if (currentStep === 'pricing' && formData.selectedPlan) {
+      event(`onboarding_tier_selected_${formData.selectedPlan}`)
       const newSteps: Step[] = formData.selectedPlan === 'starter'
         ? ['pricing', 'account', 'business', 'confirmation']
         : ['pricing', 'account', 'business', 'payment', 'confirmation']
       const currentIndex = newSteps.indexOf(currentStep)
-      setCurrentStep(newSteps[currentIndex + 1])
+      const nextStep = newSteps[currentIndex + 1]
+      event(`onboarding_step_${nextStep}`)
+      setCurrentStep(nextStep)
       return
     }
     
     const nextIndex = currentStepIndex + 1
     
     if (nextIndex < steps.length) {
+      event(`onboarding_step_${steps[nextIndex]}`)
       // If moving TO payment step, create account and get payment intent
       if (steps[nextIndex] === 'payment') {
+        event('onboarding_payment_started')
         setIsLoading(true)
         try {
           const response = await authService.signup({
@@ -286,6 +301,7 @@ export default function GetStartedPage() {
           }
         } catch (error: any) {
           console.error('Signup error:', error)
+          event('onboarding_error', { step: 'payment_setup', error: error.error || 'signup_failed' })
           setApiError(error.error || 'Failed to create account. Please try again.')
         }
         setIsLoading(false)
@@ -302,6 +318,7 @@ export default function GetStartedPage() {
   }
 
   const handleBack = () => {
+    event('onboarding_step_back', { from_step: currentStep })
     // Special case: if we're on account step and came from a pricing tier URL
     if (currentStep === 'account' && tierFromUrl) {
       // Clear the URL tier tracking so getSteps() includes pricing step

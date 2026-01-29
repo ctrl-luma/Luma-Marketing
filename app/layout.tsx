@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 import ScrollToTop from '@/components/ScrollToTop'
 import { AuthProvider } from '@/components/providers/AuthProvider'
+import Analytics from '@/components/Analytics'
+import { GA_MEASUREMENT_ID } from '@/lib/analytics'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -62,8 +65,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
+      <head>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
+          `}
+        </Script>
+      </head>
       <body>
         <AuthProvider>
+          <Analytics />
           <ScrollToTop />
           {children}
         </AuthProvider>

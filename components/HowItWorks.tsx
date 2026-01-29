@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { Download, LayoutGrid, CreditCard, Banknote } from 'lucide-react'
 import StarryBackground from './StarryBackground'
+import { event } from '@/lib/analytics'
 
 const steps = [
   {
@@ -62,6 +63,7 @@ function BrowserFrame({ src, alt }: { src: string; alt: string }) {
             href={process.env.NEXT_PUBLIC_DASHBOARD_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => event('dashboard_url_click', { location: 'how_it_works' })}
             className="block bg-gray-800 rounded px-1.5 sm:px-2.5 py-0.5 sm:py-0.5 text-[9px] sm:text-[11px] text-gray-400 max-w-[12rem] mx-auto -translate-x-[23px] hover:text-gray-200 hover:underline transition-colors cursor-pointer truncate text-center"
           >
             {process.env.NEXT_PUBLIC_DASHBOARD_URL}
@@ -82,7 +84,7 @@ function QrDownload() {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <a href="/download" className="bg-white p-3 rounded-xl shadow-inner block">
+      <a href="/download" onClick={() => event('qr_code_click')} className="bg-white p-3 rounded-xl shadow-inner block">
         {url ? (
           <img
             src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=000000&margin=0`}

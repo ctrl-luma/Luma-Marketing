@@ -15,6 +15,7 @@ import {
   CreditCard,
   Clock,
 } from 'lucide-react'
+import { event } from '@/lib/analytics'
 
 const APP_LINKS_CACHE_KEY = 'luma_app_links'
 const APP_LINKS_CACHE_TTL = 1000 * 60 * 60 * 24 // 24 hours
@@ -171,7 +172,7 @@ export default function DownloadPage() {
                   href={appLinks.ios || undefined}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => !appLinks.ios && e.preventDefault()}
+                  onClick={(e) => { if (!appLinks.ios) { e.preventDefault() } else { event('download_click_ios') } }}
                   className={`group w-full sm:w-auto ${!appLinks.ios ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className="flex items-center gap-4 px-6 py-4 bg-gray-900 border border-gray-700 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10">
@@ -189,7 +190,7 @@ export default function DownloadPage() {
                   href={appLinks.android || undefined}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => !appLinks.android && e.preventDefault()}
+                  onClick={(e) => { if (!appLinks.android) { e.preventDefault() } else { event('download_click_android') } }}
                   className={`group w-full sm:w-auto ${!appLinks.android ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className="flex items-center gap-4 px-6 py-4 bg-gray-900 border border-gray-700 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10">

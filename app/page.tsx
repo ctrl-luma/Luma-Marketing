@@ -10,6 +10,7 @@ import FAQ from '@/components/FAQ'
 import CTA from '@/components/CTA'
 import Newsletter from '@/components/Newsletter'
 import Footer from '@/components/Footer'
+import SectionTracker from '@/components/SectionTracker'
 
 export default function Home() {
   return (
@@ -29,16 +30,16 @@ export default function Home() {
       <div className="relative z-10">
         <Header />
         <main>
-          <Hero />
-          <TrustedBy />
-          <HowItWorks />
-          <Features />
-          <AppShowcase />
-          <Comparison />
-          <Pricing />
-          <FAQ />
-          <CTA />
-          <Newsletter />
+          <SectionTracker section="hero"><Hero /></SectionTracker>
+          <SectionTracker section="trusted_by"><TrustedBy /></SectionTracker>
+          <SectionTracker section="how_it_works"><HowItWorks /></SectionTracker>
+          <SectionTracker section="features"><Features /></SectionTracker>
+          <SectionTracker section="app_showcase"><AppShowcase /></SectionTracker>
+          <SectionTracker section="comparison"><Comparison /></SectionTracker>
+          <SectionTracker section="pricing"><Pricing /></SectionTracker>
+          <SectionTracker section="faq"><FAQ /></SectionTracker>
+          <SectionTracker section="cta"><CTA /></SectionTracker>
+          <SectionTracker section="newsletter"><Newsletter /></SectionTracker>
         </main>
         <Footer />
       </div>

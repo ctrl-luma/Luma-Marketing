@@ -7,6 +7,7 @@ import { useFadeIn } from '@/hooks/useFadeIn'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { Button, GradientBackground } from './ui'
+import { event } from '@/lib/analytics'
 
 export default function CTA() {
   const [isMobile, setIsMobile] = useState(true)
@@ -40,14 +41,14 @@ export default function CTA() {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-        <Link href="/get-started" className="w-full sm:w-auto">
+        <Link href="/get-started" className="w-full sm:w-auto" onClick={() => event('cta_bottom_get_started')}>
           <Button size="lg" variant="primary" className="w-full sm:w-auto group text-sm sm:text-base">
             Start Free Today
             <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
           </Button>
         </Link>
 
-        <a href="#pricing" onClick={handlePricingClick} className="w-full sm:w-auto">
+        <a href="#pricing" onClick={(e) => { handlePricingClick(e); event('cta_bottom_view_pricing') }} className="w-full sm:w-auto">
           <Button
             variant="secondary"
             size="lg"

@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { pricingTiers, type PricingTier } from '@/lib/pricing'
 import StarryBackground from './StarryBackground'
+import { event } from '@/lib/analytics'
 
 export default function Pricing() {
   const [isMobile, setIsMobile] = useState(true)
@@ -127,7 +128,7 @@ export default function Pricing() {
           ))}
         </ul>
 
-        <Link href={`/get-started?tier=${tier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`} className="block">
+        <Link href={`/get-started?tier=${tier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`} className="block" onClick={() => event(`cta_pricing_${tier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`)}>
           <Button
             variant={tier.highlighted ? 'secondary' : 'primary'}
             className="w-full py-2.5 sm:py-3 text-sm sm:text-base"
@@ -319,7 +320,7 @@ export default function Pricing() {
                     ))}
                   </ul>
 
-                  <Link href={`/get-started?tier=${tier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`} className="block">
+                  <Link href={`/get-started?tier=${tier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`} className="block" onClick={() => event(`cta_pricing_${tier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`)}>
                     <Button
                       variant={tier.highlighted ? 'secondary' : 'primary'}
                       className="w-full py-2.5 sm:py-3 text-sm sm:text-base"

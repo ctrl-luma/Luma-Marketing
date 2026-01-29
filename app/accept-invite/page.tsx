@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { apiClient } from '@/lib/api/client'
 import { Check, AlertCircle, Loader2, Eye, EyeOff, Smartphone } from 'lucide-react'
+import { event } from '@/lib/analytics'
 
 interface InviteInfo {
   valid: boolean
@@ -95,8 +96,10 @@ function AcceptInviteContent() {
         token,
         password,
       })
+      event('invite_accepted')
       setSuccess(true)
     } catch (err: any) {
+      event('invite_error', { error: err.error || 'unknown' })
       setError(err.error || 'Failed to accept invite. Please try again.')
     } finally {
       setSubmitting(false)
@@ -156,7 +159,7 @@ function AcceptInviteContent() {
               <p className="text-gray-400 text-sm">Email</p>
               <p className="text-white font-medium">{inviteInfo.email}</p>
             </div>
-            <Link href="/download" className="block">
+            <Link href="/download" className="block" onClick={() => event('invite_download_app_click')}>
               <Button variant="primary" size="lg" className="w-full">
                 Download the App
               </Button>

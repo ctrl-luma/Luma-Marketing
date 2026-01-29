@@ -4,6 +4,7 @@ import { Mail, Send, Check } from 'lucide-react'
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
+import { event } from '@/lib/analytics'
 
 export default function Newsletter() {
   const [email, setEmail] = useState('')
@@ -12,6 +13,8 @@ export default function Newsletter() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('loading')
+
+    event('newsletter_submit')
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3334'

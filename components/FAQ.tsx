@@ -7,6 +7,7 @@ import { useFadeIn } from '@/hooks/useFadeIn'
 import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { getTierById } from '@/lib/pricing'
+import { event } from '@/lib/analytics'
 
 const starterTier = getTierById('starter')
 const proTier = getTierById('pro')
@@ -67,7 +68,7 @@ export default function FAQ() {
           className="border border-gray-800 rounded-lg sm:rounded-xl overflow-hidden bg-gray-900/50"
         >
           <button
-            onClick={() => setOpenIndex(openIndex === index ? null : index)}
+            onClick={() => { setOpenIndex(openIndex === index ? null : index); event('faq_toggle', { question: faq.question }) }}
             className="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left cursor-pointer"
           >
             <span className="font-medium text-white text-sm sm:text-base pr-4">{faq.question}</span>
@@ -86,7 +87,7 @@ export default function FAQ() {
               {faq.answer}
               {faq.hasContactLink && (
                 <>
-                  <Link href="/contact" className="text-primary hover:text-primary-400 underline">contact us</Link>
+                  <Link href="/contact" onClick={() => event('faq_contact_click')} className="text-primary hover:text-primary-400 underline">contact us</Link>
                   {faq.answerSuffix}
                 </>
               )}

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { useIsMobile } from '@/hooks/useIsMobile'
+import { event } from '@/lib/analytics'
 
 export default function AppShowcase() {
   const isMobile = useIsMobile()
@@ -28,6 +29,7 @@ export default function AppShowcase() {
             href={process.env.NEXT_PUBLIC_DASHBOARD_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => event('dashboard_url_click', { location: 'app_showcase' })}
             className="block bg-gray-800 rounded-md sm:rounded-lg px-2 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm text-gray-400 max-w-md mx-auto hover:text-gray-200 hover:underline transition-colors cursor-pointer"
           >
             {process.env.NEXT_PUBLIC_DASHBOARD_URL}

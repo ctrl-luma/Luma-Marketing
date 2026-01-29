@@ -7,6 +7,7 @@ import { CheckCircle, CreditCard, Loader } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { apiClient } from '@/lib/api'
 import { redirectToVendorDashboard } from '@/lib/auth-handoff'
+import { event } from '@/lib/analytics'
 
 export default function SubscriptionSuccessPage() {
   const router = useRouter()
@@ -25,6 +26,7 @@ export default function SubscriptionSuccessPage() {
         setTimeout(() => {
           redirectToVendorDashboard()
         }, 3000)
+        event('subscription_success', { method: 'payment_intent' })
         setIsProcessing(false)
         return
       }
@@ -79,7 +81,7 @@ export default function SubscriptionSuccessPage() {
           <div className="text-red-500 mb-6">
             <p className="text-xl font-semibold">{error}</p>
           </div>
-          <Button onClick={() => redirectToVendorDashboard()}>
+          <Button onClick={() => { event('subscription_error_go_to_dashboard'); redirectToVendorDashboard() }}>
             Go to Dashboard
           </Button>
         </div>

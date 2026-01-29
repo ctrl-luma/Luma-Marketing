@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { event } from '@/lib/analytics'
 
 const navigation = [
   { name: 'Features', href: '/#features' },
@@ -81,7 +82,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
+                  onClick={(e) => { handleNavClick(e, item.href); event(`nav_click_${item.name.toLowerCase().replace(/\s+/g, '_')}`) }}
                   className="text-gray-300 hover:text-primary font-medium transition-colors duration-200"
                 >
                   {item.name}
@@ -89,6 +90,7 @@ export default function Header() {
               ))}
               <Link
                 href="/get-started"
+                onClick={() => event('cta_header_get_started')}
                 className="nav-btn-primary ml-8 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/20 hover:from-primary-400 hover:to-primary-500 hover:shadow-lg hover:shadow-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900"
               >
                 Get Started
@@ -124,6 +126,7 @@ export default function Header() {
               style={{ transitionDelay: isOpen ? `${index * 50}ms` : '0ms' }}
               onClick={(e) => {
                 handleNavClick(e, item.href)
+                event(`nav_click_${item.name.toLowerCase().replace(/\s+/g, '_')}`)
                 setIsOpen(false)
               }}
             >
@@ -134,7 +137,7 @@ export default function Header() {
             <Link
               href="/get-started"
               className="block w-full text-center rounded-xl bg-primary px-4 py-3.5 font-semibold text-white transition-all duration-200 hover:bg-primary-600 hover:-translate-y-0.5"
-              onClick={() => setIsOpen(false)}
+              onClick={() => { event('cta_header_get_started'); setIsOpen(false) }}
             >
               Get Started
             </Link>

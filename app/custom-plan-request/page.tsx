@@ -6,6 +6,7 @@ import { ArrowLeft, Send, Building, TrendingUp, FileText, MessageSquare } from '
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { apiClient } from '@/lib/api'
+import { event } from '@/lib/analytics'
 import { redirectToVendorDashboard } from '@/lib/auth-handoff'
 import { useRouter } from 'next/navigation'
 
@@ -55,6 +56,7 @@ export default function CustomPlanRequestPage() {
     try {
       // Submit the custom plan request
       await apiClient.post('/custom-plan-requests', formData)
+      event('custom_plan_submit')
       setSubmitted(true)
       
       // Redirect to dashboard after 3 seconds

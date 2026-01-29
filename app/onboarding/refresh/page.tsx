@@ -7,6 +7,7 @@ import { AlertCircle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { apiClient } from '@/lib/api'
 import { redirectToVendorDashboard } from '@/lib/auth-handoff'
+import { event } from '@/lib/analytics'
 
 export default function OnboardingRefreshPage() {
   const router = useRouter()
@@ -76,7 +77,7 @@ export default function OnboardingRefreshPage() {
 
             <div className="space-y-3 max-w-xs mx-auto">
               <Button
-                onClick={() => window.location.reload()}
+                onClick={() => { event('onboarding_refresh_retry'); window.location.reload() }}
                 size="lg"
                 className="w-full"
               >
@@ -85,7 +86,7 @@ export default function OnboardingRefreshPage() {
               
               <Button
                 variant="ghost"
-                onClick={() => redirectToVendorDashboard()}
+                onClick={() => { event('onboarding_refresh_go_to_dashboard'); redirectToVendorDashboard() }}
                 className="w-full"
               >
                 Go to Dashboard

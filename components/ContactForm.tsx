@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Send } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { apiClient } from '@/lib/api'
+import { event } from '@/lib/analytics'
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -17,6 +18,8 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('loading')
+
+    event('contact_form_submit')
 
     try {
       const response = await apiClient.post('/contact', {
