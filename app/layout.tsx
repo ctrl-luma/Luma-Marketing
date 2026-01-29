@@ -36,9 +36,9 @@ export const metadata: Metadata = {
     siteName: 'Luma POS',
     images: [
       {
-        url: '/luma-icon-512x512.png',
-        width: 512,
-        height: 512,
+        url: '/app-icon-black-square.png',
+        width: 1024,
+        height: 1024,
         alt: 'Luma POS',
       },
     ],
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: 'summary',
     title: 'Luma POS - Mobile Payments for Bars, Food Trucks & Events',
     description: 'Accept payments anywhere with Tap to Pay. Built for mobile bars, food trucks, and event vendors. No hardware, lower fees.',
-    images: ['/luma-icon-512x512.png'],
+    images: ['/app-icon-black-square.png'],
   },
   appleWebApp: {
     capable: true,

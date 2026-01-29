@@ -13,6 +13,12 @@
   </p>
   
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+    <!-- 1024x1024 -->
+    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
+      <canvas id="icon-1024" width="1024" height="1024" style="background: #0a0a0a; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
+      <p style="color: #888; margin-top: 10px;">1024x1024 (Splash Icon)</p>
+    </div>
+
     <!-- 512x512 -->
     <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
       <canvas id="icon-512" width="512" height="512" style="background: #0a0a0a; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
@@ -122,7 +128,7 @@
     }
     
     // Generate all icon sizes
-    const sizes = [512, 192, 180, 128, 64, 32, 16];
+    const sizes = [1024, 512, 192, 180, 128, 64, 32, 16];
     sizes.forEach(size => {
       const canvas = document.getElementById(`icon-${size}`);
       drawLumaLogo(canvas);
