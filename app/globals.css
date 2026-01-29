@@ -287,6 +287,17 @@ body {
   will-change: transform;
 }
 
+/* Star twinkle animations */
+@keyframes starTwinkle1 {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@keyframes starTwinkle2 {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* Explicit animation classes for Tailwind v4 compatibility */
 .animate-spin {
   animation: spin 1s linear infinite;

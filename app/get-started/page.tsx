@@ -473,7 +473,7 @@ export default function GetStartedPage() {
                 >
                   <h1 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Create your account</h1>
                   <p className="text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6">
-                    Get started with Luma in less than 2 minutes
+                    Get started with Luma in less than 5 minutes
                   </p>
 
                   <div className="space-y-3 sm:space-y-4">

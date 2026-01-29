@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
-import { TrendingUp, DollarSign, Users, Clock } from 'lucide-react'
 
 export default function AppShowcase() {
   const [isMobile, setIsMobile] = useState(true)
@@ -19,15 +18,8 @@ export default function AppShowcase() {
     triggerOnce: true,
   })
 
-  const chartHeights = [40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88]
-  const transactions = [
-    { item: 'Espresso Martini', quantity: 2, amount: '$28.00', time: 'Just now' },
-    { item: 'Margarita', quantity: 1, amount: '$14.00', time: '2 min ago' },
-    { item: 'Old Fashioned', quantity: 3, amount: '$48.00', time: '5 min ago' },
-  ]
-
   const DashboardContent = () => (
-    <>
+    <div className="relative">
       {/* Browser chrome */}
       <div className="bg-gray-900 rounded-t-lg sm:rounded-t-xl p-2 sm:p-3 flex items-center gap-2 border border-gray-800 border-b-0">
         <div className="flex gap-1 sm:gap-1.5">
@@ -47,146 +39,18 @@ export default function AppShowcase() {
         </div>
       </div>
 
-      {/* Dashboard content */}
-      <div className="bg-gray-950 rounded-b-lg sm:rounded-b-xl border border-gray-800 border-t-0 p-4 sm:p-6 md:p-8">
-        {/* Top stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
-          <div className="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
-            <div className="flex items-center gap-2 sm:gap-2.5 mb-2 sm:mb-3">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-md shadow-primary/20">
-                <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
-              </div>
-              <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Today&apos;s Sales</span>
-            </div>
-            <div className="text-lg sm:text-2xl font-bold text-white">$4,287</div>
-            <div className="text-[10px] sm:text-xs text-green-500 mt-0.5 sm:mt-1">+12% vs yesterday</div>
-          </div>
-
-          <div className="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
-            <div className="flex items-center gap-2 sm:gap-2.5 mb-2 sm:mb-3">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-md shadow-green-500/20">
-                <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
-              </div>
-              <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Tips</span>
-            </div>
-            <div className="text-lg sm:text-2xl font-bold text-white">$847</div>
-            <div className="text-[10px] sm:text-xs text-green-500 mt-0.5 sm:mt-1">+8% vs yesterday</div>
-          </div>
-
-          <div className="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
-            <div className="flex items-center gap-2 sm:gap-2.5 mb-2 sm:mb-3">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-md shadow-purple-500/20">
-                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
-              </div>
-              <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Transactions</span>
-            </div>
-            <div className="text-lg sm:text-2xl font-bold text-white">312</div>
-            <div className="text-[10px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1">Avg $13.74</div>
-          </div>
-
-          <div className="bg-gray-900/50 rounded-xl p-3 sm:p-4 border border-gray-800">
-            <div className="flex items-center gap-2 sm:gap-2.5 mb-2 sm:mb-3">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center shadow-md shadow-blue-500/20">
-                <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
-              </div>
-              <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide">Avg Time</span>
-            </div>
-            <div className="text-lg sm:text-2xl font-bold text-white">2.3s</div>
-            <div className="text-[10px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1">Per transaction</div>
-          </div>
-        </div>
-
-        {/* Chart area */}
-        <div className="bg-gray-900/50 rounded-lg sm:rounded-xl p-4 sm:p-6 border border-gray-800 mb-4 sm:mb-6">
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <h3 className="text-xs sm:text-sm font-medium text-white">Sales Today</h3>
-            <div className="flex items-center gap-1">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full" />
-              <span className="text-[10px] sm:text-xs text-gray-500">Live</span>
-            </div>
-          </div>
-          {/* Chart - static on mobile, animated on desktop */}
-          <div className="flex items-end gap-0.5 sm:gap-1 h-20 sm:h-32">
-            {chartHeights.map((height, i) => (
-              isMobile ? (
-                <div
-                  key={i}
-                  style={{ height: `${height}%` }}
-                  className="flex-1 bg-gradient-to-t from-primary/80 to-primary/40 rounded-t"
-                />
-              ) : (
-                <motion.div
-                  key={i}
-                  style={{ height: `${height}%`, originY: 1 }}
-                  initial={{ scaleY: 0 }}
-                  animate={inView ? { scaleY: 1 } : {}}
-                  transition={{ duration: 0.6, delay: 0.2 + i * 0.04, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="flex-1 bg-gradient-to-t from-primary/80 to-primary/40 rounded-t"
-                />
-              )
-            ))}
-          </div>
-          <div className="flex justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-gray-600">
-            <span>12pm</span>
-            <span>3pm</span>
-            <span>6pm</span>
-            <span>9pm</span>
-          </div>
-        </div>
-
-        {/* Recent transactions */}
-        <div className="bg-gray-900/50 rounded-lg sm:rounded-xl border border-gray-800 overflow-hidden">
-          <div className="p-3 sm:p-4 border-b border-gray-800">
-            <h3 className="text-xs sm:text-sm font-medium text-white">Recent Transactions</h3>
-          </div>
-          <div className="divide-y divide-gray-800">
-            {transactions.map((tx, i) => (
-              isMobile ? (
-                <div
-                  key={i}
-                  className="p-3 sm:p-4 flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full" />
-                    <div>
-                      <div className="text-xs sm:text-sm">
-                        <span className="text-white">{tx.item}</span>
-                        {tx.quantity > 1 && <span className="text-gray-500 ml-1">x{tx.quantity}</span>}
-                      </div>
-                      <div className="text-[10px] sm:text-xs text-gray-500">{tx.time}</div>
-                    </div>
-                  </div>
-                  <div className="text-xs sm:text-sm font-medium text-white">{tx.amount}</div>
-                </div>
-              ) : (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.3, delay: 0.5 + i * 0.1 }}
-                  className="p-3 sm:p-4 flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full" />
-                    <div>
-                      <div className="text-xs sm:text-sm">
-                        <span className="text-white">{tx.item}</span>
-                        {tx.quantity > 1 && <span className="text-gray-500 ml-1">x{tx.quantity}</span>}
-                      </div>
-                      <div className="text-[10px] sm:text-xs text-gray-500">{tx.time}</div>
-                    </div>
-                  </div>
-                  <div className="text-xs sm:text-sm font-medium text-white">{tx.amount}</div>
-                </motion.div>
-              )
-            ))}
-          </div>
-        </div>
+      {/* Dashboard screenshot */}
+      <div className="rounded-b-lg sm:rounded-b-xl border border-gray-800 border-t-0 overflow-hidden">
+        <img
+          src="/screenshots/dashboard-analytics.webp"
+          alt="Luma POS vendor analytics dashboard showing revenue trends, transaction counts, and peak hours"
+          className="w-full h-auto block"
+        />
       </div>
 
       {/* Glow effect - hidden on mobile */}
       <div className="hidden lg:block absolute -inset-4 bg-primary/10 blur-3xl -z-10 rounded-3xl" />
-    </>
+    </div>
   )
 
   return (
@@ -232,7 +96,7 @@ export default function AppShowcase() {
           )}
         </div>
 
-        {/* Dashboard mockup */}
+        {/* Dashboard screenshot */}
         {isMobile ? (
           <div className="relative max-w-5xl mx-auto">
             <DashboardContent />

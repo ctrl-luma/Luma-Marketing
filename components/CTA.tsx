@@ -36,7 +36,7 @@ export default function CTA() {
       </h2>
 
       <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10">
-        Set up in 2 minutes. No credit card required.
+        Set up in 5 minutes. No credit card required.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">

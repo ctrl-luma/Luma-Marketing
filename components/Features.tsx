@@ -16,8 +16,11 @@ import {
   Zap,
 } from 'lucide-react'
 import { getTierById } from '@/lib/pricing'
+import StarryBackground from './StarryBackground'
 
 const proTier = getTierById('pro')
+
+const audiencePills = ['Mobile Bars', 'Food Trucks', 'Event Vendors', 'Pop-up Shops']
 
 const heroFeatures = [
   {
@@ -88,6 +91,7 @@ export default function Features() {
     return (
       <section className="section-padding bg-black relative overflow-hidden" id="features">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 to-black" />
+        <StarryBackground subtle className="z-[1]" />
 
         <div
           ref={fadeRef}
@@ -95,12 +99,21 @@ export default function Features() {
         >
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
             <h2 className="heading-2 mb-3 sm:mb-4">
-              Built for Mobile Bars & Pop-ups
+              Everything you need to run events
             </h2>
             <p className="text-base sm:text-lg text-gray-400">
-              Everything you need to run events efficiently. From setup to settlement
-              in minutes, not hours.
+              From weddings to farmer&apos;s markets. Set up in minutes, not hours.
             </p>
+            <div className="flex flex-wrap justify-center gap-2 mt-4 sm:mt-5">
+              {audiencePills.map((pill) => (
+                <span
+                  key={pill}
+                  className="px-3 py-1 text-xs sm:text-sm text-gray-300 border border-gray-700 rounded-full"
+                >
+                  {pill}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Hero features - larger cards */}
@@ -158,6 +171,7 @@ export default function Features() {
   return (
     <section className="section-padding bg-black relative overflow-hidden" id="features">
       <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 to-black" />
+      <StarryBackground subtle className="z-[1]" />
 
       {/* Subtle background accent */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
@@ -171,7 +185,7 @@ export default function Features() {
             transition={{ duration: 0.5 }}
             className="heading-2 mb-3 sm:mb-4"
           >
-            Built for Mobile Bars & Pop-ups
+            Everything you need to run events
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -179,9 +193,23 @@ export default function Features() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-base sm:text-lg text-gray-400"
           >
-            Everything you need to run events efficiently. From setup to settlement
-            in minutes, not hours.
+            From weddings to farmer&apos;s markets. Set up in minutes, not hours.
           </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="flex flex-wrap justify-center gap-2 mt-4 sm:mt-5"
+          >
+            {audiencePills.map((pill) => (
+              <span
+                key={pill}
+                className="px-3 py-1 text-sm text-gray-300 border border-gray-700 rounded-full"
+              >
+                {pill}
+              </span>
+            ))}
+          </motion.div>
         </div>
 
         {/* Hero features - prominent cards with glow */}

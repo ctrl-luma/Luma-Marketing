@@ -8,6 +8,7 @@ import { Check, X } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { pricingTiers, type PricingTier } from '@/lib/pricing'
+import StarryBackground from './StarryBackground'
 
 export default function Pricing() {
   const [isMobile, setIsMobile] = useState(true)
@@ -142,6 +143,7 @@ export default function Pricing() {
   if (isMobile) {
     return (
       <section className="section-padding bg-gradient-to-b from-black to-gray-950 relative overflow-hidden" id="pricing">
+        <StarryBackground subtle className="z-[1]" />
         <div
           ref={fadeRef}
           className={`container relative z-10 transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
@@ -171,6 +173,7 @@ export default function Pricing() {
   // Desktop version - with animations
   return (
     <section className="section-padding bg-gradient-to-b from-black to-gray-950 relative overflow-hidden" id="pricing">
+      <StarryBackground subtle className="z-[1]" />
       {/* Animated gradient orbs */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-primary/15 to-transparent rounded-full blur-3xl opacity-50" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-radial from-primary/10 to-transparent rounded-full blur-3xl opacity-30" />
