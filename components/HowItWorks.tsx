@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { Download, LayoutGrid, CreditCard, Banknote } from 'lucide-react'
@@ -50,11 +51,21 @@ const steps = [
 function BrowserFrame({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="rounded-lg sm:rounded-xl overflow-hidden border border-gray-800 shadow-2xl shadow-black/50 max-w-full">
-      <div className="bg-gray-900 px-2 py-1.5 sm:p-2 flex items-center gap-1.5">
+      <div className="bg-gray-900 px-2 py-1.5 sm:p-2 flex items-center gap-1.5 sm:gap-2">
         <div className="flex gap-1">
           <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-red-500/80" />
           <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-yellow-500/80" />
           <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-green-500/80" />
+        </div>
+        <div className="flex-1 mx-0.5 sm:mx-1">
+          <a
+            href={process.env.NEXT_PUBLIC_DASHBOARD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block bg-gray-800 rounded px-1.5 sm:px-2.5 py-0.5 sm:py-0.5 text-[9px] sm:text-[11px] text-gray-400 max-w-[12rem] mx-auto -translate-x-[23px] hover:text-gray-200 hover:underline transition-colors cursor-pointer truncate text-center"
+          >
+            {process.env.NEXT_PUBLIC_DASHBOARD_URL}
+          </a>
         </div>
       </div>
       <img src={src} alt={alt} className="w-full h-auto block" />
@@ -99,12 +110,8 @@ function PhoneFrame({ src, alt }: { src: string; alt: string }) {
 }
 
 export default function HowItWorks() {
-  const [isMobile, setIsMobile] = useState(true)
+  const isMobile = useIsMobile()
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 1024)
-  }, [])
 
   const { ref, inView } = useInView({
     threshold: 0.05,
@@ -129,7 +136,7 @@ export default function HowItWorks() {
             </p>
           </div>
 
-          <div className="space-y-8 sm:space-y-14 max-w-md sm:max-w-lg mx-auto px-1">
+          <div className="space-y-16 sm:space-y-14 max-w-md sm:max-w-lg mx-auto px-1">
             {steps.map((step) => {
               const Icon = step.icon
               return (

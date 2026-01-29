@@ -2,16 +2,12 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 export default function AppShowcase() {
-  const [isMobile, setIsMobile] = useState(true)
+  const isMobile = useIsMobile()
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 1024)
-  }, [])
 
   const { ref, inView } = useInView({
     threshold: 0.1,

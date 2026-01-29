@@ -43,7 +43,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-20 [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
         <StarryBackground className="absolute inset-0 z-0" />
 
-        <div className={`container relative z-10 pt-24 sm:pt-20 pb-28 sm:pb-16 transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div className={`container relative z-10 pt-24 sm:pt-20 pb-14 sm:pb-16 transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left side - Text content */}
             <div className="text-center lg:text-left">
@@ -78,18 +78,18 @@ export default function Hero() {
                 {[
                   { label: 'Processing', value: '<3 seconds', icon: Zap },
                   { label: 'Setup', value: '5 minutes', icon: Clock },
-                  { label: 'Hardware cost', value: 'Free', icon: DollarSign },
-                  { label: 'No card needed', value: 'Free to start', icon: CreditCard },
+                  { label: 'Cancel anytime', value: 'No Contracts', icon: DollarSign },
+                  { label: 'No card needed', value: 'Free Plan', icon: CreditCard },
                 ].map((item) => {
                   const Icon = item.icon
                   return (
-                    <div key={item.label} className="flex flex-col items-center gap-2 bg-gray-900/60 rounded-xl px-3 py-3.5 sm:px-4 sm:py-4 border border-gray-800">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gray-800 flex items-center justify-center">
-                        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                    <div key={item.label} className="flex flex-col items-center gap-1 sm:gap-2 bg-gray-900/60 rounded-lg sm:rounded-xl px-2 py-2 sm:px-4 sm:py-4 border border-gray-800">
+                      <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-md sm:rounded-lg bg-gray-800 flex items-center justify-center">
+                        <Icon className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-primary" />
                       </div>
                       <div className="text-center">
-                        <p className="text-sm sm:text-base font-semibold text-white leading-tight">{item.value}</p>
-                        <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">{item.label}</p>
+                        <p className="text-xs sm:text-base font-semibold text-white leading-tight">{item.value}</p>
+                        <p className="text-[9px] sm:text-xs text-gray-500 mt-0.5">{item.label}</p>
                       </div>
                     </div>
                   )
@@ -158,8 +158,8 @@ export default function Hero() {
               {[
                 { label: 'Processing', value: '<3 seconds', icon: Zap },
                 { label: 'Setup', value: '5 minutes', icon: Clock },
-                { label: 'Hardware cost', value: 'Free', icon: DollarSign },
-                { label: 'No card needed', value: 'Free to start', icon: CreditCard },
+                { label: 'Cancel anytime', value: 'No Contracts', icon: DollarSign },
+                { label: 'No card needed', value: 'Free Plan', icon: CreditCard },
               ].map((item) => {
                 const Icon = item.icon
                 return (

@@ -2,12 +2,12 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import {
   Smartphone,
   DollarSign,
-  Calendar,
+
   Users,
   Settings,
   Receipt,
@@ -42,9 +42,9 @@ const heroFeatures = [
 
 const additionalFeatures = [
   {
-    name: 'Event Mode',
-    description: 'Switch between events instantly. Clone last week\'s setup in one tap.',
-    icon: Calendar,
+    name: 'Team Management',
+    description: 'Add staff, assign roles, and track who sold what. Perfect for busy events.',
+    icon: Users,
   },
   {
     name: 'Revenue Splits',
@@ -64,7 +64,7 @@ const additionalFeatures = [
   {
     name: 'Multi-Device Sync',
     description: 'All devices stay in sync. Updates appear everywhere instantly.',
-    icon: Users,
+    icon: Smartphone,
   },
   {
     name: 'Instant Payouts',
@@ -74,12 +74,8 @@ const additionalFeatures = [
 ]
 
 export default function Features() {
-  const [isMobile, setIsMobile] = useState(true)
+  const isMobile = useIsMobile()
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 1024)
-  }, [])
 
   const { ref, inView } = useInView({
     threshold: 0.1,
@@ -97,18 +93,18 @@ export default function Features() {
           ref={fadeRef}
           className={`container relative z-10 transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
         >
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-16">
             <h2 className="heading-2 mb-3 sm:mb-4">
               Everything you need to run events
             </h2>
             <p className="text-base sm:text-lg text-gray-400">
               From weddings to farmer&apos;s markets. Set up in minutes, not hours.
             </p>
-            <div className="flex flex-wrap justify-center gap-2 mt-4 sm:mt-5">
+            <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mt-3 sm:mt-5">
               {audiencePills.map((pill) => (
                 <span
                   key={pill}
-                  className="px-3 py-1 text-xs sm:text-sm text-gray-300 border border-gray-700 rounded-full"
+                  className="px-2.5 py-0.5 sm:px-3 sm:py-1 text-xs sm:text-sm text-gray-300 border border-gray-700 rounded-full"
                 >
                   {pill}
                 </span>
@@ -117,17 +113,17 @@ export default function Features() {
           </div>
 
           {/* Hero features - larger cards */}
-          <div className="grid sm:grid-cols-3 gap-4 sm:gap-5 mb-12 sm:mb-16 items-stretch">
+          <div className="grid sm:grid-cols-3 gap-3 sm:gap-5 mb-8 sm:mb-16 items-stretch">
             {heroFeatures.map((feature) => {
               const Icon = feature.icon
               return (
                 <div
                   key={feature.name}
-                  className="relative p-5 sm:p-6 rounded-2xl bg-gray-900/80 border border-gray-800 group h-full"
+                  className="relative p-3 sm:p-6 rounded-2xl bg-gray-900/80 border border-gray-800 group h-full"
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                      <Icon className="h-5 w-5 text-primary" />
+                  <div className="flex items-center gap-3 mb-2 sm:mb-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                     </div>
                     <h3 className="text-base sm:text-lg font-semibold text-white">
                       {feature.name}
@@ -143,20 +139,20 @@ export default function Features() {
 
           {/* Additional features - clean grid */}
           <div className="max-w-4xl mx-auto">
-            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-6 text-center">
+            <h3 className="hidden sm:block text-sm font-medium text-gray-500 uppercase tracking-wider mb-6 text-center">
               Everything else you need
             </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 items-stretch">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 items-stretch">
               {additionalFeatures.map((feature) => {
                 const Icon = feature.icon
                 return (
                   <div
                     key={feature.name}
-                    className="p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors h-full"
+                    className="p-3 sm:p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors h-full"
                   >
-                    <Icon className="h-5 w-5 text-primary mb-2" />
+                    <Icon className="h-5 w-5 text-primary mb-2 sm:mb-2" />
                     <h4 className="font-medium text-white text-sm mb-1">{feature.name}</h4>
-                    <p className="text-xs text-gray-500 leading-relaxed">{feature.description}</p>
+                    <p className="hidden sm:block text-xs text-gray-500 leading-relaxed">{feature.description}</p>
                   </div>
                 )
               })}
