@@ -17,13 +17,9 @@ import {
 } from 'lucide-react'
 import { event } from '@/lib/analytics'
 
-const APP_LINKS_CACHE_KEY = 'luma_app_links'
-const APP_LINKS_CACHE_TTL = 1000 * 60 * 60 * 24 // 24 hours
-
-interface AppLinks {
-  ios: string | null
-  android: string | null
-  cachedAt?: number
+const APP_LINKS = {
+  ios: process.env.NEXT_PUBLIC_IOS_DOWNLOAD_URL || null,
+  android: process.env.NEXT_PUBLIC_ANDROID_DOWNLOAD_URL || null,
 }
 
 const FEATURES = [
@@ -69,7 +65,7 @@ function getMobileOS(): 'ios' | 'android' | null {
 }
 
 export default function DownloadPage() {
-  const [appLinks, setAppLinks] = useState<AppLinks>({ ios: null, android: null })
+  const appLinks = APP_LINKS
   const [qrUrl, setQrUrl] = useState<string>('')
 
   // Set QR URL on client side only to avoid hydration mismatch
@@ -87,50 +83,6 @@ export default function DownloadPage() {
     } else if (mobileOS === 'android' && appLinks.android) {
       window.open(appLinks.android, '_blank')
     }
-  }, [appLinks])
-
-  useEffect(() => {
-    const fetchAppLinks = async () => {
-      // Check cache first
-      try {
-        const cached = localStorage.getItem(APP_LINKS_CACHE_KEY)
-        console.log('[AppLinks] Cached value:', cached)
-        if (cached) {
-          const parsedCache: AppLinks = JSON.parse(cached)
-          if (parsedCache.cachedAt && Date.now() - parsedCache.cachedAt < APP_LINKS_CACHE_TTL) {
-            console.log('[AppLinks] Using cached links:', parsedCache)
-            setAppLinks(parsedCache)
-            return
-          }
-        }
-      } catch (e) {
-        console.error('[AppLinks] Cache error:', e)
-      }
-
-      // Fetch from API
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3334'
-        console.log('[AppLinks] Fetching from:', `${apiUrl}/marketing/app-links`)
-        const response = await fetch(`${apiUrl}/marketing/app-links`)
-        console.log('[AppLinks] Response status:', response.status)
-        if (response.ok) {
-          const data = await response.json()
-          console.log('[AppLinks] API response:', data)
-          const linksWithCache: AppLinks = {
-            ...data,
-            cachedAt: Date.now(),
-          }
-          setAppLinks(linksWithCache)
-          localStorage.setItem(APP_LINKS_CACHE_KEY, JSON.stringify(linksWithCache))
-        } else {
-          console.error('[AppLinks] Response not OK:', response.status, response.statusText)
-        }
-      } catch (e) {
-        console.error('[AppLinks] Failed to fetch app links:', e)
-      }
-    }
-
-    fetchAppLinks()
   }, [])
 
   return (

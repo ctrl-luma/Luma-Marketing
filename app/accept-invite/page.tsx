@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { apiClient } from '@/lib/api/client'
-import { Check, AlertCircle, Loader2, Eye, EyeOff, Smartphone } from 'lucide-react'
+import { Check, AlertCircle, Loader2, Eye, EyeOff, Smartphone, QrCode } from 'lucide-react'
 import { event } from '@/lib/analytics'
 
 interface InviteInfo {
@@ -159,6 +159,25 @@ function AcceptInviteContent() {
               <p className="text-gray-400 text-sm">Email</p>
               <p className="text-white font-medium">{inviteInfo.email}</p>
             </div>
+            <div className="flex justify-center">
+              <div className="bg-white p-4 rounded-xl shadow-inner">
+                {(() => {
+                  const downloadUrl = `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/download`;
+                  return downloadUrl ? (
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(downloadUrl)}&bgcolor=ffffff&color=000000&margin=0`}
+                      alt="Download QR Code"
+                      className="w-40 h-40"
+                    />
+                  ) : (
+                    <div className="w-40 h-40 flex items-center justify-center bg-gray-100 rounded">
+                      <QrCode className="w-12 h-12 text-gray-400" />
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+            <p className="text-gray-500 text-xs text-center">Scan to download the Luma app</p>
             <Link href="/download" className="block" onClick={() => event('invite_download_app_click')}>
               <Button variant="primary" size="lg" className="w-full">
                 Download the App
