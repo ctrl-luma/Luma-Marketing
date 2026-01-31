@@ -10,13 +10,16 @@ import { event } from '@/lib/analytics'
 const PAUSE_MS = 1000
 
 function DemoVideo() {
+  const containerRef = useRef<HTMLDivElement>(null)
   const forwardRef = useRef<HTMLVideoElement>(null)
   const reverseRef = useRef<HTMLVideoElement>(null)
+  const isVisible = useRef(false)
 
   useEffect(() => {
+    const container = containerRef.current
     const forward = forwardRef.current
     const reverse = reverseRef.current
-    if (!forward || !reverse) return
+    if (!container || !forward || !reverse) return
 
     let timeout: ReturnType<typeof setTimeout>
 
@@ -30,45 +33,64 @@ function DemoVideo() {
       forward.style.visibility = 'hidden'
     }
 
-    const playWhenReady = (video: HTMLVideoElement, onReady: () => void) => {
-      if (video.readyState >= 3) {
-        onReady()
-      } else {
-        video.addEventListener('canplay', onReady, { once: true })
+    // Pre-buffer the other video so switches are seamless
+    const preloadVideo = (video: HTMLVideoElement) => {
+      if (video.readyState < 3) {
+        video.load()
       }
     }
 
     const onForwardEnd = () => {
+      if (!isVisible.current) return
       reverse.currentTime = 0
-      playWhenReady(reverse, () => {
+      const onPlaying = () => {
         showReverse()
-        reverse.play()
-      })
+        reverse.removeEventListener('playing', onPlaying)
+        // Pre-buffer forward for next cycle
+        forward.currentTime = 0
+        preloadVideo(forward)
+      }
+      reverse.addEventListener('playing', onPlaying)
+      reverse.play().catch(() => {})
     }
 
     const onReverseEnd = () => {
       timeout = setTimeout(() => {
+        if (!isVisible.current) return
         forward.currentTime = 0
-        playWhenReady(forward, () => {
+        const onPlaying = () => {
           showForward()
-          forward.play()
-        })
+          forward.removeEventListener('playing', onPlaying)
+          // Pre-buffer reverse for next cycle
+          reverse.currentTime = 0
+          preloadVideo(reverse)
+        }
+        forward.addEventListener('playing', onPlaying)
+        forward.play().catch(() => {})
       }, PAUSE_MS)
     }
 
     forward.addEventListener('ended', onForwardEnd)
     reverse.addEventListener('ended', onReverseEnd)
 
-    // Ensure autoplay on mobile — trigger play when visible
+    // Only play when in viewport, pause when off-screen
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && forward.paused && reverse.style.visibility === 'hidden') {
-          forward.play().catch(() => {})
+        isVisible.current = entry.isIntersecting
+        if (entry.isIntersecting) {
+          if (forward.style.visibility !== 'hidden' && forward.paused) {
+            forward.play().catch(() => {})
+          } else if (reverse.style.visibility !== 'hidden' && reverse.paused) {
+            reverse.play().catch(() => {})
+          }
+        } else {
+          forward.pause()
+          reverse.pause()
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.1 }
     )
-    observer.observe(forward)
+    observer.observe(container)
 
     return () => {
       forward.removeEventListener('ended', onForwardEnd)
@@ -79,7 +101,7 @@ function DemoVideo() {
   }, [])
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <video
         ref={forwardRef}
@@ -87,6 +109,7 @@ function DemoVideo() {
         autoPlay
         muted
         playsInline
+        preload="auto"
         className="w-full h-auto block"
       />
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
@@ -95,7 +118,7 @@ function DemoVideo() {
         src="/analytics-reverse.webm"
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
         className="absolute inset-0 w-full h-full block"
         style={{ visibility: 'hidden' }}
       />
@@ -140,7 +163,7 @@ export default function AppShowcase() {
       </div>
 
       {/* Glow effect - hidden on mobile */}
-      <div className="hidden lg:block absolute -inset-4 bg-primary/10 blur-3xl -z-10 rounded-3xl" />
+      <div className="hidden lg:block absolute -inset-4 bg-primary/10 blur-2xl -z-10 rounded-3xl" />
     </div>
   )
 
