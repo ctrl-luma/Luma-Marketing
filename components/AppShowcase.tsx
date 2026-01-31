@@ -16,7 +16,7 @@ function DemoVideo() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !document.hidden) {
           video.play().catch(() => {})
         } else {
           video.pause()
@@ -26,14 +26,30 @@ function DemoVideo() {
     )
     observer.observe(video)
 
-    return () => observer.disconnect()
+    const onVisibility = () => {
+      if (document.hidden) {
+        video.pause()
+      } else {
+        // Re-load if browser discarded the video
+        if (video.readyState === 0) {
+          video.load()
+        }
+        video.play().catch(() => {})
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
   }, [])
 
   return (
     // eslint-disable-next-line jsx-a11y/media-has-caption
     <video
       ref={videoRef}
-      src="/analytics-loop.webm"
+      src="/analytics-loop-av1.webm"
       autoPlay
       loop
       muted

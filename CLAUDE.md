@@ -455,4 +455,22 @@ Edit `app/get-started/page.tsx`:
 
 ---
 
+## Video Assets
+
+The dashboard demo video (`public/analytics-loop.webm`) is a looping clip that plays forward then reverse. It was created using **ffmpeg**.
+
+**Concatenate forward + reverse into a loop:**
+```bash
+ffmpeg -i forward.webm -i reverse.webm -filter_complex "[0:v][1:v]concat=n=2:v=1:a=0" -c:v libvpx-vp9 -crf 35 -b:v 0 -r 15 -an analytics-loop.webm
+```
+
+**Or generate the reverse from a single source:**
+```bash
+ffmpeg -i source.webm -filter_complex "[0:v]split[fwd][rev];[rev]reverse[r];[fwd][r]concat=n=2:v=1:a=0" -c:v libvpx-vp9 -crf 35 -b:v 0 -r 15 -an analytics-loop.webm
+```
+
+**Key flags:** `-c:v libvpx-vp9` (VP9 codec), `-crf 35` (quality, higher = smaller), `-b:v 0` (variable bitrate), `-r 15` (15fps, sufficient for UI scroll recordings), `-an` (no audio)
+
+---
+
 **Remember:** This is the first touchpoint for new vendors. Ensure fast load times, clear messaging, and a smooth onboarding experience. Test the full signup flow regularly.
