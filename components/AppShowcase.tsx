@@ -7,122 +7,40 @@ import { useFadeIn } from '@/hooks/useFadeIn'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { event } from '@/lib/analytics'
 
-const PAUSE_MS = 1000
-
 function DemoVideo() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const forwardRef = useRef<HTMLVideoElement>(null)
-  const reverseRef = useRef<HTMLVideoElement>(null)
-  const isVisible = useRef(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
-    const container = containerRef.current
-    const forward = forwardRef.current
-    const reverse = reverseRef.current
-    if (!container || !forward || !reverse) return
+    const video = videoRef.current
+    if (!video) return
 
-    let timeout: ReturnType<typeof setTimeout>
-
-    const showForward = () => {
-      forward.style.visibility = 'visible'
-      reverse.style.visibility = 'hidden'
-    }
-
-    const showReverse = () => {
-      reverse.style.visibility = 'visible'
-      forward.style.visibility = 'hidden'
-    }
-
-    // Pre-buffer the other video so switches are seamless
-    const preloadVideo = (video: HTMLVideoElement) => {
-      if (video.readyState < 3) {
-        video.load()
-      }
-    }
-
-    const onForwardEnd = () => {
-      if (!isVisible.current) return
-      reverse.currentTime = 0
-      const onPlaying = () => {
-        showReverse()
-        reverse.removeEventListener('playing', onPlaying)
-        // Pre-buffer forward for next cycle
-        forward.currentTime = 0
-        preloadVideo(forward)
-      }
-      reverse.addEventListener('playing', onPlaying)
-      reverse.play().catch(() => {})
-    }
-
-    const onReverseEnd = () => {
-      timeout = setTimeout(() => {
-        if (!isVisible.current) return
-        forward.currentTime = 0
-        const onPlaying = () => {
-          showForward()
-          forward.removeEventListener('playing', onPlaying)
-          // Pre-buffer reverse for next cycle
-          reverse.currentTime = 0
-          preloadVideo(reverse)
-        }
-        forward.addEventListener('playing', onPlaying)
-        forward.play().catch(() => {})
-      }, PAUSE_MS)
-    }
-
-    forward.addEventListener('ended', onForwardEnd)
-    reverse.addEventListener('ended', onReverseEnd)
-
-    // Only play when in viewport, pause when off-screen
     const observer = new IntersectionObserver(
       ([entry]) => {
-        isVisible.current = entry.isIntersecting
         if (entry.isIntersecting) {
-          if (forward.style.visibility !== 'hidden' && forward.paused) {
-            forward.play().catch(() => {})
-          } else if (reverse.style.visibility !== 'hidden' && reverse.paused) {
-            reverse.play().catch(() => {})
-          }
+          video.play().catch(() => {})
         } else {
-          forward.pause()
-          reverse.pause()
+          video.pause()
         }
       },
       { threshold: 0.1 }
     )
-    observer.observe(container)
+    observer.observe(video)
 
-    return () => {
-      forward.removeEventListener('ended', onForwardEnd)
-      reverse.removeEventListener('ended', onReverseEnd)
-      clearTimeout(timeout)
-      observer.disconnect()
-    }
+    return () => observer.disconnect()
   }, [])
 
   return (
-    <div ref={containerRef} className="relative">
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-      <video
-        ref={forwardRef}
-        src="/analytics.webm"
-        autoPlay
-        muted
-        playsInline
-        preload="auto"
-        className="w-full h-auto block"
-      />
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-      <video
-        ref={reverseRef}
-        src="/analytics-reverse.webm"
-        muted
-        playsInline
-        preload="metadata"
-        className="absolute inset-0 w-full h-full block"
-        style={{ visibility: 'hidden' }}
-      />
-    </div>
+    // eslint-disable-next-line jsx-a11y/media-has-caption
+    <video
+      ref={videoRef}
+      src="/analytics-loop.webm"
+      autoPlay
+      loop
+      muted
+      playsInline
+      preload="metadata"
+      className="w-full h-auto block"
+    />
   )
 }
 
@@ -211,20 +129,9 @@ export default function AppShowcase() {
         </div>
 
         {/* Dashboard screenshot */}
-        {isMobile ? (
-          <div className="relative max-w-5xl mx-auto">
-            <DashboardContent />
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative max-w-5xl mx-auto"
-          >
-            <DashboardContent />
-          </motion.div>
-        )}
+        <div className="relative max-w-5xl mx-auto">
+          <DashboardContent />
+        </div>
       </div>
     </section>
   )
