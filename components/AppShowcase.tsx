@@ -30,17 +30,29 @@ function DemoVideo() {
       forward.style.visibility = 'hidden'
     }
 
+    const playWhenReady = (video: HTMLVideoElement, onReady: () => void) => {
+      if (video.readyState >= 3) {
+        onReady()
+      } else {
+        video.addEventListener('canplay', onReady, { once: true })
+      }
+    }
+
     const onForwardEnd = () => {
       reverse.currentTime = 0
-      showReverse()
-      reverse.play()
+      playWhenReady(reverse, () => {
+        showReverse()
+        reverse.play()
+      })
     }
 
     const onReverseEnd = () => {
       timeout = setTimeout(() => {
         forward.currentTime = 0
-        showForward()
-        forward.play()
+        playWhenReady(forward, () => {
+          showForward()
+          forward.play()
+        })
       }, PAUSE_MS)
     }
 
