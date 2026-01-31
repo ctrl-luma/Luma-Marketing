@@ -1,10 +1,95 @@
 'use client'
 
+import { useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { event } from '@/lib/analytics'
+
+const PAUSE_MS = 1000
+
+function DemoVideo() {
+  const forwardRef = useRef<HTMLVideoElement>(null)
+  const reverseRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const forward = forwardRef.current
+    const reverse = reverseRef.current
+    if (!forward || !reverse) return
+
+    let timeout: ReturnType<typeof setTimeout>
+
+    const showForward = () => {
+      forward.style.visibility = 'visible'
+      reverse.style.visibility = 'hidden'
+    }
+
+    const showReverse = () => {
+      reverse.style.visibility = 'visible'
+      forward.style.visibility = 'hidden'
+    }
+
+    const onForwardEnd = () => {
+      reverse.currentTime = 0
+      showReverse()
+      reverse.play()
+    }
+
+    const onReverseEnd = () => {
+      timeout = setTimeout(() => {
+        forward.currentTime = 0
+        showForward()
+        forward.play()
+      }, PAUSE_MS)
+    }
+
+    forward.addEventListener('ended', onForwardEnd)
+    reverse.addEventListener('ended', onReverseEnd)
+
+    // Ensure autoplay on mobile — trigger play when visible
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && forward.paused && reverse.style.visibility === 'hidden') {
+          forward.play().catch(() => {})
+        }
+      },
+      { threshold: 0.3 }
+    )
+    observer.observe(forward)
+
+    return () => {
+      forward.removeEventListener('ended', onForwardEnd)
+      reverse.removeEventListener('ended', onReverseEnd)
+      clearTimeout(timeout)
+      observer.disconnect()
+    }
+  }, [])
+
+  return (
+    <div className="relative">
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <video
+        ref={forwardRef}
+        src="/analytics.webm"
+        autoPlay
+        muted
+        playsInline
+        className="w-full h-auto block"
+      />
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <video
+        ref={reverseRef}
+        src="/analytics-reverse.webm"
+        muted
+        playsInline
+        preload="auto"
+        className="absolute inset-0 w-full h-full block"
+        style={{ visibility: 'hidden' }}
+      />
+    </div>
+  )
+}
 
 export default function AppShowcase() {
   const isMobile = useIsMobile()
@@ -37,13 +122,9 @@ export default function AppShowcase() {
         </div>
       </div>
 
-      {/* Dashboard screenshot */}
+      {/* Dashboard demo video */}
       <div className="rounded-b-lg sm:rounded-b-xl border border-gray-800 border-t-0 overflow-hidden">
-        <img
-          src="/screenshots/dashboard-analytics.webp"
-          alt="Luma POS vendor analytics dashboard showing revenue trends, transaction counts, and peak hours"
-          className="w-full h-auto block"
-        />
+        <DemoVideo />
       </div>
 
       {/* Glow effect - hidden on mobile */}
