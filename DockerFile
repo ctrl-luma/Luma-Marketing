@@ -1,35 +1,54 @@
-# Base image: tiny static web server
-FROM joseluisq/static-web-server:2-alpine
+# Build stage
+FROM node:20-alpine AS builder
+WORKDIR /app
 
-ENV SERVER_ROOT="/www"
-ENV SERVER_FALLBACK_PAGE="/index.html"
-ENV SERVER_CACHE_CONTROL_HEADERS="true"
-WORKDIR /www
+# Build-time env vars (NEXT_PUBLIC_* must be present at build time)
+ARG NEXT_PUBLIC_APP_NAME
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_DASHBOARD_URL
+ARG NEXT_PUBLIC_IOS_DOWNLOAD_URL
+ARG NEXT_PUBLIC_ANDROID_DOWNLOAD_URL
+ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
-# Copy the static Next.js export
-COPY out .
+ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_DASHBOARD_URL=$NEXT_PUBLIC_DASHBOARD_URL
+ENV NEXT_PUBLIC_IOS_DOWNLOAD_URL=$NEXT_PUBLIC_IOS_DOWNLOAD_URL
+ENV NEXT_PUBLIC_ANDROID_DOWNLOAD_URL=$NEXT_PUBLIC_ANDROID_DOWNLOAD_URL
+ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
-# Cache config: HTML = no-cache, hashed assets = long cache
-COPY <<EOF /etc/static-web-server/config.toml
-[general]
-cache-control-headers = true
+# Install dependencies
+COPY package*.json ./
+RUN npm ci
 
-[[advanced.headers]]
-source = "**/*.html"
-[advanced.headers.headers]
-Cache-Control = "no-cache"
+# Copy source and build
+COPY . .
+RUN npm run build
 
-[[advanced.headers]]
-source = "**/*.txt"
-[advanced.headers.headers]
-Cache-Control = "no-cache"
+# Production stage
+FROM node:20-alpine AS runner
+WORKDIR /app
 
-[[advanced.headers]]
-source = "/_next/static/**"
-[advanced.headers.headers]
-Cache-Control = "public, max-age=31536000, immutable"
-EOF
+ENV NODE_ENV=production
 
-ENV SERVER_CONFIG_FILE="/etc/static-web-server/config.toml"
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy standalone build
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
+# Set ownership
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
 
 EXPOSE 80
+ENV PORT=80
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]

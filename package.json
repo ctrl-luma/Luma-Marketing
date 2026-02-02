@@ -13,8 +13,8 @@
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3333",
     "lint": "next lint",
-    "build:dev": "dotenv -e .env.dev -- next build && docker buildx build --platform linux/amd64,linux/arm64 --label version=latest -t ghcr.io/ctrl-luma/lumapos-web:dev --push .",
-    "build:prod": "dotenv -e .env.prod -- next build && docker buildx build --platform linux/amd64,linux/arm64 --label version=latest -t ghcr.io/ctrl-luma/lumapos-web:latest --push ."
+    "build:dev": "dotenv -e .env.dev -- docker buildx build --platform linux/amd64,linux/arm64 --build-arg NEXT_PUBLIC_APP_NAME --build-arg NEXT_PUBLIC_APP_URL --build-arg NEXT_PUBLIC_API_URL --build-arg NEXT_PUBLIC_DASHBOARD_URL --build-arg NEXT_PUBLIC_IOS_DOWNLOAD_URL --build-arg NEXT_PUBLIC_ANDROID_DOWNLOAD_URL --build-arg NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY --label version=latest -t ghcr.io/ctrl-luma/lumapos-web:dev --push .",
+    "build:prod": "dotenv -e .env.prod -- docker buildx build --platform linux/amd64,linux/arm64 --build-arg NEXT_PUBLIC_APP_NAME --build-arg NEXT_PUBLIC_APP_URL --build-arg NEXT_PUBLIC_API_URL --build-arg NEXT_PUBLIC_DASHBOARD_URL --build-arg NEXT_PUBLIC_IOS_DOWNLOAD_URL --build-arg NEXT_PUBLIC_ANDROID_DOWNLOAD_URL --build-arg NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY --label version=latest -t ghcr.io/ctrl-luma/lumapos-web:latest --push ."
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^5.4.1",
@@ -31,6 +31,7 @@
     "react-countup": "^6.5.3",
     "react-dom": "^19.2.1",
     "react-intersection-observer": "^10.0.0",
+    "socket.io-client": "^4.8.0",
     "tailwind-merge": "^3.4.0",
     "typescript": "^5.9.3"
   },

@@ -10,6 +10,7 @@ import { event } from '@/lib/analytics'
 const navigation = [
   { name: 'Features', href: '/#features' },
   { name: 'Pricing', href: '/#pricing' },
+  { name: 'Events', href: '/events' },
   { name: 'About', href: '/about' },
   { name: 'Contact', href: '/contact' },
 ]

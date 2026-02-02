@@ -49,14 +49,16 @@ function DemoVideo() {
     // eslint-disable-next-line jsx-a11y/media-has-caption
     <video
       ref={videoRef}
-      src="/analytics-loop-av1.webm"
       autoPlay
       loop
       muted
       playsInline
-      preload="metadata"
+      preload="auto"
       className="w-full h-auto block"
-    />
+    >
+      <source src="/analytics-loop-av1.webm" type='video/webm; codecs="av01.0.05M.08"' />
+      <source src="/analytics-loop.webm" type="video/webm" />
+    </video>
   )
 }
 
