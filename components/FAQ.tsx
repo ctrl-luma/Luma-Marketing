@@ -8,6 +8,7 @@ import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { getTierById } from '@/lib/pricing'
 import { event } from '@/lib/analytics'
+import StarryBackground from './StarryBackground'
 
 const starterTier = getTierById('starter')
 const proTier = getTierById('pro')
@@ -112,6 +113,7 @@ export default function FAQ() {
   if (isMobile) {
     return (
       <section id="faq" className="section-padding bg-black relative overflow-hidden">
+        <StarryBackground subtle className="z-[1]" />
         <div
           ref={fadeRef}
           className={`container relative z-10 transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
@@ -136,6 +138,7 @@ export default function FAQ() {
   // Desktop version - with animations
   return (
     <section id="faq" className="section-padding bg-black relative overflow-hidden">
+      <StarryBackground subtle className="z-[1]" />
       <div className="container relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <motion.h2

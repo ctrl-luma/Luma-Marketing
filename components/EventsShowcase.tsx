@@ -8,6 +8,7 @@ import { useIsMobile } from '@/hooks/useIsMobile'
 import { Ticket, QrCode, Wallet, BarChart3 } from 'lucide-react'
 import Link from 'next/link'
 import { event } from '@/lib/analytics'
+import StarryBackground from './StarryBackground'
 
 const features = [
   {
@@ -80,6 +81,7 @@ export default function EventsShowcase() {
   if (isMobile) {
     return (
       <section className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
+        <StarryBackground subtle className="z-[1]" />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
 
         <div
@@ -138,6 +140,7 @@ export default function EventsShowcase() {
   // Desktop version
   return (
     <section className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
+      <StarryBackground subtle className="z-[1]" />
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
       <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2" />
 

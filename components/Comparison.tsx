@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { Check, AlertTriangle } from 'lucide-react'
 import { getTierById } from '@/lib/pricing'
+import StarryBackground from './StarryBackground'
 
 const proTier = getTierById('pro')
 
@@ -160,6 +161,7 @@ export default function Comparison() {
 
   return (
     <section className="section-padding bg-black relative overflow-hidden">
+      <StarryBackground subtle className="z-[1]" />
       {/* Background elements - hidden on mobile */}
       <div className="hidden lg:block absolute inset-0">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />

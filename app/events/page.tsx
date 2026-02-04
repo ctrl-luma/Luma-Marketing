@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import { publicEventsApi, type PublicEvent } from '@/lib/api/events'
 import { CalendarDays, MapPin, Search, Ticket } from 'lucide-react'
 import { io, type Socket } from 'socket.io-client'
+import StarryBackground from '@/components/StarryBackground'
 
 // --- Date helpers ---
 
@@ -246,9 +247,10 @@ export default function EventsPage() {
   const hasSearch = debouncedSearch.length > 0
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen bg-black">
+      <StarryBackground subtle className="z-[1]" />
       <Header />
-      <main className="pt-24 sm:pt-28 pb-16">
+      <main className="pt-24 sm:pt-28 pb-16 relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero */}
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
