@@ -152,10 +152,17 @@ function EventCard({ evt }: { evt: PublicEvent }) {
             <CalendarDays className="h-4 w-4 text-gray-500 shrink-0" />
             <span>{getRelativeLabel(evt.startsAt, evt.timezone)} at {formatTime(evt.startsAt, evt.timezone)}</span>
           </div>
-          {evt.locationName && (
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-gray-500 shrink-0" />
-              <span className="truncate">{evt.locationName}</span>
+          {(evt.locationName || evt.locationAddress) && (
+            <div className="flex items-start gap-2">
+              <MapPin className="h-4 w-4 text-gray-500 shrink-0 mt-0.5" />
+              <div className="min-w-0">
+                {evt.locationName && (
+                  <span className="block truncate">{evt.locationName}</span>
+                )}
+                {evt.locationAddress && (
+                  <span className="block text-xs text-gray-500 truncate">{evt.locationAddress}</span>
+                )}
+              </div>
             </div>
           )}
           <div className="flex items-center gap-2">
