@@ -13,16 +13,22 @@ import { event } from '@/lib/analytics'
 
 export default function Pricing() {
   const [isMobile, setIsMobile] = useState(true)
+  const [initialLoad, setInitialLoad] = useState(false)
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 1024)
+    if (window.location.hash) {
+      setInitialLoad(true)
+    }
   }, [])
 
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
   })
+
+  const shouldAnimate = inView || initialLoad
 
   const PricingCard = ({ tier, index }: { tier: PricingTier, index: number }) => (
     <div
@@ -183,7 +189,7 @@ export default function Pricing() {
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
             className="heading-2 mb-3 sm:mb-4 text-white"
           >
@@ -191,7 +197,7 @@ export default function Pricing() {
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-base sm:text-lg text-gray-300"
           >
@@ -206,7 +212,7 @@ export default function Pricing() {
               <motion.div
                 key={tier.name}
                 initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className={`relative rounded-2xl p-6 sm:p-7 md:p-8 overflow-visible transition-all duration-300 group flex flex-col ${
                   tier.highlighted

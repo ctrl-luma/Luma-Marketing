@@ -19,7 +19,7 @@ const principles = [
   },
   {
     title: 'Built for Operators',
-    description: 'Revenue splits, tip tracking, multi-location support—features real vendors need.',
+    description: 'Revenue splits, tip tracking, events & ticketing—features real vendors need.',
     icon: Users,
     color: 'primary',
   },

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useFadeIn } from '@/hooks/useFadeIn'
@@ -66,10 +66,20 @@ export default function AppShowcase() {
   const isMobile = useIsMobile()
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
+  // Check if navigating to home page with any hash (from another page)
+  const [initialLoad, setInitialLoad] = useState(false)
+  useEffect(() => {
+    if (window.location.hash) {
+      setInitialLoad(true)
+    }
+  }, [])
+
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
   })
+
+  const shouldAnimate = inView || initialLoad
 
   const DashboardContent = () => (
     <div className="relative">
@@ -128,7 +138,7 @@ export default function AppShowcase() {
               <motion.h2
                 ref={ref}
                 initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5 }}
                 className="heading-2 mb-3 sm:mb-4"
               >
@@ -136,7 +146,7 @@ export default function AppShowcase() {
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="text-base sm:text-lg text-gray-400"
               >

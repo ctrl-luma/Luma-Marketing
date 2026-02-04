@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useFadeIn } from '@/hooks/useFadeIn'
@@ -77,15 +78,33 @@ export default function Features() {
   const isMobile = useIsMobile()
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
+  // Check if navigating to home page with any hash (from another page)
+  const [initialLoad, setInitialLoad] = useState(false)
+  useEffect(() => {
+    if (window.location.hash) {
+      setInitialLoad(true)
+    }
+  }, [])
+
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
   })
 
+  // Separate observer for bottom section
+  const { ref: bottomRef, inView: bottomInView } = useInView({
+    threshold: 0.1,
+    triggerOnce: true,
+  })
+
+  // Show content if in view OR if we navigated directly to this section
+  const shouldAnimate = inView || initialLoad
+  const shouldAnimateBottom = bottomInView || initialLoad
+
   // Mobile version
   if (isMobile) {
     return (
-      <section className="section-padding bg-black relative overflow-hidden" id="features">
+      <section className="section-padding bg-black relative overflow-hidden scroll-mt-24" id="features">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 to-black" />
         <StarryBackground subtle className="z-[1]" />
 
@@ -165,7 +184,7 @@ export default function Features() {
 
   // Desktop version
   return (
-    <section className="section-padding bg-black relative overflow-hidden" id="features">
+    <section className="section-padding bg-black relative overflow-hidden scroll-mt-24" id="features">
       <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 to-black" />
       <StarryBackground subtle className="z-[1]" />
 
@@ -177,7 +196,7 @@ export default function Features() {
           <motion.h2
             ref={ref}
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
             className="heading-2 mb-3 sm:mb-4"
           >
@@ -185,7 +204,7 @@ export default function Features() {
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-base sm:text-lg text-gray-400"
           >
@@ -193,7 +212,7 @@ export default function Features() {
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.15 }}
             className="flex flex-wrap justify-center gap-2 mt-4 sm:mt-5"
           >
@@ -216,7 +235,7 @@ export default function Features() {
               <motion.div
                 key={feature.name}
                 initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="group relative h-full"
               >
@@ -243,9 +262,10 @@ export default function Features() {
 
         {/* Additional features - 3x2 grid */}
         <motion.div
+          ref={bottomRef}
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          animate={shouldAnimateBottom ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
           className="max-w-5xl mx-auto"
         >
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-8 text-center">
@@ -258,8 +278,8 @@ export default function Features() {
                 <motion.div
                   key={feature.name}
                   initial={{ opacity: 0, y: 10 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.5 + index * 0.05 }}
+                  animate={shouldAnimateBottom ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.1 + index * 0.05 }}
                   className="group p-5 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 hover:bg-gray-900/80 transition-all duration-300 h-full"
                 >
                   <div className="flex items-start gap-3">

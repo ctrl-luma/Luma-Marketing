@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useFadeIn } from '@/hooks/useFadeIn'
@@ -60,10 +61,20 @@ export default function EventsShowcase() {
   const isMobile = useIsMobile()
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
+  // Check if navigating to home page with any hash (from another page)
+  const [initialLoad, setInitialLoad] = useState(false)
+  useEffect(() => {
+    if (window.location.hash) {
+      setInitialLoad(true)
+    }
+  }, [])
+
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
   })
+
+  const shouldAnimate = inView || initialLoad
 
   // Mobile version
   if (isMobile) {
@@ -135,7 +146,7 @@ export default function EventsShowcase() {
           <motion.h2
             ref={ref}
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
             className="heading-2 mb-4"
           >
@@ -143,7 +154,7 @@ export default function EventsShowcase() {
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-lg text-gray-400"
           >
@@ -155,7 +166,7 @@ export default function EventsShowcase() {
           {/* Browser screenshot */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <BrowserFrame
@@ -167,7 +178,7 @@ export default function EventsShowcase() {
           {/* Features */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="space-y-6"
           >
@@ -177,7 +188,7 @@ export default function EventsShowcase() {
                 <motion.div
                   key={feature.title}
                   initial={{ opacity: 0, y: 10 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
                   className="flex gap-4 p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors"
                 >
@@ -195,7 +206,7 @@ export default function EventsShowcase() {
             {/* CTA */}
             <motion.div
               initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
+              animate={shouldAnimate ? { opacity: 1 } : {}}
               transition={{ duration: 0.4, delay: 0.8 }}
               className="pt-2"
             >

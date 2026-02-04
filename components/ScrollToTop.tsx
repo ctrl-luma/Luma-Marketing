@@ -3,6 +3,16 @@
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 
+const SCROLL_OFFSET = 50 // Offset for fixed header
+
+function scrollToHash(hash: string) {
+  const element = document.querySelector(hash)
+  if (element) {
+    const top = element.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET
+    window.scrollTo({ top, behavior: 'instant' })
+  }
+}
+
 export default function ScrollToTop() {
   const pathname = usePathname()
 
@@ -11,11 +21,10 @@ export default function ScrollToTop() {
     const hash = window.location.hash
 
     if (hash) {
-      // If there's a hash, scroll to that element
-      const element = document.querySelector(hash)
-      if (element) {
-        element.scrollIntoView()
-      }
+      // Small delay to ensure layout is complete
+      requestAnimationFrame(() => {
+        scrollToHash(hash)
+      })
     } else {
       // No hash, scroll to top
       window.scrollTo(0, 0)
@@ -32,11 +41,8 @@ export default function ScrollToTop() {
     if (hash) {
       // Small delay to ensure DOM is ready
       setTimeout(() => {
-        const element = document.querySelector(hash)
-        if (element) {
-          element.scrollIntoView()
-        }
-      }, 0)
+        scrollToHash(hash)
+      }, 50)
     } else {
       window.scrollTo(0, 0)
     }

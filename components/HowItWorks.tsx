@@ -111,14 +111,81 @@ function PhoneFrame({ src, alt }: { src: string; alt: string }) {
   )
 }
 
+// Desktop step with its own intersection observer
+function StepItem({ step, index, initialLoad }: { step: typeof steps[number]; index: number; initialLoad: boolean }) {
+  const Icon = step.icon
+  const isEven = index % 2 === 0
+
+  const { ref, inView } = useInView({
+    threshold: 0.2,
+    triggerOnce: true,
+  })
+
+  const shouldAnimate = inView || initialLoad
+
+  return (
+    <motion.div
+      ref={ref}
+      key={step.number}
+      initial={{ opacity: 0, x: isEven ? 50 : -50 }}
+      animate={shouldAnimate ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.6 }}
+      className={`flex items-center gap-12 ${isEven ? 'flex-row' : 'flex-row-reverse'}`}
+    >
+      {/* Text side */}
+      <div className="flex-1">
+        <div className="flex items-center gap-4 mb-4">
+          <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${step.gradient} flex items-center justify-center shadow-lg relative`}>
+            <Icon className="w-7 h-7 text-white" />
+            <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-900 border-2 border-gray-700 flex items-center justify-center">
+              <span className="text-xs font-bold text-white">{step.number}</span>
+            </div>
+          </div>
+          <h3 className="text-xl font-semibold text-white">{step.title}</h3>
+        </div>
+        <p className="text-gray-400 leading-relaxed">{step.description}</p>
+      </div>
+
+      {/* Image side */}
+      <div className="flex-1">
+        {step.image ? (
+          step.isPhone ? (
+            <PhoneFrame src={step.image} alt={step.imageAlt!} />
+          ) : (
+            <BrowserFrame src={step.image} alt={step.imageAlt!} />
+          )
+        ) : step.hasQr ? (
+          <QrDownload />
+        ) : (
+          <div className="flex items-center justify-center h-48">
+            <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center shadow-xl opacity-60`}>
+              <Icon className="w-12 h-12 text-white" />
+            </div>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  )
+}
+
 export default function HowItWorks() {
   const isMobile = useIsMobile()
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
+
+  // Check if navigating to home page with any hash (from another page)
+  const [initialLoad, setInitialLoad] = useState(false)
+  useEffect(() => {
+    if (window.location.hash) {
+      setInitialLoad(true)
+    }
+  }, [])
 
   const { ref, inView } = useInView({
     threshold: 0.05,
     triggerOnce: true,
   })
+
+  const shouldAnimate = inView || initialLoad
 
   // Mobile version
   if (isMobile) {
@@ -134,7 +201,7 @@ export default function HowItWorks() {
               Up and running in minutes
             </h2>
             <p className="text-base sm:text-lg text-gray-400">
-              Four simple steps to start accepting payments anywhere.
+              Four simple steps to accepting payments and getting paid.
             </p>
           </div>
 
@@ -185,7 +252,7 @@ export default function HowItWorks() {
           <motion.h2
             ref={ref}
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
             className="heading-2 mb-3 sm:mb-4"
           >
@@ -193,62 +260,18 @@ export default function HowItWorks() {
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-base sm:text-lg text-gray-400"
           >
-            Four simple steps to start accepting payments anywhere.
+            Four simple steps to accepting payments and getting paid.
           </motion.p>
         </div>
 
         <div className="space-y-20 sm:space-y-28 max-w-5xl mx-auto">
-          {steps.map((step, index) => {
-            const Icon = step.icon
-            const isEven = index % 2 === 0
-
-            return (
-              <motion.div
-                key={step.number}
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.15 + index * 0.12 }}
-                className={`flex items-center gap-12 ${isEven ? 'flex-row' : 'flex-row-reverse'}`}
-              >
-                {/* Text side */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${step.gradient} flex items-center justify-center shadow-lg relative`}>
-                      <Icon className="w-7 h-7 text-white" />
-                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-900 border-2 border-gray-700 flex items-center justify-center">
-                        <span className="text-xs font-bold text-white">{step.number}</span>
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-semibold text-white">{step.title}</h3>
-                  </div>
-                  <p className="text-gray-400 leading-relaxed">{step.description}</p>
-                </div>
-
-                {/* Image side */}
-                <div className="flex-1">
-                  {step.image ? (
-                    step.isPhone ? (
-                      <PhoneFrame src={step.image} alt={step.imageAlt!} />
-                    ) : (
-                      <BrowserFrame src={step.image} alt={step.imageAlt!} />
-                    )
-                  ) : step.hasQr ? (
-                    <QrDownload />
-                  ) : (
-                    <div className="flex items-center justify-center h-48">
-                      <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center shadow-xl opacity-60`}>
-                        <Icon className="w-12 h-12 text-white" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )
-          })}
+          {steps.map((step, index) => (
+            <StepItem key={step.number} step={step} index={index} initialLoad={initialLoad} />
+          ))}
         </div>
       </div>
     </section>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { event } from '@/lib/analytics'
 
@@ -90,9 +90,17 @@ export default function Header() {
                 </Link>
               ))}
               <Link
+                href="/download"
+                onClick={() => event('cta_header_download')}
+                className="ml-6 inline-flex items-center justify-center gap-2 rounded-xl border border-gray-700 bg-gray-800/50 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-700/50 hover:border-gray-600 transition-colors"
+              >
+                <Download className="h-4 w-4" />
+                Download
+              </Link>
+              <Link
                 href="/get-started"
                 onClick={() => event('cta_header_get_started')}
-                className="nav-btn-primary ml-8 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/20 hover:from-primary-400 hover:to-primary-500 hover:shadow-lg hover:shadow-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900"
+                className="nav-btn-primary inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/20 hover:from-primary-400 hover:to-primary-500 hover:shadow-lg hover:shadow-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900"
               >
                 Get Started
               </Link>
@@ -134,7 +142,15 @@ export default function Header() {
               {item.name}
             </Link>
           ))}
-          <div className="pt-3 mt-2 border-t border-gray-800">
+          <div className="pt-3 mt-2 border-t border-gray-800 space-y-2">
+            <Link
+              href="/download"
+              className="flex items-center justify-center gap-2 w-full rounded-xl border border-gray-700 bg-gray-800/50 px-4 py-3.5 font-semibold text-white transition-all duration-200 hover:bg-gray-700/50"
+              onClick={() => { event('cta_header_download'); setIsOpen(false) }}
+            >
+              <Download className="h-4 w-4" />
+              Download
+            </Link>
             <Link
               href="/get-started"
               className="block w-full text-center rounded-xl bg-primary px-4 py-3.5 font-semibold text-white transition-all duration-200 hover:bg-primary-600 hover:-translate-y-0.5"

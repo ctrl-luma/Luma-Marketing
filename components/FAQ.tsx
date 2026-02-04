@@ -43,20 +43,30 @@ const faqs = [
     question: 'Can I cancel anytime?',
     answer: 'Yes. No contracts, no commitments. You can cancel your subscription anytime from your account settings. Your Starter plan access continues even after canceling Pro.',
   },
+  {
+    question: 'What about manual card entry?',
+    answer: 'Manual card entry (typing in card numbers) has slightly higher fees due to increased fraud risk. Starter: 3.1% + $0.33 per transaction. Pro: 3.0% + $0.31 per transaction. This also applies to any online sales directly to customers, including ticket sales. Tap to Pay is always cheaper and faster.',
+  },
 ]
 
 export default function FAQ() {
   const [isMobile, setIsMobile] = useState(true)
+  const [initialLoad, setInitialLoad] = useState(false)
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 1024)
+    if (window.location.hash) {
+      setInitialLoad(true)
+    }
   }, [])
 
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
   })
+
+  const shouldAnimate = inView || initialLoad
 
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
@@ -131,7 +141,7 @@ export default function FAQ() {
           <motion.h2
             ref={ref}
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
             className="heading-2 mb-3 sm:mb-4"
           >
@@ -139,7 +149,7 @@ export default function FAQ() {
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-base sm:text-lg text-gray-400"
           >
@@ -149,7 +159,7 @@ export default function FAQ() {
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="max-w-2xl mx-auto"
         >

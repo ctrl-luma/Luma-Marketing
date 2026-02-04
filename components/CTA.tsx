@@ -11,10 +11,14 @@ import { event } from '@/lib/analytics'
 
 export default function CTA() {
   const [isMobile, setIsMobile] = useState(true)
+  const [initialLoad, setInitialLoad] = useState(false)
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 1024)
+    if (window.location.hash) {
+      setInitialLoad(true)
+    }
   }, [])
 
   const handlePricingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -29,6 +33,8 @@ export default function CTA() {
     threshold: 0.1,
     triggerOnce: true,
   })
+
+  const shouldAnimate = inView || initialLoad
 
   const Content = () => (
     <div className="max-w-3xl mx-auto text-center">
@@ -88,13 +94,13 @@ export default function CTA() {
         <motion.div
           ref={ref}
           initial={{ opacity: 0, scale: 0.95 }}
-          animate={inView ? { opacity: 1, scale: 1 } : {}}
+          animate={shouldAnimate ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.5 }}
           className="relative"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <Content />

@@ -28,23 +28,24 @@ const comparison = [
   {
     feature: 'Tip Pooling',
     description: 'Split tips by hours, role, or custom rules',
-    luma: 'Included',
+    luma: 'Included with Pro',
     othersAvg: '+$50/mo avg',
     othersWarning: true,
   },
   {
     feature: 'Team Permissions',
     description: 'Control who can access what',
-    luma: 'Included',
+    luma: 'Included with Pro',
     othersAvg: '+$50/mo avg',
     othersWarning: true,
   },
   {
-    feature: 'Payout Speed',
-    description: 'How fast you get your money',
-    luma: '2-day standard',
-    othersAvg: '1–3 days',
-    othersWarning: false,
+    feature: 'Event Ticketing',
+    description: 'Sell tickets online with QR code scanning',
+    luma: 'Base processing fee',
+    lumaSubtext: 'No extra ticketing fee',
+    othersAvg: '$1.79 + 6.6%/ticket',
+    othersWarning: true,
   },
   {
     feature: 'Instant Payout Fee',
@@ -69,7 +70,7 @@ const comparison = [
   },
 ]
 
-function FeatureCard({ item, index }: { item: typeof comparison[number]; index: number }) {
+function FeatureCard({ item }: { item: typeof comparison[number] }) {
   return (
     <div className="h-full flex flex-col bg-gray-900/60 border border-gray-800 rounded-2xl p-5 sm:p-6 backdrop-blur-sm hover:border-gray-700 transition-colors">
       {/* Feature name + description */}
@@ -116,18 +117,46 @@ function FeatureCard({ item, index }: { item: typeof comparison[number]; index: 
   )
 }
 
+// Desktop card with its own intersection observer
+function AnimatedFeatureCard({ item, index, initialLoad }: { item: typeof comparison[number]; index: number; initialLoad: boolean }) {
+  const { ref, inView } = useInView({
+    threshold: 0.2,
+    triggerOnce: true,
+  })
+
+  const shouldAnimate = inView || initialLoad
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.4 }}
+      className="h-full"
+    >
+      <FeatureCard item={item} />
+    </motion.div>
+  )
+}
+
 export default function Comparison() {
   const [isMobile, setIsMobile] = useState(true)
+  const [initialLoad, setInitialLoad] = useState(false)
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 1024)
+    if (window.location.hash) {
+      setInitialLoad(true)
+    }
   }, [])
 
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
   })
+
+  const shouldAnimate = inView || initialLoad
 
   return (
     <section className="section-padding bg-black relative overflow-hidden">
@@ -154,7 +183,7 @@ export default function Comparison() {
           <motion.div
             ref={ref}
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
             className="text-center max-w-3xl mx-auto mb-8 sm:mb-12"
           >
@@ -170,17 +199,9 @@ export default function Comparison() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 max-w-5xl mx-auto">
           {comparison.map((item, index) => (
             isMobile ? (
-              <FeatureCard key={item.feature} item={item} index={index} />
+              <FeatureCard key={item.feature} item={item} />
             ) : (
-              <motion.div
-                key={item.feature}
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.4, delay: 0.05 * index }}
-                className="h-full"
-              >
-                <FeatureCard item={item} index={index} />
-              </motion.div>
+              <AnimatedFeatureCard key={item.feature} item={item} index={index} initialLoad={initialLoad} />
             )
           ))}
         </div>

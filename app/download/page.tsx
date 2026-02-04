@@ -9,7 +9,7 @@ import {
   CheckCircle2,
   Zap,
   Shield,
-  Wifi,
+  Ticket,
   CreditCard,
   Clock,
   BarChart3,
@@ -28,9 +28,9 @@ const FEATURES = [
     description: 'Process payments in seconds with tap-to-pay technology',
   },
   {
-    icon: Wifi,
-    title: 'Works Offline',
-    description: 'Continue selling even without an internet connection',
+    icon: Ticket,
+    title: 'Events & Ticketing',
+    description: 'Sell tickets online and scan QR codes at the door',
   },
   {
     icon: Shield,
