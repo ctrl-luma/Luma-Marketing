@@ -24,6 +24,10 @@ Luma-Marketing/
 │   ├── page.tsx                  # Landing page (composition of sections)
 │   ├── get-started/              # Multi-step onboarding wizard
 │   │   └── page.tsx              # ~950 lines - full signup flow
+│   ├── events/                   # Public events pages
+│   │   ├── page.tsx              # Events listing grid
+│   │   └── [slug]/
+│   │       └── page.tsx          # Individual event + ticket purchase
 │   ├── about/                    # About page
 │   ├── contact/                  # Contact form
 │   ├── privacy/                  # Privacy policy
@@ -42,6 +46,7 @@ Luma-Marketing/
 │   │   └── AuthProvider.tsx      # Auth context provider
 │   ├── Hero.tsx                  # Hero section with phone mockup
 │   ├── Features.tsx              # Feature showcase grid
+│   ├── EventsShowcase.tsx        # Events/ticketing showcase section
 │   ├── Pricing.tsx               # Pricing tier cards
 │   ├── FAQ.tsx                   # Accordion FAQ section
 │   ├── Header.tsx                # Navigation with scroll effects
@@ -69,8 +74,10 @@ Luma-Marketing/
 
 | Route | Purpose |
 |-------|---------|
-| `/` | Marketing landing with Hero, Features, Pricing, FAQ |
+| `/` | Marketing landing with Hero, Features, EventsShowcase, Pricing, FAQ |
 | `/get-started` | Multi-step signup wizard with payment |
+| `/events` | Public events listing (browse upcoming events) |
+| `/events/[slug]` | Public event page with ticket purchase |
 | `/about` | Company mission and values |
 | `/contact` | Contact form |
 | `/custom-plan-request` | Enterprise custom pricing request |
@@ -78,6 +85,31 @@ Luma-Marketing/
 | `/privacy` | Privacy policy |
 | `/onboarding` | Post-signup completion handler |
 | `/subscription` | Payment success confirmation |
+
+---
+
+## Public Events Pages
+
+The marketing site hosts public-facing event pages where customers can browse and purchase tickets.
+
+### `/events` - Events Listing
+- Grid of upcoming public events
+- Shows event image, name, date, location
+- Links to individual event pages
+
+### `/events/[slug]` - Event Detail Page
+- Event hero with image and details
+- Ticket tier selection and quantity
+- Stripe checkout integration
+- Apple/Google Wallet pass delivery after purchase
+- Ticket confirmation emails with QR codes
+
+**Key Features:**
+- Events are created by vendors in the Vendor Dashboard
+- Public events appear on the marketing site automatically
+- Tickets include QR codes for scanning at entry
+- Wallet passes for Apple Wallet and Google Wallet
+- Day-before reminder emails
 
 ---
 

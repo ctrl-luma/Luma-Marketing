@@ -15,6 +15,7 @@ export interface PublicEvent {
   salesEndAt: string | null;
   imageUrl: string | null;
   bannerUrl: string | null;
+  timezone: string;
   status: string;
   maxTicketsPerOrder: number;
   refundPolicy: string | null;
@@ -69,7 +70,7 @@ export const publicEventsApi = {
   checkLock: (slug: string, sessionId: string) =>
     apiClient.get<TicketLockResponse & { tierId: string; quantity: number; tierPrice: number }>(`/events/public/${slug}/lock/${sessionId}`),
 
-  lockTickets: (slug: string, data: { tierId: string; quantity: number }) =>
+  lockTickets: (slug: string, data: { tierId: string; quantity: number; customerEmail?: string }) =>
     apiClient.post<TicketLockResponse>(`/events/public/${slug}/lock`, data),
 
   purchase: (slug: string, data: {

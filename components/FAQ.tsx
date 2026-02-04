@@ -36,8 +36,8 @@ const faqs = [
     answer: 'Tips are tracked automatically per transaction and staff member. Revenue splits let you automatically divide payments between operators, venues, and promoters - no manual calculations needed.',
   },
   {
-    question: 'What are custom catalogs?',
-    answer: 'Custom catalogs let you create different menus, pricing, and inventory for each venue or event. Heading to a new location? Switch your entire catalog with one tap in the app. Set up once in the dashboard, use everywhere. Pro users get unlimited catalogs—perfect for mobile vendors who work multiple venues.',
+    question: 'What are custom menus?',
+    answer: 'Custom menus let you create different menus, pricing, and inventory for each venue or event. Heading to a new location? Switch your entire menu with one tap in the app. Set up once in the dashboard, use everywhere. Pro users get unlimited menus—perfect for mobile vendors who work multiple venues.',
   },
   {
     question: 'Can I cancel anytime?',

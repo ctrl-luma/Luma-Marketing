@@ -4,6 +4,7 @@ import TrustedBy from '@/components/TrustedBy'
 import HowItWorks from '@/components/HowItWorks'
 import Features from '@/components/Features'
 import AppShowcase from '@/components/AppShowcase'
+import EventsShowcase from '@/components/EventsShowcase'
 import Comparison from '@/components/Comparison'
 import Pricing from '@/components/Pricing'
 import FAQ from '@/components/FAQ'
@@ -35,6 +36,7 @@ export default function Home() {
           <SectionTracker section="how_it_works"><HowItWorks /></SectionTracker>
           <SectionTracker section="features"><Features /></SectionTracker>
           <SectionTracker section="app_showcase"><AppShowcase /></SectionTracker>
+          <SectionTracker section="events_showcase"><EventsShowcase /></SectionTracker>
           <SectionTracker section="comparison"><Comparison /></SectionTracker>
           <SectionTracker section="pricing"><Pricing /></SectionTracker>
           <SectionTracker section="faq"><FAQ /></SectionTracker>

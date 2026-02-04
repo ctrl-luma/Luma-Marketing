@@ -26,7 +26,7 @@ const steps = [
     icon: LayoutGrid,
     gradient: 'from-primary-400 to-primary-600',
     image: '/screenshots/howit-menu.webp',
-    imageAlt: 'Luma vendor dashboard showing catalog editor with products and categories',
+    imageAlt: 'Luma vendor dashboard showing menu editor with products and categories',
   },
   {
     number: '3',

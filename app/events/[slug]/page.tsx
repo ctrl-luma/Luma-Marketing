@@ -6,8 +6,86 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { publicEventsApi, type PublicEvent, type PublicTier } from '@/lib/api/events'
-import { CalendarDays, MapPin, Clock, Ticket, Users, ArrowLeft, Loader2, ExternalLink, Mail, ShieldAlert, AlertTriangle, Plus, Minus, Share2 } from 'lucide-react'
+import { CalendarDays, MapPin, Clock, Ticket, ArrowLeft, ExternalLink, Mail, ShieldAlert, AlertTriangle, Plus, Minus, Share2, Flame } from 'lucide-react'
 import { io, type Socket } from 'socket.io-client'
+
+// --- Countdown hook ---
+
+function useCountdown(targetDate: string | null) {
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    if (!targetDate) return
+    const id = setInterval(() => setNow(new Date()), 60_000) // update every minute
+    return () => clearInterval(id)
+  }, [targetDate])
+
+  if (!targetDate) return null
+  const target = new Date(targetDate)
+  const diff = target.getTime() - now.getTime()
+  if (diff <= 0 || diff > 24 * 60 * 60 * 1000) return null // only show within 24h
+
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+  if (hours > 0) return `Starts in ${hours}h ${minutes}m`
+  return `Starts in ${minutes}m`
+}
+
+// --- OG Meta ---
+
+function EventMeta({ event }: { event: PublicEvent }) {
+  const title = `${event.name} | Luma Events`
+  const eventTimezone = event.timezone || 'America/New_York'
+  const description = event.description
+    ? event.description.slice(0, 160)
+    : `${event.name} — ${new Date(event.startsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: eventTimezone })}`
+  const image = event.bannerUrl || event.imageUrl || '/events.webp'
+
+  useEffect(() => {
+    // Set document title
+    document.title = title
+
+    // Set or create meta tags
+    const setMeta = (property: string, content: string) => {
+      let el = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement | null
+      if (!el) {
+        el = document.createElement('meta')
+        el.setAttribute('property', property)
+        document.head.appendChild(el)
+      }
+      el.content = content
+    }
+
+    const setNameMeta = (name: string, content: string) => {
+      let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null
+      if (!el) {
+        el = document.createElement('meta')
+        el.setAttribute('name', name)
+        document.head.appendChild(el)
+      }
+      el.content = content
+    }
+
+    // Open Graph
+    setMeta('og:title', event.name)
+    setMeta('og:description', description)
+    setMeta('og:type', 'event')
+    setMeta('og:url', window.location.href)
+    setMeta('og:image', image)
+
+    // Twitter Card
+    setNameMeta('twitter:card', 'summary_large_image')
+    setNameMeta('twitter:title', event.name)
+    setNameMeta('twitter:description', description)
+    setNameMeta('twitter:image', image)
+
+    // General description
+    setNameMeta('description', description)
+  }, [event, title, description, image])
+
+  return null
+}
 
 export default function EventPage() {
   const params = useParams()
@@ -29,6 +107,8 @@ export default function EventPage() {
         return sum + (tier ? tier.price * qty : 0)
       }, 0)
     : 0
+
+  const countdown = useCountdown(event?.startsAt ?? null)
 
   const fetchEvent = useCallback(async () => {
     try {
@@ -72,6 +152,9 @@ export default function EventPage() {
     }
   }, [event?.id, fetchEvent])
 
+  // Format dates in the event's timezone (not the viewer's local time)
+  const eventTimezone = event?.timezone || 'America/New_York'
+
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr)
     return d.toLocaleDateString('en-US', {
@@ -79,6 +162,7 @@ export default function EventPage() {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
+      timeZone: eventTimezone,
     })
   }
 
@@ -88,11 +172,17 @@ export default function EventPage() {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
+      timeZone: eventTimezone,
     })
   }
 
   const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+    return new Date(dateStr).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZoneName: 'short',
+      timeZone: eventTimezone,
+    })
   }
 
   const isSoldOut = (tier: PublicTier) => {
@@ -168,22 +258,28 @@ export default function EventPage() {
 
   return (
     <div className="relative min-h-screen">
+      <EventMeta event={event} />
       <Header />
-      <main className="pt-20 sm:pt-24 pb-16">
+      <main className="pt-20 sm:pt-24 pb-28 lg:pb-16">
         {/* Hero Banner */}
-        {(event.bannerUrl || event.imageUrl) && (
-          <div className="w-full h-56 sm:h-72 md:h-96 bg-gray-900 relative overflow-hidden">
-            <img
-              src={event.bannerUrl || event.imageUrl}
-              alt={event.name}
-              className="w-full h-full object-cover"
-            />
+        <div className="w-full h-56 sm:h-72 md:h-96 bg-gray-900 relative overflow-hidden">
+          <img
+            src={event.bannerUrl || event.imageUrl || '/events.webp'}
+            alt={event.name}
+            className="w-full h-full object-cover"
+          />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
             {/* Overlay event title on banner for large screens */}
             <div className="absolute bottom-0 left-0 right-0 hidden md:block">
               <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-8">
                 <div className="flex items-end justify-between">
                   <div>
+                    {countdown && (
+                      <div className="inline-flex items-center gap-1.5 bg-orange-500/90 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-3">
+                        <Flame className="h-3.5 w-3.5" />
+                        {countdown}
+                      </div>
+                    )}
                     <h1 className="text-4xl lg:text-5xl font-bold text-white mb-2 drop-shadow-lg">{event.name}</h1>
                     {event.organizationName && (
                       <p className="text-gray-300 text-sm">Hosted by <span className="text-white font-medium">{event.organizationName}</span></p>
@@ -200,7 +296,6 @@ export default function EventPage() {
               </div>
             </div>
           </div>
-        )}
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Back link & share (mobile) */}
@@ -212,71 +307,30 @@ export default function EventPage() {
               <ArrowLeft className="h-4 w-4" />
               All Events
             </Link>
-            {!(event.bannerUrl || event.imageUrl) && (
-              <button
-                type="button"
-                onClick={handleShare}
-                className="inline-flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors text-sm cursor-pointer"
-              >
-                <Share2 className="h-3.5 w-3.5" />
-                {copied ? 'Copied!' : 'Share'}
-              </button>
-            )}
-            {(event.bannerUrl || event.imageUrl) && (
-              <button
-                type="button"
-                onClick={handleShare}
-                className="md:hidden inline-flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors text-sm cursor-pointer"
-              >
-                <Share2 className="h-3.5 w-3.5" />
-                {copied ? 'Copied!' : 'Share'}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleShare}
+              className="md:hidden inline-flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors text-sm cursor-pointer"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+              {copied ? 'Copied!' : 'Share'}
+            </button>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
             {/* Event Details */}
             <div className="lg:col-span-2">
-              {/* Title (mobile only if banner exists, always if no banner) */}
-              {(event.bannerUrl || event.imageUrl) ? (
-                <div className="md:hidden mb-6">
-                  <h1 className="text-3xl font-bold text-white mb-2">{event.name}</h1>
-                  {event.organizationName && (
-                    <p className="text-gray-400 text-sm">Hosted by <span className="text-gray-300">{event.organizationName}</span></p>
-                  )}
-                </div>
-              ) : (
-                <div className="mb-6">
-                  <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">{event.name}</h1>
-                  {event.organizationName && (
-                    <p className="text-gray-400 text-sm">Hosted by <span className="text-gray-300">{event.organizationName}</span></p>
-                  )}
-                </div>
-              )}
-
-              {/* Quick info strip */}
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-300 mb-8 pb-6 border-b border-gray-800/60">
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-primary" />
-                  <span>{formatDateShort(event.startsAt)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-primary" />
-                  <span>{formatTime(event.startsAt)} – {formatTime(event.endsAt)}</span>
-                </div>
-                {event.locationName && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const q = encodeURIComponent(event.locationAddress || event.locationName || '')
-                      const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)
-                      window.open(isApple ? `https://maps.apple.com/?q=${q}` : `https://maps.google.com/maps?q=${q}`, '_blank')
-                    }}
-                    className="flex items-center gap-2 hover:text-primary transition-colors cursor-pointer"
-                  >
-                    <MapPin className="h-4 w-4 text-primary" />
-                    <span className="underline decoration-gray-600 underline-offset-2">{event.locationName}</span>
-                  </button>
+              {/* Title (mobile only - desktop shows in banner overlay) */}
+              <div className="md:hidden mb-6">
+                {countdown && (
+                  <div className="inline-flex items-center gap-1.5 bg-orange-500/90 text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-3">
+                    <Flame className="h-3.5 w-3.5" />
+                    {countdown}
+                  </div>
+                )}
+                <h1 className="text-3xl font-bold text-white mb-2">{event.name}</h1>
+                {event.organizationName && (
+                  <p className="text-gray-400 text-sm">Hosted by <span className="text-gray-300">{event.organizationName}</span></p>
                 )}
               </div>
 
@@ -296,36 +350,44 @@ export default function EventPage() {
                 </div>
 
                 {event.locationName && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const q = encodeURIComponent(event.locationAddress || event.locationName || '')
-                      const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)
-                      window.open(isApple ? `https://maps.apple.com/?q=${q}` : `https://maps.google.com/maps?q=${q}`, '_blank')
-                    }}
-                    className="w-full text-left flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 border border-gray-800/60 hover:border-gray-700 transition-colors group cursor-pointer"
-                  >
+                  <div className="w-full flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 border border-gray-800/60">
                     <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                       <MapPin className="h-5 w-5 text-primary" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Location</p>
-                      <p className="text-sm font-medium text-white group-hover:text-primary transition-colors">{event.locationName}</p>
+                      <p className="text-sm font-medium text-white">{event.locationName}</p>
                       {event.locationAddress && (
                         <p className="text-sm text-gray-400">{event.locationAddress}</p>
                       )}
-                      <p className="text-xs text-primary mt-1.5 flex items-center gap-1">
-                        Open in Maps <ExternalLink className="h-3 w-3" />
-                      </p>
+                      <div className="flex items-center gap-2 mt-1.5 text-xs">
+                        <a
+                          href={`https://maps.apple.com/?q=${encodeURIComponent(event.locationAddress || event.locationName || '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline flex items-center gap-1"
+                        >
+                          Apple Maps <ExternalLink className="h-3 w-3" />
+                        </a>
+                        <span className="text-gray-600">·</span>
+                        <a
+                          href={`https://maps.google.com/maps?q=${encodeURIComponent(event.locationAddress || event.locationName || '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline flex items-center gap-1"
+                        >
+                          Google Maps <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
                     </div>
-                  </button>
+                  </div>
                 )}
               </div>
 
               {/* Age restriction */}
               {event.ageRestriction && (
-                <div className="flex items-center gap-3 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/15 text-amber-300 text-sm mb-8">
-                  <ShieldAlert className="h-5 w-5 shrink-0" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-medium mb-8">
+                  <ShieldAlert className="h-3.5 w-3.5" />
                   <span>{event.ageRestriction}</span>
                 </div>
               )}
@@ -359,113 +421,189 @@ export default function EventPage() {
               )}
             </div>
 
-            {/* Ticket Tiers Sidebar */}
-            <div className="lg:col-span-1">
+            {/* Ticket Tiers Sidebar (desktop) */}
+            <div className="lg:col-span-1 hidden lg:block">
               <div className="sticky top-28">
-                <div className="rounded-2xl border border-gray-800/60 bg-gradient-to-b from-gray-900/80 to-gray-950/80 p-6">
-                  <h2 className="text-lg font-semibold text-white mb-5">Tickets</h2>
-
-                  {!salesOpen && (
-                    <div className="p-3.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-sm mb-5">
-                      {event.salesStartAt && new Date(event.salesStartAt) > new Date()
-                        ? `Sales open ${formatDateShort(event.salesStartAt)} at ${formatTime(event.salesStartAt)}`
-                        : 'Ticket sales have ended'}
-                    </div>
-                  )}
-
-                  <div className="space-y-3">
-                    {event.tiers
-                      .sort((a, b) => a.sortOrder - b.sortOrder)
-                      .map((tier) => {
-                        const soldOut = isSoldOut(tier)
-                        const qty = quantities[tier.id] || 0
-                        const isSelected = qty > 0
-                        const maxQty = Math.min(
-                          event.maxTicketsPerOrder || 10,
-                          tier.available !== null ? tier.available : 999
-                        )
-                        return (
-                          <div
-                            key={tier.id}
-                            className={`rounded-xl border p-4 transition-all ${
-                              soldOut
-                                ? 'bg-gray-900/30 border-gray-800/50 opacity-50'
-                                : isSelected
-                                ? 'bg-primary/5 border-primary/30 ring-1 ring-primary/20'
-                                : 'bg-gray-900/40 border-gray-800/60 hover:border-gray-700'
-                            }`}
-                          >
-                            <div className="flex items-start justify-between mb-1.5">
-                              <h3 className="font-semibold text-white text-sm">{tier.name}</h3>
-                              <span className={`text-base font-bold ${isSelected ? 'text-primary' : 'text-white'}`}>
-                                {tier.price === 0 ? 'Free' : `$${tier.price.toFixed(2)}`}
-                              </span>
-                            </div>
-
-                            {tier.description && (
-                              <p className="text-xs text-gray-400 mb-3 leading-relaxed">{tier.description}</p>
-                            )}
-
-                            <div className="flex items-center justify-between">
-                              <span className={`text-xs ${soldOut ? 'text-red-400' : 'text-gray-500'}`}>
-                                {soldOut
-                                  ? 'Sold out'
-                                  : tier.available !== null
-                                  ? `${tier.available} left`
-                                  : 'Available'}
-                              </span>
-
-                              {salesOpen && !soldOut && (
-                                <div className="flex items-center gap-1.5">
-                                  <button
-                                    type="button"
-                                    onClick={() => setQuantities(prev => ({ ...prev, [tier.id]: Math.max(0, qty - 1) }))}
-                                    disabled={qty === 0}
-                                    className="h-7 w-7 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                                  >
-                                    <Minus className="h-3 w-3" />
-                                  </button>
-                                  <span className="w-5 text-center text-sm font-medium text-white tabular-nums">{qty}</span>
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      const newQty = Math.min(maxQty, qty + 1)
-                                      const reset: Record<string, number> = {}
-                                      event!.tiers.forEach(t => { reset[t.id] = 0 })
-                                      reset[tier.id] = newQty
-                                      setQuantities(reset)
-                                    }}
-                                    disabled={qty >= maxQty}
-                                    className="h-7 w-7 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                                  >
-                                    <Plus className="h-3 w-3" />
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )
-                      })}
-                  </div>
-
-                  {/* Go to Checkout button */}
-                  {selectedTierId && totalQuantity > 0 && (
-                    <Link
-                      href={`/events/${slug}/checkout?tier=${selectedTierId}&qty=${quantities[selectedTierId]}`}
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-600 transition-colors mt-5"
-                    >
-                      <Ticket className="h-4 w-4" />
-                      Go to Checkout · {totalQuantity} {totalQuantity === 1 ? 'ticket' : 'tickets'}
-                      {totalPrice > 0 ? ` · $${totalPrice.toFixed(2)}` : ' · Free'}
-                    </Link>
-                  )}
-                </div>
+                <TicketSidebar
+                  event={event}
+                  slug={slug}
+                  quantities={quantities}
+                  setQuantities={setQuantities}
+                  salesOpen={salesOpen}
+                  isSoldOut={isSoldOut}
+                  selectedTierId={selectedTierId}
+                  totalQuantity={totalQuantity}
+                  totalPrice={totalPrice}
+                  formatDateShort={formatDateShort}
+                  formatTime={formatTime}
+                />
               </div>
+            </div>
+
+            {/* Ticket Tiers (mobile — inline) */}
+            <div className="lg:hidden lg:col-span-1">
+              <TicketSidebar
+                event={event}
+                slug={slug}
+                quantities={quantities}
+                setQuantities={setQuantities}
+                salesOpen={salesOpen}
+                isSoldOut={isSoldOut}
+                selectedTierId={selectedTierId}
+                totalQuantity={totalQuantity}
+                totalPrice={totalPrice}
+                formatDateShort={formatDateShort}
+                formatTime={formatTime}
+              />
             </div>
           </div>
         </div>
       </main>
+
+      {/* Sticky mobile checkout bar */}
+      {selectedTierId && totalQuantity > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-gray-950/95 backdrop-blur-md border-t border-gray-800 px-4 py-3 safe-area-pb">
+          <Link
+            href={`/events/${slug}/checkout?tier=${selectedTierId}&qty=${quantities[selectedTierId]}`}
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3.5 text-sm font-semibold text-white hover:bg-primary-600 transition-colors"
+          >
+            <Ticket className="h-4 w-4" />
+            Get Tickets · {totalQuantity} {totalQuantity === 1 ? 'ticket' : 'tickets'}
+            {totalPrice > 0 ? ` · $${totalPrice.toFixed(2)}` : ' · Free'}
+          </Link>
+        </div>
+      )}
+
       <Footer />
+    </div>
+  )
+}
+
+// --- Ticket Sidebar (shared between desktop & mobile) ---
+
+function TicketSidebar({
+  event,
+  slug,
+  quantities,
+  setQuantities,
+  salesOpen,
+  isSoldOut,
+  selectedTierId,
+  totalQuantity,
+  totalPrice,
+  formatDateShort,
+  formatTime,
+}: {
+  event: PublicEvent
+  slug: string
+  quantities: Record<string, number>
+  setQuantities: React.Dispatch<React.SetStateAction<Record<string, number>>>
+  salesOpen: boolean
+  isSoldOut: (tier: PublicTier) => boolean
+  selectedTierId: string | null
+  totalQuantity: number
+  totalPrice: number
+  formatDateShort: (d: string) => string
+  formatTime: (d: string) => string
+}) {
+  return (
+    <div className="rounded-2xl border border-gray-800/60 bg-gradient-to-b from-gray-900/80 to-gray-950/80 p-6">
+      <h2 className="text-lg font-semibold text-white mb-5">Tickets</h2>
+
+      {!salesOpen && (
+        <div className="p-3.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-sm mb-5">
+          {event.salesStartAt && new Date(event.salesStartAt) > new Date()
+            ? `Sales open ${formatDateShort(event.salesStartAt)} at ${formatTime(event.salesStartAt)}`
+            : 'Ticket sales have ended'}
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {event.tiers
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map((tier) => {
+            const soldOut = isSoldOut(tier)
+            const qty = quantities[tier.id] || 0
+            const isSelected = qty > 0
+            const maxQty = Math.min(
+              event.maxTicketsPerOrder || 10,
+              tier.available !== null ? tier.available : 999
+            )
+            return (
+              <div
+                key={tier.id}
+                className={`rounded-xl border p-4 transition-all ${
+                  soldOut
+                    ? 'bg-gray-900/30 border-gray-800/50 opacity-50'
+                    : isSelected
+                    ? 'bg-primary/5 border-primary/30 ring-1 ring-primary/20'
+                    : 'bg-gray-900/40 border-gray-800/60 hover:border-gray-700'
+                }`}
+              >
+                <div className="flex items-start justify-between mb-1.5">
+                  <h3 className="font-semibold text-white text-sm">{tier.name}</h3>
+                  <span className={`text-base font-bold ${isSelected ? 'text-primary' : 'text-white'}`}>
+                    {tier.price === 0 ? 'Free' : `$${tier.price.toFixed(2)}`}
+                  </span>
+                </div>
+
+                {tier.description && (
+                  <p className="text-xs text-gray-400 mb-3 leading-relaxed">{tier.description}</p>
+                )}
+
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs ${soldOut ? 'text-red-400' : 'text-gray-500'}`}>
+                    {soldOut
+                      ? 'Sold out'
+                      : tier.available !== null
+                      ? `${tier.available} left`
+                      : 'Available'}
+                  </span>
+
+                  {salesOpen && !soldOut && (
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setQuantities(prev => ({ ...prev, [tier.id]: Math.max(0, qty - 1) }))}
+                        disabled={qty === 0}
+                        className="h-7 w-7 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                      >
+                        <Minus className="h-3 w-3" />
+                      </button>
+                      <span className="w-5 text-center text-sm font-medium text-white tabular-nums">{qty}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newQty = Math.min(maxQty, qty + 1)
+                          const reset: Record<string, number> = {}
+                          event.tiers.forEach(t => { reset[t.id] = 0 })
+                          reset[tier.id] = newQty
+                          setQuantities(reset)
+                        }}
+                        disabled={qty >= maxQty}
+                        className="h-7 w-7 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+      </div>
+
+      {/* Go to Checkout button (desktop only — mobile uses sticky bar) */}
+      {selectedTierId && totalQuantity > 0 && (
+        <Link
+          href={`/events/${slug}/checkout?tier=${selectedTierId}&qty=${quantities[selectedTierId]}`}
+          className="hidden lg:inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-600 transition-colors mt-5"
+        >
+          <Ticket className="h-4 w-4" />
+          Go to Checkout · {totalQuantity} {totalQuantity === 1 ? 'ticket' : 'tickets'}
+          {totalPrice > 0 ? ` · $${totalPrice.toFixed(2)}` : ' · Free'}
+        </Link>
+      )}
     </div>
   )
 }

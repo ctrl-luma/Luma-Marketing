@@ -52,7 +52,7 @@ const additionalFeatures = [
     icon: Split,
   },
   {
-    name: 'Custom Catalogs',
+    name: 'Custom Menus',
     description: 'Different menus and pricing for each venue. Switch with one tap.',
     icon: Settings,
   },

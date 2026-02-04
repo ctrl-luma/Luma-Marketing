@@ -156,7 +156,19 @@ export default function TermsOfService() {
                 Luma POS charges fees as outlined in your pricing plan. All fees are in addition to Stripe&apos;s processing fees.
               </p>
 
-              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.2 Payment Authorization</h3>
+              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.2 Card-Not-Present Transaction Fees</h3>
+              <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">
+                Online transactions, including event ticket sales, online ordering, and any other card-not-present payments, are subject to higher transaction fees than in-person Tap to Pay transactions. This reflects the increased fraud risk and higher processing costs associated with card-not-present transactions as charged by payment processors.
+              </p>
+              <ul className="list-disc list-inside text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 space-y-1">
+                <li><strong className="text-white">Tap to Pay (card-present):</strong> Standard transaction fees as listed in your pricing plan</li>
+                <li><strong className="text-white">Online/Ticket Sales (card-not-present):</strong> Higher transaction fees apply due to increased fraud protection requirements</li>
+              </ul>
+              <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">
+                Current card-not-present rates will be displayed at checkout and in your dashboard. These rates are subject to change based on payment processor pricing.
+              </p>
+
+              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.3 Payment Authorization</h3>
               <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">By using the Service, you authorize Luma POS to:</p>
               <ul className="list-disc list-inside text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 space-y-1">
                 <li>Charge your payment method on file for subscription fees</li>
@@ -164,7 +176,7 @@ export default function TermsOfService() {
                 <li>Adjust your account balance to recover amounts owed</li>
               </ul>
 
-              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.3 Disputed Fees</h3>
+              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.4 Disputed Fees</h3>
               <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">
                 Any disputes regarding Luma POS fees must be submitted within 30 days of the charge. After 30 days, all charges are considered accepted.
               </p>

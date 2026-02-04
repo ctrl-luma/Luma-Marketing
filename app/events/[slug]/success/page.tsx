@@ -27,7 +27,7 @@ export default function SuccessPage() {
     <div className="relative min-h-screen">
       <Header />
       <main className="pt-24 sm:pt-28 pb-16">
-        <div className="container mx-auto px-4 sm:px-6 max-w-sm">
+        <div className="container mx-auto px-4 sm:px-6 max-w-xs">
           {/* Success checkmark */}
           <div className="flex justify-center mb-6">
             <div className="h-16 w-16 rounded-full bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
@@ -50,9 +50,9 @@ export default function SuccessPage() {
                 <div className="flex items-center gap-2.5 text-gray-400">
                   <CalendarDays className="h-3.5 w-3.5 text-gray-500 shrink-0" />
                   <span>
-                    {new Date(event.startsAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                    {new Date(event.startsAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: event.timezone || 'America/New_York' })}
                     {' · '}
-                    {new Date(event.startsAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                    {new Date(event.startsAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZoneName: 'short', timeZone: event.timezone || 'America/New_York' })}
                   </span>
                 </div>
                 {event.locationName && (

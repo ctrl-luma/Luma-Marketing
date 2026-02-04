@@ -8,7 +8,7 @@ import Footer from '@/components/Footer'
 import { publicEventsApi, type PublicEvent } from '@/lib/api/events'
 import { getStripePromise } from '@/lib/stripe'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
-import { ArrowLeft, Clock, AlertCircle, Minus, Plus, Ticket, ShieldCheck, CalendarDays, MapPin, ShieldAlert } from 'lucide-react'
+import { ArrowLeft, Clock, AlertCircle, Minus, Plus, Ticket, ShieldCheck, CalendarDays, MapPin, ShieldAlert, XCircle } from 'lucide-react'
 
 function CheckoutForm({
   event,
@@ -35,8 +35,9 @@ function CheckoutForm({
   const router = useRouter()
   const slug = params.slug as string
 
-  const [customerName, setCustomerName] = useState('')
-  const [customerEmail, setCustomerEmail] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [timeLeft, setTimeLeft] = useState(0)
@@ -69,6 +70,9 @@ function CheckoutForm({
 
     setSubmitting(true)
     setError(null)
+
+    const customerName = `${firstName.trim()} ${lastName.trim()}`.trim()
+    const customerEmail = email.toLowerCase().trim()
 
     try {
       // For free tickets, skip Stripe
@@ -122,15 +126,15 @@ function CheckoutForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Timer */}
-      <div className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium ${
+      {/* Timer - prominent at top */}
+      <div className={`flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-sm font-semibold ${
         isUrgent
-          ? 'bg-red-500/10 border border-red-500/30 text-red-400'
+          ? 'bg-red-500/15 border border-red-500/40 text-red-400'
           : 'bg-primary/10 border border-primary/30 text-primary-300'
       }`}>
         <Clock className="h-4 w-4 shrink-0" />
         <span>
-          Reserved for {minutes}:{seconds.toString().padStart(2, '0')}
+          Tickets reserved for {minutes}:{seconds.toString().padStart(2, '0')}
         </span>
       </div>
 
@@ -178,26 +182,39 @@ function CheckoutForm({
         </div>
       </div>
 
-      {/* Customer Info */}
+      {/* Customer Info - all fields on one page */}
       <div className="space-y-3">
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">Full Name</label>
-          <input
-            type="text"
-            required
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-            placeholder="John Doe"
-            className="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-          />
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">First Name</label>
+            <input
+              type="text"
+              required
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="John"
+              className="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">Last Name</label>
+            <input
+              type="text"
+              required
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Doe"
+              className="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+            />
+          </div>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1.5">Email</label>
           <input
             type="email"
             required
-            value={customerEmail}
-            onChange={(e) => setCustomerEmail(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="john@example.com"
             className="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
           />
@@ -224,7 +241,7 @@ function CheckoutForm({
 
       <button
         type="submit"
-        disabled={submitting || (!stripe && totalAmount > 0)}
+        disabled={submitting || (!stripe && totalAmount > 0) || !firstName.trim() || !lastName.trim() || !email.trim()}
         className="w-full inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {submitting ? (
@@ -268,9 +285,9 @@ export default function CheckoutPage() {
     sessionId: string
     expiresAt: Date
   } | null>(null)
-  const [locking, setLocking] = useState(false)
   const [expired, setExpired] = useState(false)
   const [lockError, setLockError] = useState<string | null>(null)
+  const [soldOut, setSoldOut] = useState(false)
   const lockAttempted = useRef(false)
 
   const storageKey = `ticket_lock_${slug}_${tierId}`
@@ -283,19 +300,34 @@ export default function CheckoutPage() {
     try { sessionStorage.removeItem(storageKey) } catch {}
   }
 
-  // Fetch event then restore or create lock
+  // Fetch event and create lock immediately
   useEffect(() => {
     if (lockAttempted.current) return
     lockAttempted.current = true
 
-    publicEventsApi.getBySlug(slug)
-      .then(res => {
+    const initCheckout = async () => {
+      try {
+        // Fetch event
+        const res = await publicEventsApi.getBySlug(slug)
         setEvent(res.event)
-        return res.event
-      })
-      .then(async () => {
-        if (!tierId) return
-        setLocking(true)
+
+        if (!tierId) {
+          router.push(`/events/${slug}`)
+          return
+        }
+
+        const tier = res.event.tiers.find(t => t.id === tierId)
+        if (!tier) {
+          router.push(`/events/${slug}`)
+          return
+        }
+
+        // Check if sold out
+        if (tier.available !== null && tier.available <= 0) {
+          setSoldOut(true)
+          setLoading(false)
+          return
+        }
 
         // Try to restore existing lock from sessionStorage
         try {
@@ -306,7 +338,7 @@ export default function CheckoutPage() {
               const check = await publicEventsApi.checkLock(slug, sessionId)
               setLockState({ sessionId: check.sessionId, expiresAt: new Date(check.expiresAt) })
               setQuantity(check.quantity)
-              setLocking(false)
+              setLoading(false)
               return
             }
             clearSavedLock()
@@ -315,20 +347,28 @@ export default function CheckoutPage() {
           clearSavedLock()
         }
 
-        // Create new lock
-        try {
-          const res = await publicEventsApi.lockTickets(slug, { tierId, quantity: 1 })
-          setLockState({ sessionId: res.sessionId, expiresAt: new Date(res.expiresAt) })
-          saveLock(res.sessionId, res.expiresAt)
-        } catch (err: any) {
-          setLockError(err?.error || 'Failed to reserve tickets. Please try again.')
-        } finally {
-          setLocking(false)
+        // Create new lock immediately (email collected later on form)
+        const lockRes = await publicEventsApi.lockTickets(slug, {
+          tierId,
+          quantity: initialQty,
+        })
+        setLockState({ sessionId: lockRes.sessionId, expiresAt: new Date(lockRes.expiresAt) })
+        saveLock(lockRes.sessionId, lockRes.expiresAt)
+      } catch (err: any) {
+        if (err?.code === 'NOT_ENOUGH_TICKETS' || err?.available === 0) {
+          setSoldOut(true)
+        } else if (err?.code === 'MAX_PER_CUSTOMER_EXCEEDED' || err?.code === 'IP_LIMIT_EXCEEDED') {
+          setLockError(err.error)
+        } else {
+          setLockError(err?.error || 'Failed to reserve tickets. They may have sold out.')
         }
-      })
-      .catch(() => router.push('/events'))
-      .finally(() => setLoading(false))
-  }, [slug, tierId, router])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    initCheckout()
+  }, [slug, tierId, router, initialQty])
 
   const tier = event?.tiers.find(t => t.id === tierId)
   const maxPerOrder = event?.maxTicketsPerOrder ?? 10
@@ -336,20 +376,42 @@ export default function CheckoutPage() {
 
   const handleRetry = async () => {
     setExpired(false)
-    setLocking(true)
+    setSoldOut(false)
     setLockError(null)
+    setLoading(true)
     clearSavedLock()
+
     try {
-      const res = await publicEventsApi.lockTickets(slug, { tierId, quantity })
-      setLockState({
-        sessionId: res.sessionId,
-        expiresAt: new Date(res.expiresAt),
+      // Refresh event data
+      const res = await publicEventsApi.getBySlug(slug)
+      setEvent(res.event)
+
+      const freshTier = res.event.tiers.find(t => t.id === tierId)
+      if (freshTier && typeof freshTier.available === 'number' && freshTier.available <= 0) {
+        setSoldOut(true)
+        setLoading(false)
+        return
+      }
+
+      const lockRes = await publicEventsApi.lockTickets(slug, {
+        tierId,
+        quantity,
       })
-      saveLock(res.sessionId, res.expiresAt)
+      setLockState({
+        sessionId: lockRes.sessionId,
+        expiresAt: new Date(lockRes.expiresAt),
+      })
+      saveLock(lockRes.sessionId, lockRes.expiresAt)
     } catch (err: any) {
-      setLockError(err?.error || 'Failed to reserve tickets. Please try again.')
+      if (err?.code === 'NOT_ENOUGH_TICKETS' || err?.available === 0) {
+        setSoldOut(true)
+      } else if (err?.code === 'MAX_PER_CUSTOMER_EXCEEDED' || err?.code === 'IP_LIMIT_EXCEEDED') {
+        setLockError(err.error)
+      } else {
+        setLockError(err?.error || 'Failed to reserve tickets. Please try again.')
+      }
     } finally {
-      setLocking(false)
+      setLoading(false)
     }
   }
 
@@ -357,12 +419,12 @@ export default function CheckoutPage() {
     setExpired(true)
     setLockState(null)
     clearSavedLock()
-  }, [storageKey])
+  }, [])
 
   const totalAmount = (tier?.price || 0) * quantity
   const stripePromise = getStripePromise()
 
-  if (loading || locking) {
+  if (loading) {
     return (
       <div className="relative min-h-screen">
         <Header />
@@ -372,14 +434,66 @@ export default function CheckoutPage() {
             <div className="h-7 w-40 bg-gray-800 rounded mb-2" />
             <div className="h-4 w-56 bg-gray-800 rounded mb-8" />
             <div className="space-y-4">
-              <div className="h-10 bg-gray-800/50 rounded-xl" />
+              <div className="h-12 bg-primary/20 rounded-xl" />
               <div className="h-24 bg-gray-800/50 rounded-xl" />
               <div className="h-10 bg-gray-800/50 rounded-xl" />
               <div className="h-10 bg-gray-800/50 rounded-xl" />
+              <div className="h-32 bg-gray-800/50 rounded-xl" />
               <div className="h-12 bg-gray-800/50 rounded-xl" />
             </div>
           </div>
         </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Sold out state
+  if (soldOut) {
+    return (
+      <div className="relative min-h-screen">
+        <Header />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+          <div className="h-16 w-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+            <XCircle className="h-8 w-8 text-red-400" />
+          </div>
+          <h1 className="text-xl font-bold text-white mb-2">Sold Out</h1>
+          <p className="text-gray-400 text-sm mb-6 max-w-xs">
+            Sorry, these tickets are no longer available. They may have been purchased while you were browsing.
+          </p>
+          <Link href={`/events/${slug}`} className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-600 transition-colors">
+            Back to Event
+          </Link>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Lock error state
+  if (lockError && !lockState) {
+    return (
+      <div className="relative min-h-screen">
+        <Header />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+          <div className="h-16 w-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+            <AlertCircle className="h-8 w-8 text-red-400" />
+          </div>
+          <h1 className="text-xl font-bold text-white mb-2">Unable to Reserve</h1>
+          <p className="text-gray-400 text-sm mb-6 max-w-xs">{lockError}</p>
+          <div className="flex gap-3">
+            <Link href={`/events/${slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Event
+            </Link>
+            <button
+              onClick={handleRetry}
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-600 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
         <Footer />
       </div>
     )
@@ -403,6 +517,9 @@ export default function CheckoutPage() {
     )
   }
 
+  // Format dates in event timezone
+  const eventTimezone = event.timezone || 'America/New_York'
+
   return (
     <div className="relative min-h-screen">
       <Header />
@@ -425,9 +542,9 @@ export default function CheckoutPage() {
             <div className="flex items-center gap-2.5 text-gray-300">
               <CalendarDays className="h-4 w-4 text-gray-500 shrink-0" />
               <span>
-                {new Date(event.startsAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                {new Date(event.startsAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: eventTimezone })}
                 {' · '}
-                {new Date(event.startsAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                {new Date(event.startsAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZoneName: 'short', timeZone: eventTimezone })}
               </span>
             </div>
             {event.locationName && (
@@ -455,21 +572,6 @@ export default function CheckoutPage() {
               >
                 Try Again
               </button>
-            </div>
-          ) : lockError ? (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>{lockError}</span>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={handleRetry}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-600 transition-colors"
-                >
-                  Try Again
-                </button>
-              </div>
             </div>
           ) : lockState ? (
             <Elements
