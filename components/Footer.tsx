@@ -24,7 +24,7 @@ const footerLinks = {
   ],
 }
 
-const socialLinks = [
+const _socialLinks = [
   { name: 'Email', icon: Mail, href: 'mailto:support@lumapos.co' },
 ]
 

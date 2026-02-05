@@ -283,6 +283,44 @@ const handlePayment = async () => {
 </Card>
 ```
 
+### Image Handling
+
+Use Next.js `<Image>` for local static images in `/public/`. Use native `<img>` for external/dynamic URLs.
+
+**Use `<Image>` (Next.js) for:**
+- Screenshots in `/public/screenshots/`
+- App store badges (`/apple-download.png`, `/google-download.png`)
+- Any static assets with known dimensions
+
+```tsx
+import Image from 'next/image'
+
+// Static screenshot with fill (parent must have position: relative)
+<Image src="/screenshots/hero-center.webp" alt="..." fill className="object-cover" />
+
+// Static image with explicit dimensions
+<Image src="/apple-download.png" alt="Download on App Store" width={168} height={56} />
+```
+
+**Use `<img>` (native) for:**
+- External API URLs (QR code generators, CDN images)
+- Dynamic URLs from API responses (event images, user avatars)
+- URLs that can't be optimized at build time
+
+```tsx
+// QR code from external API - must use native <img>
+<img
+  src={`https://api.qrserver.com/v1/create-qr-code/?data=${url}`}
+  alt="QR Code"
+  className="w-40 h-40"
+/>
+
+// Event image from API - URL not known at build time
+<img src={event.coverImageUrl} alt={event.name} className="w-full h-auto" />
+```
+
+**Note:** The ESLint rule `@next/next/no-img-element` is disabled in this project because external URLs require native `<img>`.
+
 ---
 
 ## Animation System

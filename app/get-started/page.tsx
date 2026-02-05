@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, ArrowRight, Check, CreditCard, Mail, Lock, User, Building, Eye, EyeOff, Phone, AlertCircle, MessageSquare } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Mail, Lock, Building, Eye, EyeOff, Phone, AlertCircle, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { authService } from '@/lib/api'
@@ -38,7 +38,6 @@ const formatPhoneDisplay = (phone: string): string => {
 
 export default function GetStartedPage() {
   const searchParams = useSearchParams()
-  const router = useRouter()
   const initialTier = searchParams.get('tier')
 
   const [currentStep, setCurrentStep] = useState<Step>(initialTier ? 'account' : 'pricing')
@@ -190,10 +189,11 @@ export default function GetStartedPage() {
         // Fallback to dashboard
         redirectToVendorDashboard()
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { error?: string }
       console.error('Signup error:', error)
-      event('onboarding_error', { step: currentStep, error: error.error || 'signup_failed' })
-      setApiError(error.error || 'Failed to create account. Please try again.')
+      event('onboarding_error', { step: currentStep, error: err.error || 'signup_failed' })
+      setApiError(err.error || 'Failed to create account. Please try again.')
       setIsLoading(false)
     }
   }
@@ -299,10 +299,11 @@ export default function GetStartedPage() {
           } else {
             setApiError('Unable to set up payment. Please try again.')
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const err = error as { error?: string }
           console.error('Signup error:', error)
-          event('onboarding_error', { step: 'payment_setup', error: error.error || 'signup_failed' })
-          setApiError(error.error || 'Failed to create account. Please try again.')
+          event('onboarding_error', { step: 'payment_setup', error: err.error || 'signup_failed' })
+          setApiError(err.error || 'Failed to create account. Please try again.')
         }
         setIsLoading(false)
       } else if (steps[nextIndex] === 'confirmation') {

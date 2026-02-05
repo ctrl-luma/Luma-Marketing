@@ -79,29 +79,41 @@ function groupEvents(events: PublicEvent[]): EventGroup[] {
 
 // --- Helpers ---
 
-function getLowestPrice(evt: any): string | null {
+interface EventTier {
+  price: number
+  maxQuantity: number | null
+  available: number | null
+}
+
+interface EventWithTiers {
+  minPrice?: number | null
+  tiers?: EventTier[]
+  totalAvailable?: number
+}
+
+function getLowestPrice(evt: EventWithTiers): string | null {
   if (evt.minPrice !== undefined && evt.minPrice !== null) {
-    return evt.minPrice === 0 ? 'Free' : `$${parseFloat(evt.minPrice).toFixed(2)}`
+    return evt.minPrice === 0 ? 'Free' : `$${parseFloat(String(evt.minPrice)).toFixed(2)}`
   }
   if (evt.tiers?.length) {
-    const min = Math.min(...evt.tiers.map((t: any) => t.price))
+    const min = Math.min(...evt.tiers.map((t) => t.price))
     return min === 0 ? 'Free' : `$${min.toFixed(2)}`
   }
   return null
 }
 
-function isEventSoldOut(evt: any): boolean {
+function isEventSoldOut(evt: EventWithTiers): boolean {
   if (evt.tiers?.length) {
-    return evt.tiers.every((t: any) => t.maxQuantity !== null && t.available !== null && t.available <= 0)
+    return evt.tiers.every((t) => t.maxQuantity !== null && t.available !== null && t.available <= 0)
   }
   // List endpoint doesn't always have tiers — check totalAvailable if present
   if (evt.totalAvailable !== undefined) return evt.totalAvailable <= 0
   return false
 }
 
-function getTotalAvailable(evt: any): number | null {
+function getTotalAvailable(evt: EventWithTiers): number | null {
   if (evt.tiers?.length) {
-    return evt.tiers.reduce((sum: number, t: any) => sum + (t.available ?? 0), 0)
+    return evt.tiers.reduce((sum: number, t) => sum + (t.available ?? 0), 0)
   }
   return null
 }
@@ -116,67 +128,108 @@ function EventCard({ evt }: { evt: PublicEvent }) {
   return (
     <Link
       href={`/events/${evt.slug}`}
-      className="group block rounded-2xl bg-gray-900/80 border border-gray-800 overflow-hidden hover:border-gray-700 transition-all duration-300 hover:-translate-y-1"
+      className="group block rounded-xl sm:rounded-2xl bg-gray-900/80 border border-gray-800 overflow-hidden hover:border-gray-700 transition-all duration-300 sm:hover:-translate-y-1"
     >
-      {/* Image */}
-      <div className="aspect-[16/9] bg-gray-800 relative overflow-hidden">
-        <img
-          src={evt.imageUrl || '/events.webp'}
-          alt={evt.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-        {/* Price badge */}
-        {price && !soldOut && (
-          <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm rounded-lg px-3 py-1 text-sm font-semibold text-white">
-            {price === 'Free' ? 'Free' : `From ${price}`}
-          </div>
-        )}
-        {/* Sold out badge */}
-        {soldOut && (
-          <div className="absolute top-3 right-3 bg-red-600/90 backdrop-blur-sm rounded-lg px-3 py-1 text-sm font-semibold text-white">
-            Sold Out
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="p-5">
-        <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-primary transition-colors">
-          {evt.name}
-        </h3>
-        {evt.organizationName && (
-          <p className="text-xs text-gray-500 mb-3">by {evt.organizationName}</p>
-        )}
-
-        <div className="space-y-2 text-sm text-gray-400">
-          <div className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 text-gray-500 shrink-0" />
-            <span>{getRelativeLabel(evt.startsAt, evt.timezone)} at {formatTime(evt.startsAt, evt.timezone)}</span>
-          </div>
-          {(evt.locationName || evt.locationAddress) && (
-            <div className="flex items-start gap-2">
-              <MapPin className="h-4 w-4 text-gray-500 shrink-0 mt-0.5" />
-              <div className="min-w-0">
-                {evt.locationName && (
-                  <span className="block truncate">{evt.locationName}</span>
-                )}
-                {evt.locationAddress && (
-                  <span className="block text-xs text-gray-500 truncate">{evt.locationAddress}</span>
-                )}
-              </div>
+      {/* Mobile: Horizontal layout */}
+      <div className="flex sm:hidden">
+        {/* Thumbnail */}
+        <div className="w-28 h-28 flex-shrink-0 bg-gray-800 relative overflow-hidden">
+          <img
+            src={evt.imageUrl || '/events.webp'}
+            alt={evt.name}
+            className="w-full h-full object-cover"
+          />
+          {soldOut && (
+            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+              <span className="text-xs font-semibold text-red-400">Sold Out</span>
             </div>
           )}
-          <div className="flex items-center gap-2">
-            <Ticket className="h-4 w-4 text-gray-500 shrink-0" />
-            <span>
-              {soldOut
-                ? 'Sold out'
-                : available !== null
-                ? available > 0
-                  ? `${available} tickets available`
-                  : 'Sold out'
-                : 'Tickets available'}
-            </span>
+        </div>
+        {/* Content */}
+        <div className="flex-1 p-3 min-w-0">
+          <h3 className="text-sm font-semibold text-white mb-1 truncate group-hover:text-primary transition-colors">
+            {evt.name}
+          </h3>
+          <div className="space-y-1 text-xs text-gray-400">
+            <div className="flex items-center gap-1.5">
+              <CalendarDays className="h-3 w-3 text-gray-500 shrink-0" />
+              <span className="truncate">{getRelativeLabel(evt.startsAt, evt.timezone)} · {formatTime(evt.startsAt, evt.timezone)}</span>
+            </div>
+            {(evt.locationName || evt.locationAddress) && (
+              <div className="flex items-center gap-1.5">
+                <MapPin className="h-3 w-3 text-gray-500 shrink-0" />
+                <span className="truncate">{evt.locationName || evt.locationAddress}</span>
+              </div>
+            )}
+          </div>
+          {price && !soldOut && (
+            <div className="mt-2 text-xs font-medium text-primary">
+              {price === 'Free' ? 'Free' : `From ${price}`}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Desktop: Stacked layout */}
+      <div className="hidden sm:block">
+        {/* Image */}
+        <div className="aspect-[16/9] bg-gray-800 relative overflow-hidden">
+          <img
+            src={evt.imageUrl || '/events.webp'}
+            alt={evt.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          {price && !soldOut && (
+            <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm rounded-lg px-3 py-1 text-sm font-semibold text-white">
+              {price === 'Free' ? 'Free' : `From ${price}`}
+            </div>
+          )}
+          {soldOut && (
+            <div className="absolute top-3 right-3 bg-red-600/90 backdrop-blur-sm rounded-lg px-3 py-1 text-sm font-semibold text-white">
+              Sold Out
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="p-5">
+          <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-primary transition-colors">
+            {evt.name}
+          </h3>
+          {evt.organizationName && (
+            <p className="text-xs text-gray-500 mb-3">by {evt.organizationName}</p>
+          )}
+
+          <div className="space-y-2 text-sm text-gray-400">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="h-4 w-4 text-gray-500 shrink-0" />
+              <span>{getRelativeLabel(evt.startsAt, evt.timezone)} at {formatTime(evt.startsAt, evt.timezone)}</span>
+            </div>
+            {(evt.locationName || evt.locationAddress) && (
+              <div className="flex items-start gap-2">
+                <MapPin className="h-4 w-4 text-gray-500 shrink-0 mt-0.5" />
+                <div className="min-w-0">
+                  {evt.locationName && (
+                    <span className="block truncate">{evt.locationName}</span>
+                  )}
+                  {evt.locationAddress && (
+                    <span className="block text-xs text-gray-500 truncate">{evt.locationAddress}</span>
+                  )}
+                </div>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <Ticket className="h-4 w-4 text-gray-500 shrink-0" />
+              <span>
+                {soldOut
+                  ? 'Sold out'
+                  : available !== null
+                  ? available > 0
+                    ? `${available} tickets available`
+                    : 'Sold out'
+                  : 'Tickets available'}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -253,38 +306,50 @@ export default function EventsPage() {
       <main className="pt-24 sm:pt-28 pb-16 relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero */}
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-            <h1 className="heading-1 mb-4">Upcoming Events</h1>
-            <p className="text-lead">
-              Discover events from mobile bars, food trucks, and vendors powered by Luma POS.
+          <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-14">
+            <h1 className="heading-1 mb-2 sm:mb-4">Upcoming Events</h1>
+            <p className="text-sm sm:text-base text-gray-400">
+              Discover events powered by Luma POS.
             </p>
           </div>
 
           {/* Search */}
-          <div className="max-w-xl mx-auto mb-10">
+          <div className="max-w-xl mx-auto mb-6 sm:mb-10">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+              <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
               <input
                 type="text"
-                placeholder="Search events by name or location..."
+                placeholder="Search events..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-gray-900 border border-gray-700 rounded-lg sm:rounded-xl text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
           </div>
 
           {/* Events */}
           {loading ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="rounded-2xl bg-gray-900/80 border border-gray-800 overflow-hidden animate-pulse">
-                  <div className="aspect-video bg-gray-800" />
-                  <div className="p-5 space-y-3">
-                    <div className="h-5 w-3/4 bg-gray-800 rounded" />
-                    <div className="h-3 w-1/4 bg-gray-800/60 rounded" />
-                    <div className="h-4 w-1/2 bg-gray-800 rounded" />
-                    <div className="h-4 w-2/3 bg-gray-800 rounded" />
+                <div key={i} className="rounded-xl sm:rounded-2xl bg-gray-900/80 border border-gray-800 overflow-hidden animate-pulse">
+                  {/* Mobile skeleton */}
+                  <div className="flex sm:hidden">
+                    <div className="w-28 h-28 bg-gray-800 flex-shrink-0" />
+                    <div className="flex-1 p-3 space-y-2">
+                      <div className="h-4 w-3/4 bg-gray-800 rounded" />
+                      <div className="h-3 w-1/2 bg-gray-800/60 rounded" />
+                      <div className="h-3 w-2/3 bg-gray-800/60 rounded" />
+                    </div>
+                  </div>
+                  {/* Desktop skeleton */}
+                  <div className="hidden sm:block">
+                    <div className="aspect-video bg-gray-800" />
+                    <div className="p-5 space-y-3">
+                      <div className="h-5 w-3/4 bg-gray-800 rounded" />
+                      <div className="h-3 w-1/4 bg-gray-800/60 rounded" />
+                      <div className="h-4 w-1/2 bg-gray-800 rounded" />
+                      <div className="h-4 w-2/3 bg-gray-800 rounded" />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -299,23 +364,23 @@ export default function EventsPage() {
             </div>
           ) : hasSearch ? (
             /* Flat grid when searching — no grouping */
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
               {events.map((evt) => (
                 <EventCard key={evt.id} evt={evt} />
               ))}
             </div>
           ) : (
             /* Grouped by timeframe */
-            <div className="space-y-12">
+            <div className="space-y-8 sm:space-y-12">
               {groups.map((group) => (
                 <div key={group.label}>
-                  <h2 className="text-lg font-semibold text-gray-300 mb-5 flex items-center gap-3">
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-300 mb-3 sm:mb-5 flex items-center gap-2 sm:gap-3">
                     <span>{group.label}</span>
-                    <span className="text-xs font-normal text-gray-600 bg-gray-800 rounded-full px-2.5 py-0.5">
+                    <span className="text-[10px] sm:text-xs font-normal text-gray-600 bg-gray-800 rounded-full px-2 sm:px-2.5 py-0.5">
                       {group.events.length}
                     </span>
                   </h2>
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
                     {group.events.map((evt) => (
                       <EventCard key={evt.id} evt={evt} />
                     ))}

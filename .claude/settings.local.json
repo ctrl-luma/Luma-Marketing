@@ -24,7 +24,9 @@
       "WebFetch(domain:support.stripe.com)",
       "WebFetch(domain:www.swipesum.com)",
       "Bash(xargs ls:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(ls:*)",
+      "Bash(npm run lint:*)"
     ],
     "deny": []
   }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { motion } from 'framer-motion'
@@ -70,7 +71,7 @@ function BrowserFrame({ src, alt }: { src: string; alt: string }) {
           </a>
         </div>
       </div>
-      <img src={src} alt={alt} className="w-full h-auto block" />
+      <Image src={src} alt={alt} width={800} height={600} className="w-full h-auto block" />
     </div>
   )
 }
@@ -105,7 +106,7 @@ function PhoneFrame({ src, alt }: { src: string; alt: string }) {
     <div className="w-[180px] sm:w-[220px] mx-auto bg-gradient-to-b from-[#272f3b] to-[#161b24] rounded-[2rem] sm:rounded-[2.5rem] p-2 sm:p-2.5 shadow-2xl shadow-black/50">
       <div className="w-full h-full bg-black rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden relative">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 sm:w-20 h-4 sm:h-5 bg-black rounded-b-lg sm:rounded-b-xl z-20" />
-        <img src={src} alt={alt} className="w-full h-auto block" />
+        <Image src={src} alt={alt} width={220} height={476} className="w-full h-auto block" />
       </div>
     </div>
   )

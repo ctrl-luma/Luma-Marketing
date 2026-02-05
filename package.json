@@ -12,7 +12,7 @@
     "dev": "next dev -p 3333",
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3333",
-    "lint": "next lint",
+    "lint": "eslint .",
     "build:dev": "dotenv -e .env.dev -- docker buildx build --platform linux/amd64,linux/arm64 --build-arg NEXT_PUBLIC_APP_NAME --build-arg NEXT_PUBLIC_APP_URL --build-arg NEXT_PUBLIC_API_URL --build-arg NEXT_PUBLIC_DASHBOARD_URL --build-arg NEXT_PUBLIC_IOS_DOWNLOAD_URL --build-arg NEXT_PUBLIC_ANDROID_DOWNLOAD_URL --build-arg NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY --label version=latest -t ghcr.io/ctrl-luma/lumapos-web:dev --push .",
     "build:prod": "dotenv -e .env.prod -- docker buildx build --platform linux/amd64,linux/arm64 --build-arg NEXT_PUBLIC_APP_NAME --build-arg NEXT_PUBLIC_APP_URL --build-arg NEXT_PUBLIC_API_URL --build-arg NEXT_PUBLIC_DASHBOARD_URL --build-arg NEXT_PUBLIC_IOS_DOWNLOAD_URL --build-arg NEXT_PUBLIC_ANDROID_DOWNLOAD_URL --build-arg NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY --label version=latest -t ghcr.io/ctrl-luma/lumapos-web:latest --push ."
   },
@@ -36,10 +36,16 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^16.1.6",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.19",
     "dotenv-cli": "^11.0.0",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.1.6",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "typescript-eslint": "^8.54.0"
   }
 }

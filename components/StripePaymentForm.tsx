@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   PaymentElement,
   useStripe,
@@ -76,9 +76,10 @@ export default function StripePaymentForm({
       } else {
         onSuccess();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { message?: string }
       setMessage('An error occurred while processing your payment');
-      onError(err.message || 'Payment processing failed');
+      onError(error.message || 'Payment processing failed');
     } finally {
       setIsLoading(false);
     }

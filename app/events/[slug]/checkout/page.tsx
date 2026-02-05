@@ -118,8 +118,9 @@ function CheckoutForm({
       })
 
       router.push(`/events/${slug}/success?tickets=${res.tickets.map(t => t.id).join(',')}&email=${encodeURIComponent(customerEmail)}`)
-    } catch (err: any) {
-      setError(err?.error || err?.message || 'Purchase failed. Please try again.')
+    } catch (err: unknown) {
+      const error = err as { error?: string; message?: string }
+      setError(error?.error || error?.message || 'Purchase failed. Please try again.')
       setSubmitting(false)
     }
   }
@@ -354,13 +355,14 @@ export default function CheckoutPage() {
         })
         setLockState({ sessionId: lockRes.sessionId, expiresAt: new Date(lockRes.expiresAt) })
         saveLock(lockRes.sessionId, lockRes.expiresAt)
-      } catch (err: any) {
-        if (err?.code === 'NOT_ENOUGH_TICKETS' || err?.available === 0) {
+      } catch (err: unknown) {
+        const error = err as { code?: string; error?: string; available?: number }
+        if (error?.code === 'NOT_ENOUGH_TICKETS' || error?.available === 0) {
           setSoldOut(true)
-        } else if (err?.code === 'MAX_PER_CUSTOMER_EXCEEDED' || err?.code === 'IP_LIMIT_EXCEEDED') {
-          setLockError(err.error)
+        } else if (error?.code === 'MAX_PER_CUSTOMER_EXCEEDED' || error?.code === 'IP_LIMIT_EXCEEDED') {
+          setLockError(error.error || 'Unable to reserve tickets')
         } else {
-          setLockError(err?.error || 'Failed to reserve tickets. They may have sold out.')
+          setLockError(error?.error || 'Failed to reserve tickets. They may have sold out.')
         }
       } finally {
         setLoading(false)
@@ -368,6 +370,7 @@ export default function CheckoutPage() {
     }
 
     initCheckout()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, tierId, router, initialQty])
 
   const tier = event?.tiers.find(t => t.id === tierId)
@@ -402,13 +405,14 @@ export default function CheckoutPage() {
         expiresAt: new Date(lockRes.expiresAt),
       })
       saveLock(lockRes.sessionId, lockRes.expiresAt)
-    } catch (err: any) {
-      if (err?.code === 'NOT_ENOUGH_TICKETS' || err?.available === 0) {
+    } catch (err: unknown) {
+      const error = err as { code?: string; error?: string; available?: number }
+      if (error?.code === 'NOT_ENOUGH_TICKETS' || error?.available === 0) {
         setSoldOut(true)
-      } else if (err?.code === 'MAX_PER_CUSTOMER_EXCEEDED' || err?.code === 'IP_LIMIT_EXCEEDED') {
-        setLockError(err.error)
+      } else if (error?.code === 'MAX_PER_CUSTOMER_EXCEEDED' || error?.code === 'IP_LIMIT_EXCEEDED') {
+        setLockError(error.error || 'Unable to reserve tickets')
       } else {
-        setLockError(err?.error || 'Failed to reserve tickets. Please try again.')
+        setLockError(error?.error || 'Failed to reserve tickets. Please try again.')
       }
     } finally {
       setLoading(false)
@@ -419,6 +423,7 @@ export default function CheckoutPage() {
     setExpired(true)
     setLockState(null)
     clearSavedLock()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const totalAmount = (tier?.price || 0) * quantity

@@ -71,9 +71,10 @@ interface StarryBackgroundProps {
   children?: React.ReactNode
   className?: string
   subtle?: boolean
+  opacity?: number
 }
 
-export default function StarryBackground({ children, className = '', subtle = false }: StarryBackgroundProps) {
+export default function StarryBackground({ children, className = '', subtle = false, opacity }: StarryBackgroundProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -92,7 +93,7 @@ export default function StarryBackground({ children, className = '', subtle = fa
   })
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', opacity: subtle ? 0.4 : 1 }} className={className}>
+    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', opacity: opacity ?? (subtle ? 0.4 : 1) }} className={className}>
       {/* Star group 1 */}
       <div style={groupStyle('starTwinkle1')}>
         <FourPointStar style={{ top: '8%', left: '5%' }} size={16} color="rgba(255,255,255,0.6)" />

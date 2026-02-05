@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useFadeIn } from '@/hooks/useFadeIn'
@@ -52,7 +53,7 @@ function BrowserFrame({ src, alt }: { src: string; alt: string }) {
         </div>
       </div>
       <div className="bg-gray-950">
-        <img src={src} alt={alt} className="w-full h-auto block" />
+        <Image src={src} alt={alt} width={800} height={600} className="w-full h-auto block" />
       </div>
     </div>
   )

@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { Linkedin, Twitter } from 'lucide-react'
-import Image from 'next/image'
 
 const team = [
   {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Send } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { apiClient } from '@/lib/api'
@@ -35,9 +35,10 @@ export default function ContactForm() {
 
       // Reset to idle after 5 seconds
       setTimeout(() => setStatus('idle'), 5000)
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { details?: unknown }
       console.error('Contact form error:', error)
-      console.error('Error details:', error.details)
+      console.error('Error details:', err.details)
       setStatus('error')
 
       // Reset to idle after 5 seconds

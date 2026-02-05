@@ -1,8 +1,7 @@
 import { authService } from './auth';
-import { apiClient } from './client';
 
 let isRefreshing = false;
-let refreshPromise: Promise<any> | null = null;
+let refreshPromise: Promise<void> | null = null;
 
 export function setupAuthInterceptor() {
   if (typeof window === 'undefined') return;

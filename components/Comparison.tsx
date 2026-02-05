@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import { Check, AlertTriangle } from 'lucide-react'
 import { getTierById } from '@/lib/pricing'
 import StarryBackground from './StarryBackground'
@@ -71,7 +72,25 @@ const comparison = [
   },
 ]
 
-function FeatureCard({ item }: { item: typeof comparison[number] }) {
+function FeatureCard({ item, compact = false }: { item: typeof comparison[number]; compact?: boolean }) {
+  if (compact) {
+    // Mobile version - compact 2-column grid card
+    return (
+      <div className="bg-gray-900/60 border border-gray-800 rounded-lg p-3">
+        <h3 className="font-medium text-white text-xs mb-2 leading-tight">{item.feature}</h3>
+        <div className="flex items-center gap-1 text-xs text-green-400 font-medium mb-1">
+          <Check className="w-3 h-3 flex-shrink-0" />
+          <span className="truncate">{item.luma}</span>
+        </div>
+        <div className="flex items-center gap-1 text-xs text-red-400/80">
+          <AlertTriangle className="w-3 h-3 flex-shrink-0" />
+          <span className="truncate">{item.othersAvg}</span>
+        </div>
+      </div>
+    )
+  }
+
+  // Full desktop version
   return (
     <div className="h-full flex flex-col bg-gray-900/60 border border-gray-800 rounded-2xl p-5 sm:p-6 backdrop-blur-sm hover:border-gray-700 transition-colors">
       {/* Feature name + description */}
@@ -119,7 +138,7 @@ function FeatureCard({ item }: { item: typeof comparison[number] }) {
 }
 
 // Desktop card with its own intersection observer
-function AnimatedFeatureCard({ item, index, initialLoad }: { item: typeof comparison[number]; index: number; initialLoad: boolean }) {
+function AnimatedFeatureCard({ item, initialLoad }: { item: typeof comparison[number]; index: number; initialLoad: boolean }) {
   const { ref, inView } = useInView({
     threshold: 0.2,
     triggerOnce: true,
@@ -141,12 +160,11 @@ function AnimatedFeatureCard({ item, index, initialLoad }: { item: typeof compar
 }
 
 export default function Comparison() {
-  const [isMobile, setIsMobile] = useState(true)
+  const isMobile = useIsMobile()
   const [initialLoad, setInitialLoad] = useState(false)
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 1024)
     if (window.location.hash) {
       setInitialLoad(true)
     }
@@ -173,12 +191,12 @@ export default function Comparison() {
         className={`container relative z-10 ${isMobile ? `transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}` : ''}`}
       >
         {isMobile ? (
-          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-            <h2 className="heading-2 mb-3 sm:mb-4 text-white">
-              The hidden costs they don&apos;t tell you about
+          <div className="text-center max-w-3xl mx-auto mb-6">
+            <h2 className="heading-2 mb-2 text-white">
+              Why Luma costs less
             </h2>
-            <p className="text-base sm:text-lg text-gray-300">
-              Other POS systems nickel-and-dime you with extra fees. We don&apos;t.
+            <p className="text-sm text-gray-400">
+              No hidden fees. No expensive hardware.
             </p>
           </div>
         ) : (
@@ -190,23 +208,27 @@ export default function Comparison() {
             className="text-center max-w-3xl mx-auto mb-8 sm:mb-12"
           >
             <h2 className="heading-2 mb-3 sm:mb-4 text-white">
-              The hidden costs they don&apos;t tell you about
+              Why Luma costs less
             </h2>
             <p className="text-base sm:text-lg text-gray-300">
-              Other POS systems nickel-and-dime you with extra fees. We don&apos;t.
+              No hidden fees, no expensive hardware, no long-term contracts.
             </p>
           </motion.div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 max-w-5xl mx-auto">
-          {comparison.map((item, index) => (
-            isMobile ? (
-              <FeatureCard key={item.feature} item={item} />
-            ) : (
+        {isMobile ? (
+          <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto">
+            {comparison.map((item) => (
+              <FeatureCard key={item.feature} item={item} compact />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 max-w-5xl mx-auto">
+            {comparison.map((item, index) => (
               <AnimatedFeatureCard key={item.feature} item={item} index={index} initialLoad={initialLoad} />
-            )
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

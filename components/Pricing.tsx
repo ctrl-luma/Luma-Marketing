@@ -30,7 +30,7 @@ export default function Pricing() {
 
   const shouldAnimate = inView || initialLoad
 
-  const PricingCard = ({ tier, index }: { tier: PricingTier, index: number }) => (
+  const PricingCard = ({ tier }: { tier: PricingTier, index: number }) => (
     <div
       className={`relative rounded-2xl p-6 sm:p-7 md:p-8 overflow-visible flex flex-col transition-all duration-300 ${
         tier.highlighted

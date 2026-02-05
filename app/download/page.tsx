@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StarryBackground from '@/components/StarryBackground'
@@ -57,9 +58,10 @@ const FEATURES = [
 // Detect mobile device type
 function getMobileOS(): 'ios' | 'android' | null {
   if (typeof window === 'undefined') return null
-  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera
+  const win = window as Window & { opera?: string; MSStream?: unknown }
+  const userAgent = navigator.userAgent || navigator.vendor || win.opera || ''
   if (/android/i.test(userAgent)) return 'android'
-  if (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream) return 'ios'
+  if (/iPad|iPhone|iPod/.test(userAgent) && !win.MSStream) return 'ios'
   return null
 }
 
@@ -82,6 +84,7 @@ export default function DownloadPage() {
     } else if (mobileOS === 'android' && appLinks.android) {
       window.open(appLinks.android, '_blank')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -128,10 +131,12 @@ export default function DownloadPage() {
                     onClick={(e) => { if (!appLinks.ios) { e.preventDefault() } else { event('download_click_ios') } }}
                     className={`w-full sm:w-auto flex justify-center ${!appLinks.ios ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] transition-transform duration-200'}`}
                   >
-                    <img
+                    <Image
                       src="/apple-download.png"
                       alt="Download on the App Store"
-                      className="h-14"
+                      width={168}
+                      height={56}
+                      className="h-14 w-auto"
                     />
                   </a>
 
@@ -142,10 +147,12 @@ export default function DownloadPage() {
                     onClick={(e) => { if (!appLinks.android) { e.preventDefault() } else { event('download_click_android') } }}
                     className={`w-full sm:w-auto flex justify-center ${!appLinks.android ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] transition-transform duration-200'}`}
                   >
-                    <img
+                    <Image
                       src="/google-download.png"
                       alt="Get it on Google Play"
-                      className="h-14"
+                      width={189}
+                      height={56}
+                      className="h-14 w-auto"
                     />
                   </a>
                 </div>

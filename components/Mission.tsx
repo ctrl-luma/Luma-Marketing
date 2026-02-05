@@ -55,7 +55,7 @@ export default function Mission() {
   })
 
   return (
-    <section className="section-padding bg-black">
+    <section className="section-padding">
       <div className="container">
         {/* Story Section */}
         <motion.div
@@ -63,9 +63,9 @@ export default function Mission() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="max-w-3xl mx-auto mb-12 sm:mb-20"
+          className="max-w-3xl mx-auto mb-10 sm:mb-20"
         >
-          <h2 className="text-xl sm:text-2xl font-semibold text-white mb-4 sm:mb-6">The problem</h2>
+          <h2 className="text-lg sm:text-2xl font-semibold text-white mb-3 sm:mb-6">The problem</h2>
           <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-gray-400 leading-relaxed">
             <p>
               Most POS systems are built for brick-and-mortar stores. They assume you have
@@ -86,7 +86,7 @@ export default function Mission() {
         </motion.div>
 
         {/* Principles Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto">
           {principles.map((principle, index) => {
             const Icon = principle.icon
             const colors = getColorClasses(principle.color)
@@ -96,15 +96,15 @@ export default function Mission() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-                className={`relative p-5 sm:p-8 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
+                className={`relative p-4 sm:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
               >
-                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center mb-4 sm:mb-6 mx-auto`}>
-                  <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+                <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center mb-3 sm:mb-6 mx-auto`}>
+                  <Icon className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 text-center">
+                <h3 className="text-base sm:text-xl font-semibold text-white mb-1.5 sm:mb-3 text-center">
                   {principle.title}
                 </h3>
-                <p className="text-sm sm:text-base text-gray-400 leading-relaxed text-center">
+                <p className="text-xs sm:text-base text-gray-400 leading-relaxed text-center">
                   {principle.description}
                 </p>
               </motion.div>

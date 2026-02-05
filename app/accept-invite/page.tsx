@@ -43,7 +43,7 @@ function AcceptInviteContent() {
       try {
         const result = await apiClient.get<InviteInfo>(`/auth/validate-invite?token=${token}`)
         setInviteInfo(result)
-      } catch (err) {
+      } catch {
         setInviteInfo({ valid: false })
       } finally {
         setLoading(false)
@@ -98,9 +98,10 @@ function AcceptInviteContent() {
       })
       event('invite_accepted')
       setSuccess(true)
-    } catch (err: any) {
-      event('invite_error', { error: err.error || 'unknown' })
-      setError(err.error || 'Failed to accept invite. Please try again.')
+    } catch (err: unknown) {
+      const error = err as { error?: string }
+      event('invite_error', { error: error.error || 'unknown' })
+      setError(error.error || 'Failed to accept invite. Please try again.')
     } finally {
       setSubmitting(false)
     }

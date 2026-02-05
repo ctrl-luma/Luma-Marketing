@@ -45,13 +45,14 @@ export function useAuth(): UseAuthReturn {
       setTimeout(() => {
         redirectToVendorDashboard();
       }, 100);
-    } catch (error: any) {
-      setError(error.error || 'Login failed');
+    } catch (error: unknown) {
+      const err = error as { error?: string }
+      setError(err.error || 'Login failed');
       throw error;
     } finally {
       setIsLoading(false);
     }
-  }, [router]);
+  }, []);
 
   const signup = useCallback(async (data: SignupData) => {
     setIsLoading(true);
@@ -64,13 +65,14 @@ export function useAuth(): UseAuthReturn {
       setTimeout(() => {
         redirectToVendorDashboard();
       }, 100);
-    } catch (error: any) {
-      setError(error.error || 'Signup failed');
+    } catch (error: unknown) {
+      const err = error as { error?: string }
+      setError(err.error || 'Signup failed');
       throw error;
     } finally {
       setIsLoading(false);
     }
-  }, [router]);
+  }, []);
 
   const logout = useCallback(async () => {
     setIsLoading(true);

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
@@ -19,24 +20,6 @@ function PhoneFrame({ children, className = '', small = false }: { children: Rea
   )
 }
 
-function ScreenshotImage({ src, alt }: { src: string; alt: string }) {
-  return (
-    <img
-      src={src}
-      alt={alt}
-      className="w-full h-full object-cover"
-      onError={(e) => {
-        // Hide broken image, show placeholder gradient instead
-        const target = e.currentTarget
-        target.style.display = 'none'
-        if (target.nextElementSibling) {
-          ;(target.nextElementSibling as HTMLElement).style.display = 'flex'
-        }
-      }}
-    />
-  )
-}
-
 function PlaceholderScreen({ label }: { label: string }) {
   return (
     <div className="w-full h-full bg-gradient-to-b from-[#272f3b] to-[#161b24] flex items-center justify-center">
@@ -46,12 +29,20 @@ function PlaceholderScreen({ label }: { label: string }) {
 }
 
 function PhoneWithScreenshot({ src, alt, placeholder }: { src: string; alt: string; placeholder: string }) {
+  const [hasError, setHasError] = useState(false)
+
   return (
     <>
-      <ScreenshotImage src={src} alt={alt} />
-      <div className="w-full h-full hidden">
-        <PlaceholderScreen label={placeholder} />
-      </div>
+      {!hasError && (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover"
+          onError={() => setHasError(true)}
+        />
+      )}
+      {hasError && <PlaceholderScreen label={placeholder} />}
     </>
   )
 }

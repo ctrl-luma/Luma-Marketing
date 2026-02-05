@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { Menu, X, Download } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { event } from '@/lib/analytics'
 
 const navigation = [
@@ -18,12 +17,9 @@ const navigation = [
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const router = useRouter()
   const pathname = usePathname()
 
   useEffect(() => {
-    setMounted(true)
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
     }

@@ -1,7 +1,7 @@
 type ApiError = {
   error: string;
   statusCode?: number;
-  details?: any;
+  details?: unknown;
 };
 
 class ApiClient {
@@ -69,7 +69,7 @@ class ApiClient {
     return this.handleResponse<T>(response);
   }
 
-  async post<T>(endpoint: string, data?: any, options?: RequestInit): Promise<T> {
+  async post<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     console.log('API POST:', `${this.baseURL}${endpoint}`, data);
     
     const response = await fetch(`${this.baseURL}${endpoint}`, {
@@ -84,7 +84,7 @@ class ApiClient {
     return this.handleResponse<T>(response);
   }
 
-  async put<T>(endpoint: string, data?: any, options?: RequestInit): Promise<T> {
+  async put<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       ...options,
       method: 'PUT',
@@ -105,7 +105,7 @@ class ApiClient {
     return this.handleResponse<T>(response);
   }
 
-  async patch<T>(endpoint: string, data?: any, options?: RequestInit): Promise<T> {
+  async patch<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       ...options,
       method: 'PATCH',

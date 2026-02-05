@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -10,7 +9,6 @@ import { redirectToVendorDashboard } from '@/lib/auth-handoff'
 import { event } from '@/lib/analytics'
 
 export default function OnboardingRefreshPage() {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
