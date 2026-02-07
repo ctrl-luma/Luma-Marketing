@@ -7,6 +7,7 @@ import { useIsMobile } from '@/hooks/useIsMobile'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { Download, LayoutGrid, CreditCard, Banknote } from 'lucide-react'
+import BrandedQRCode from '@/components/ui/BrandedQRCode'
 import StarryBackground from './StarryBackground'
 import { event } from '@/lib/analytics'
 
@@ -85,15 +86,11 @@ function QrDownload() {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <a href="/download" onClick={() => event('qr_code_click')} className="bg-white p-3 rounded-xl shadow-inner block">
+      <a href="/download" onClick={() => event('qr_code_click')} className="block">
         {url ? (
-          <img
-            src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=000000&margin=0`}
-            alt="Scan to download Luma"
-            className="w-32 h-32 sm:w-40 sm:h-40"
-          />
+          <BrandedQRCode value={url} />
         ) : (
-          <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gray-100 rounded" />
+          <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gray-900 rounded" />
         )}
       </a>
       <p className="text-xs text-gray-500 text-center">Scan or tap to download</p>

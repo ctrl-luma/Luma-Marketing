@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, ArrowRight, Check, Mail, Lock, Building, Eye, EyeOff, Phone, AlertCircle, MessageSquare } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Mail, Lock, Building, Eye, EyeOff, AlertCircle, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { authService } from '@/lib/api'
+import PhoneInput from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 import { redirectToVendorDashboard } from '@/lib/auth-handoff'
 import { Elements } from '@stripe/react-stripe-js'
 import { getStripePromise } from '@/lib/stripe'
@@ -15,26 +17,6 @@ import { pricingTiers, getTierById } from '@/lib/pricing'
 import { event } from '@/lib/analytics'
 
 type Step = 'account' | 'business' | 'usecase' | 'pricing' | 'payment' | 'confirmation'
-
-// Format phone number for display
-const formatPhoneDisplay = (phone: string): string => {
-  if (!phone) return ''
-  
-  const cleaned = phone.replace(/\D/g, '')
-  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)
-  if (match) {
-    return `(${match[1]}) ${match[2]}-${match[3]}`
-  }
-  
-  // Partial formatting
-  if (cleaned.length <= 3) {
-    return cleaned
-  } else if (cleaned.length <= 6) {
-    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`
-  } else {
-    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`
-  }
-}
 
 export default function GetStartedPage() {
   const searchParams = useSearchParams()
@@ -693,26 +675,16 @@ export default function GetStartedPage() {
                       <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
                         Phone number <span className="text-gray-500">(optional)</span>
                       </label>
-                      <div className="relative flex items-center">
-                        <Phone className="absolute left-3 sm:left-4 h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
-                        <span className="absolute left-9 sm:left-12 text-xs sm:text-sm text-gray-400">+1</span>
-                        <input
-                          type="tel"
-                          value={formatPhoneDisplay(formData.phone)}
-                          onChange={(e) => {
-                            // Remove all non-numeric characters
-                            const cleaned = e.target.value.replace(/\D/g, '')
-
-                            // Limit to 10 digits
-                            const limited = cleaned.slice(0, 10)
-
-                            // Store only digits
-                            handleInputChange('phone', limited)
-                          }}
-                          className="w-full pl-16 sm:pl-20 pr-3 sm:pr-4 py-2.5 rounded-lg sm:rounded-xl border border-gray-700 bg-gray-900/50 text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                          placeholder="(555) 123-4567"
-                        />
-                      </div>
+                      <PhoneInput
+                        international
+                        countryCallingCodeEditable={false}
+                        defaultCountry="US"
+                        limitMaxLength
+                        value={formData.phone}
+                        onChange={(value) => handleInputChange('phone', value || '')}
+                        placeholder="(555) 123-4567"
+                        className="phone-input-dark"
+                      />
                     </div>
 
                     <div className="space-y-3 pt-2">

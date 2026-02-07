@@ -24,8 +24,8 @@ const faqs = [
   },
   {
     question: 'What are the fees?',
-    answer: `Our Starter plan is free with ${starterTier?.transactionFee.replace(' per tap', '')} per transaction. Pro is ${proTier?.price}${proTier?.period} with lower rates at ${proTier?.transactionFee.replace(' per tap', '')}. No hidden fees, no contracts. High-volume businesses can `,
-    answerSuffix: ' for custom pricing.',
+    answer: `Our Starter plan is free with ${starterTier?.transactionFee.replace(' per tap', '')} per transaction. Pro is ${proTier?.price}${proTier?.period} with lower rates at ${proTier?.transactionFee.replace(' per tap', '')}. No hidden fees, no contracts. Manually entered cards have slightly higher rates due to additional fraud protection. High-volume businesses can `,
+    answerSuffix: ' for custom pricing or manual entry rates.',
     hasContactLink: true,
   },
   {
@@ -46,7 +46,7 @@ const faqs = [
   },
   {
     question: 'What about manual card entry?',
-    answer: 'Manual card entry (typing in card numbers) has slightly higher fees due to increased fraud risk. Starter: 3.1% + $0.33 per transaction. Pro: 3.0% + $0.31 per transaction. This also applies to any online sales directly to customers, including ticket sales. Tap to Pay is always cheaper and faster.',
+    answer: 'Manual card entry (typing in card numbers) has slightly higher fees due to increased fraud risk. Starter: 3.1% + $0.33 per transaction. Pro: 3.0% + $0.31 per transaction. This also applies to any online sales directly to customers, including ticket sales and online orders from your menu. Tap to Pay is always cheaper and faster.',
   },
 ]
 

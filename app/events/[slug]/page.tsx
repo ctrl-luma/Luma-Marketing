@@ -3,8 +3,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
 import { publicEventsApi, type PublicEvent, type PublicTier } from '@/lib/api/events'
 import { CalendarDays, MapPin, Ticket, ArrowLeft, ExternalLink, Mail, ShieldAlert, AlertTriangle, Plus, Minus, Share2, Flame } from 'lucide-react'
 import { io, type Socket } from 'socket.io-client'
@@ -213,9 +211,15 @@ export default function EventPage() {
       <div className="relative min-h-screen bg-black">
         <StarryBackground className="fixed inset-0 z-0" opacity={0.25} />
         <div className="relative z-10">
-          <Header />
-          <main className="pt-20 sm:pt-24 pb-16">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 animate-pulse">
+          <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/80 border-b border-white/5">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3">
+              <Link href="/events" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+                <span className="text-xl font-bold text-primary">Luma</span>
+              </Link>
+            </div>
+          </header>
+          <main className="pb-16">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-6 animate-pulse">
               {/* Banner skeleton */}
               <div className="h-48 sm:h-64 md:h-80 bg-gray-800/50 rounded-xl sm:rounded-2xl mb-6 sm:mb-8" />
               <div className="grid lg:grid-cols-3 gap-6 lg:gap-12">
@@ -233,7 +237,6 @@ export default function EventPage() {
               </div>
             </div>
           </main>
-          <Footer />
         </div>
       </div>
     )
@@ -244,7 +247,13 @@ export default function EventPage() {
       <div className="relative min-h-screen bg-black">
         <StarryBackground className="fixed inset-0 z-0" opacity={0.25} />
         <div className="relative z-10">
-          <Header />
+          <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/80 border-b border-white/5">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3">
+              <Link href="/events" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+                <span className="text-xl font-bold text-primary">Luma</span>
+              </Link>
+            </div>
+          </header>
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
             <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gray-800/50 flex items-center justify-center mb-4 sm:mb-6">
               <CalendarDays className="h-8 w-8 sm:h-10 sm:w-10 text-gray-600" />
@@ -255,7 +264,6 @@ export default function EventPage() {
               Browse Events
             </Link>
           </div>
-          <Footer />
         </div>
       </div>
     )
@@ -266,8 +274,17 @@ export default function EventPage() {
       <StarryBackground className="fixed inset-0 z-0" opacity={0.25} />
       <div className="relative z-10">
         <EventMeta event={event} />
-        <Header />
-        <main className="pt-20 sm:pt-24 pb-28 lg:pb-16">
+        <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/80 border-b border-white/5">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <Link href="/events" className="flex items-center hover:opacity-80 transition-opacity">
+              <span className="text-xl font-bold text-primary">Luma</span>
+            </Link>
+            {event.organizationName && (
+              <span className="text-sm text-gray-500 hidden sm:block">by {event.organizationName}</span>
+            )}
+          </div>
+        </header>
+        <main className="pb-28 lg:pb-16">
           {/* Hero Banner */}
           <div className="w-full h-48 sm:h-72 md:h-96 bg-gray-900 relative overflow-hidden">
             <img
@@ -484,7 +501,6 @@ export default function EventPage() {
           </div>
         )}
 
-        <Footer />
       </div>
     </div>
   )

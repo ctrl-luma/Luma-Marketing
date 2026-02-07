@@ -7,7 +7,6 @@ import Footer from '@/components/Footer'
 import StarryBackground from '@/components/StarryBackground'
 import {
   QrCode,
-  CheckCircle2,
   Zap,
   Shield,
   Ticket,
@@ -15,6 +14,7 @@ import {
   Clock,
   BarChart3,
 } from 'lucide-react'
+import BrandedQRCode from '@/components/ui/BrandedQRCode'
 import { event } from '@/lib/analytics'
 
 const APP_LINKS = {
@@ -168,19 +168,15 @@ export default function DownloadPage() {
               <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
                 <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                   <div className="flex-shrink-0">
-                    <div className="bg-white p-4 rounded-xl shadow-inner">
-                      {qrUrl ? (
-                        <img
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}&bgcolor=ffffff&color=000000&margin=0`}
-                          alt="Download QR Code"
-                          className="w-40 h-40"
-                        />
-                      ) : (
-                        <div className="w-40 h-40 flex items-center justify-center bg-gray-100 rounded">
+                    {qrUrl ? (
+                      <BrandedQRCode value={qrUrl} />
+                    ) : (
+                      <div className="bg-black p-4 rounded-xl shadow-inner">
+                        <div className="w-40 h-40 flex items-center justify-center bg-gray-900 rounded">
                           <QrCode className="w-12 h-12 text-gray-400" />
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                   <div className="text-center md:text-left">
                     <h3 className="text-2xl font-bold text-white mb-2">Scan to Download</h3>
@@ -188,10 +184,6 @@ export default function DownloadPage() {
                       Point your phone&apos;s camera at the QR code to download the app
                       instantly. Works with both iPhone and Android.
                     </p>
-                    <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-gray-500">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span>Auto-detects your device type</span>
-                    </div>
                   </div>
                 </div>
               </div>

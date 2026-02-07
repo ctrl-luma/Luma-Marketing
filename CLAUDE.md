@@ -24,6 +24,13 @@ Luma-Marketing/
 │   ├── page.tsx                  # Landing page (composition of sections)
 │   ├── get-started/              # Multi-step onboarding wizard
 │   │   └── page.tsx              # ~950 lines - full signup flow
+│   ├── menu/                     # Public external menus (QR code entry point)
+│   │   └── [slug]/
+│   │       ├── page.tsx          # Menu browsing with cart (~430 lines)
+│   │       ├── checkout/
+│   │       │   └── page.tsx      # Checkout form + Stripe payment (~666 lines)
+│   │       └── success/
+│   │           └── page.tsx      # Order confirmation + live tracking (~403 lines)
 │   ├── events/                   # Public events pages
 │   │   ├── page.tsx              # Events listing grid
 │   │   └── [slug]/
@@ -56,6 +63,7 @@ Luma-Marketing/
 │   ├── api/                      # API client
 │   │   ├── client.ts             # Base HTTP client
 │   │   ├── auth.ts               # Auth service
+│   │   ├── menu.ts               # Public menu API (catalog fetch, preorder CRUD)
 │   │   └── interceptor.ts        # Request/response interceptors
 │   ├── stripe.ts                 # Stripe initialization
 │   ├── pricing.ts                # Pricing tier definitions
@@ -76,6 +84,9 @@ Luma-Marketing/
 |-------|---------|
 | `/` | Marketing landing with Hero, Features, EventsShowcase, Pricing, FAQ |
 | `/get-started` | Multi-step signup wizard with payment |
+| `/menu/[slug]` | Public external menu — browse products, add to cart (QR code entry point) |
+| `/menu/[slug]/checkout` | Preorder checkout — customer info, tips, Stripe payment |
+| `/menu/[slug]/success` | Order confirmation — real-time status tracking via Socket.IO |
 | `/events` | Public events listing (browse upcoming events) |
 | `/events/[slug]` | Public event page with ticket purchase |
 | `/about` | Company mission and values |
@@ -110,6 +121,98 @@ The marketing site hosts public-facing event pages where customers can browse an
 - Tickets include QR codes for scanning at entry
 - Wallet passes for Apple Wallet and Google Wallet
 - Day-before reminder emails
+
+---
+
+## External Menus & Preorder Checkout
+
+The marketing site hosts the customer-facing external menu pages. Vendors generate QR codes in the Vendor Dashboard that link to `https://lumapos.co/menu/{slug}`. Customers scan the QR code to browse, order, and optionally pay — all without creating an account.
+
+### `/menu/[slug]` - Menu Browsing
+
+- Fetches catalog data from `GET /menu/public/{slug}` (unauthenticated API endpoint)
+- Displays products in a responsive grid (2-4 columns) with category tabs
+- Cart managed in React state and persisted to `sessionStorage` (`preorder_cart_{slug}`)
+- Floating cart button appears when items are added; opens a cart drawer modal
+- Quantity controls (+/-) on product cards and in cart drawer
+
+### `/menu/[slug]/checkout` - Checkout
+
+- Reads cart from `sessionStorage`, redirects to menu if empty
+- Customer form: first name, last name, email (required), phone (optional), order notes
+- **Payment mode** determined by catalog's `preorderPaymentMode`:
+  - `pay_now` — Stripe PaymentElement for card entry, payment confirmed server-side
+  - `pay_at_pickup` — no payment collected, customer pays via Tap to Pay at pickup
+  - `both` — customer chooses between the two options
+- **Tips** shown if `catalog.showTipScreen === true`, with preset percentages and optional custom amount
+- **Tax** calculated as `subtotal * (taxRate / 100)` from catalog settings
+- Submits to `POST /menu/public/{slug}/preorder` with items, customer info, and optional `paymentMethodId`
+- On success, redirects to `/menu/{slug}/success?id={preorderId}&email={email}`
+
+**Stripe integration:**
+```tsx
+<Elements stripe={stripePromise} options={{
+  mode: 'payment',
+  amount: Math.round(total * 100), // dollars → cents
+  currency: 'usd',
+  paymentMethodCreation: 'manual',
+  appearance: { theme: 'night', variables: { colorPrimary: '#2563EB', colorBackground: '#111827' } },
+}}>
+  <PayNowCheckoutForm />
+</Elements>
+```
+
+The form creates a PaymentMethod client-side, sends the `paymentMethodId` to the API, and the API confirms the charge on the connected Stripe account.
+
+### `/menu/[slug]/success` - Order Tracking
+
+- Fetches order status from `GET /menu/public/{slug}/preorder/{id}?email={email}`
+- Connects to Socket.IO `/public` namespace, joins `preorder:{preorderId}` room
+- Listens for real-time events: `preorder:updated`, `preorder:ready`, `preorder:completed`, `preorder:cancelled`
+- Visual status progression: Pending → Confirmed → Preparing → Ready → Picked Up (or Cancelled)
+- Shows estimated ready time, order summary, pickup instructions, and live connection indicator
+
+### Menu API Client (`lib/api/menu.ts`)
+
+```typescript
+export const publicMenuApi = {
+  getCatalog: (slug) =>           // GET /menu/public/{slug}
+  createPreorder: (slug, data) => // POST /menu/public/{slug}/preorder
+  getPreorderStatus: (slug, id, email) => // GET /menu/public/{slug}/preorder/{id}?email=...
+  cancelPreorder: (slug, id, email) =>    // POST /menu/public/{slug}/preorder/{id}/cancel
+};
+```
+
+### Key Data Types
+
+```typescript
+interface PublicCatalog {
+  id: string; name: string; slug: string;
+  organizationName: string;
+  preorderPaymentMode: 'pay_now' | 'pay_at_pickup' | 'both';
+  pickupInstructions: string | null;
+  estimatedPrepTime: number;
+  taxRate: number; showTipScreen: boolean;
+  tipPercentages: number[]; allowCustomTip: boolean;
+  categories: PublicCategory[];
+  products: PublicProduct[];
+}
+
+interface CreatePreorderRequest {
+  customerName: string; customerEmail: string;
+  customerPhone?: string;
+  paymentType: 'pay_now' | 'pay_at_pickup';
+  items: { catalogProductId: string; quantity: number; notes?: string }[];
+  tipAmount?: number; orderNotes?: string;
+  paymentMethodId?: string; // Required for pay_now
+}
+```
+
+### Important Notes
+- **No auth required** — all menu endpoints are public
+- **Monetary values** from the API are in **dollars** (not cents) — display directly, do NOT divide by 100
+- **Cart is session-scoped** — cleared on successful order, stored per-slug in `sessionStorage`
+- **Socket.IO** connects to the `/public` namespace (unauthenticated) for real-time order tracking
 
 ---
 
