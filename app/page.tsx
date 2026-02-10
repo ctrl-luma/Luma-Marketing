@@ -5,6 +5,7 @@ import HowItWorks from '@/components/HowItWorks'
 import Features from '@/components/Features'
 import AppShowcase from '@/components/AppShowcase'
 import EventsShowcase from '@/components/EventsShowcase'
+import PreorderShowcase from '@/components/PreorderShowcase'
 import Comparison from '@/components/Comparison'
 import Pricing from '@/components/Pricing'
 import FAQ from '@/components/FAQ'
@@ -37,6 +38,7 @@ export default function Home() {
           <SectionTracker section="features"><Features /></SectionTracker>
           <SectionTracker section="app_showcase"><AppShowcase /></SectionTracker>
           <SectionTracker section="events_showcase"><EventsShowcase /></SectionTracker>
+          <SectionTracker section="preorder_showcase"><PreorderShowcase /></SectionTracker>
           <SectionTracker section="comparison"><Comparison /></SectionTracker>
           <SectionTracker section="pricing"><Pricing /></SectionTracker>
           <SectionTracker section="faq"><FAQ /></SectionTracker>

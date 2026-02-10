@@ -7,7 +7,7 @@ import { publicMenuApi, type PreorderResponse } from '@/lib/api/menu'
 import { io, Socket } from 'socket.io-client'
 import { Check, Clock, ChefHat, Bell, PartyPopper, XCircle, Mail, ArrowLeft, MapPin, Loader2 } from 'lucide-react'
 
-type PreorderStatus = 'pending' | 'preparing' | 'ready' | 'picked_up' | 'cancelled'
+type PreorderStatus = 'pending' | 'preparing' | 'ready' | 'picked_up' | 'cancelled' | 'refunded'
 
 const STATUS_CONFIG: Record<PreorderStatus, {
   icon: typeof Clock
@@ -53,6 +53,14 @@ const STATUS_CONFIG: Record<PreorderStatus, {
     icon: XCircle,
     title: 'Order Cancelled',
     description: 'This order has been cancelled',
+    color: 'text-red-400',
+    bgColor: 'bg-red-500/20',
+    ringColor: 'ring-red-500/30',
+  },
+  refunded: {
+    icon: XCircle,
+    title: 'Order Refunded',
+    description: 'A refund has been issued to your original payment method',
     color: 'text-red-400',
     bgColor: 'bg-red-500/20',
     ringColor: 'ring-red-500/30',
@@ -213,7 +221,8 @@ export default function SuccessPage() {
   const config = STATUS_CONFIG[status]
   const StatusIcon = config.icon
   const currentStepIndex = STATUS_STEPS.findIndex(s => s.key === status)
-  const isCancelled = status === 'cancelled'
+  const isCancelled = status === 'cancelled' || status === 'refunded'
+  const isRefunded = status === 'refunded'
   const isComplete = status === 'picked_up'
 
   return (
@@ -250,21 +259,19 @@ export default function SuccessPage() {
           </div>
           <div className="min-w-0">
             <h1 className={`text-2xl font-bold ${config.color}`}>
-              {isCancelled && preorder.paymentType === 'pay_now'
-                ? 'Order Cancelled & Refunded'
-                : config.title}
+              {config.title}
             </h1>
             <p className="text-gray-400 text-base mt-1">
-              {isCancelled && preorder.paymentType === 'pay_now'
+              {isRefunded
                 ? `A refund of $${preorder.totalAmount.toFixed(2)} has been issued to your original payment method.`
-                : isCancelled && preorder.paymentType === 'pay_at_pickup'
+                : isCancelled
                   ? 'This order has been cancelled. No payment was collected.'
                   : config.description}
             </p>
             <p className="text-gray-500 text-sm font-mono mt-1">
               Order #{preorder.dailyNumber}
             </p>
-            {isCancelled && preorder.paymentType === 'pay_now' && (
+            {isRefunded && (
               <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/15 px-2.5 py-1 rounded-full mt-2 inline-block">
                 Refunded ${preorder.totalAmount.toFixed(2)}
               </span>

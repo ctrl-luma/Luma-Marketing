@@ -32,6 +32,7 @@ export const pricingTiers: PricingTier[] = [
       '1 User',
     ],
     notIncluded: [
+      'Online ordering & preorders',
       'Events & ticketing',
       'Tip reports & tracking',
       'Revenue splits',
@@ -55,6 +56,7 @@ export const pricingTiers: PricingTier[] = [
     features: [
       'Everything in Starter',
       'Unlimited custom menus',
+      'Online ordering & preorders',
       'Events & ticketing',
       'Unlimited users & devices',
       'Staff account management',

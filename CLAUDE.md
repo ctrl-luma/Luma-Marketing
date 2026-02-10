@@ -226,7 +226,7 @@ export const PRICING_TIERS = {
     price: 0,                       // Free
     transactionFee: '2.9% + $0.18',
     features: [
-      '1 custom catalog',
+      '1 custom menu',
       '1-2 devices',
       'Basic reporting',
       'Email support',
@@ -237,7 +237,7 @@ export const PRICING_TIERS = {
     price: 19,                      // $19/month
     transactionFee: '2.8% + $0.16',
     features: [
-      'Unlimited catalogs',
+      'Unlimited menus',
       'Unlimited events',
       'Unlimited devices',
       'Revenue splits & tip pooling',

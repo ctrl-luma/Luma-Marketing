@@ -592,7 +592,7 @@ export default function CheckoutPage() {
             </div>
           )}
 
-          {/* Tip selection - only show if catalog has tip screen enabled */}
+          {/* Tip selection - only show if menu has tip screen enabled */}
           {catalog.showTipScreen && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-300 mb-2">Add a tip (optional)</label>

@@ -287,31 +287,60 @@ export default function MenuPage() {
                       qty > 0 ? 'border-primary/50 ring-1 ring-primary/20' : 'border-gray-800'
                     }`}
                   >
-                    {/* Add button - only show when qty is 0 */}
-                    {qty === 0 && (
-                      <div className="absolute top-2 right-2 z-10">
-                        <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                          <Plus className="h-4 w-4 text-white" />
-                        </div>
-                      </div>
-                    )}
-
                     {/* Product image */}
-                    {product.imageUrl ? (
-                      <div className="aspect-[4/3] relative bg-gray-800">
+                    <div className="aspect-[4/3] relative bg-gray-800">
+                      {product.imageUrl ? (
                         <img
                           src={product.imageUrl}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />
-                      </div>
-                    ) : (
-                      <div className="aspect-[4/3] bg-gray-800 flex items-center justify-center">
-                        <ShoppingBag className="h-6 w-6 text-gray-600" />
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ShoppingBag className="h-6 w-6 text-gray-600" />
+                        </div>
+                      )}
 
-                    {/* Product info */}
+                      {/* Add button - only show when qty is 0 */}
+                      {qty === 0 && (
+                        <div className="absolute top-2 right-2">
+                          <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <Plus className="h-4 w-4 text-white" />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Quantity controls overlay on image - only show when qty > 0 */}
+                      {qty > 0 && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent pt-4 pb-2 px-2">
+                          <div className="flex items-center justify-center gap-2">
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                updateQuantity(product.catalogProductId, -1)
+                              }}
+                              className="h-8 w-8 rounded-full bg-gray-800 border border-gray-600 flex items-center justify-center text-white hover:bg-gray-700 hover:border-gray-500 transition-colors cursor-pointer"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </div>
+                            <div className="h-8 min-w-[32px] px-3 rounded-full bg-primary flex items-center justify-center">
+                              <span className="text-white font-bold text-sm">{qty}</span>
+                            </div>
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                addToCart(product)
+                              }}
+                              className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-600 transition-colors cursor-pointer"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Product info - always visible */}
                     <div className="p-2">
                       <h3 className="font-medium text-white text-xs sm:text-sm leading-tight mb-0.5 line-clamp-2">
                         {product.name}
@@ -325,35 +354,6 @@ export default function MenuPage() {
                         ${(product.price / 100).toFixed(2)}
                       </p>
                     </div>
-
-                    {/* Quantity controls at bottom - only show when qty > 0 */}
-                    {qty > 0 && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/80 to-transparent pt-6 pb-2 px-2">
-                        <div className="flex items-center justify-center gap-2">
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              updateQuantity(product.catalogProductId, -1)
-                            }}
-                            className="h-8 w-8 rounded-full bg-gray-800 border border-gray-600 flex items-center justify-center text-white hover:bg-gray-700 hover:border-gray-500 transition-colors cursor-pointer"
-                          >
-                            <Minus className="h-4 w-4" />
-                          </div>
-                          <div className="h-8 min-w-[32px] px-3 rounded-full bg-primary flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">{qty}</span>
-                          </div>
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              addToCart(product)
-                            }}
-                            className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-600 transition-colors cursor-pointer"
-                          >
-                            <Plus className="h-4 w-4" />
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </button>
                 )
               })}
@@ -370,7 +370,7 @@ export default function MenuPage() {
 
       {/* Floating cart button */}
       {cartItemCount > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black to-transparent">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black to-transparent z-30">
           <div className="container mx-auto max-w-2xl">
             <button
               onClick={() => setShowCart(true)}
