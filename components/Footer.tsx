@@ -10,13 +10,21 @@ const footerLinks = {
     { name: 'Features', href: '/#features' },
     { name: 'Pricing', href: '/#pricing' },
     { name: 'FAQ', href: '/#faq' },
-    { name: 'Events', href: '/events' },
     { name: 'Get Started', href: '/get-started' },
     { name: 'Download App', href: '/download' },
+  ],
+  features: [
+    { name: 'Tap to Pay', href: '/#how-it-works' },
+    { name: 'Events & Ticketing', href: '/#events-showcase' },
+    { name: 'Online Ordering', href: '/#preorder-showcase' },
+    { name: 'Invoicing', href: '/#invoice-showcase' },
+    { name: 'Analytics', href: '/#app-showcase' },
+    { name: 'Revenue Splits', href: '/#features' },
   ],
   company: [
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
+    { name: 'Events', href: '/events' },
   ],
   legal: [
     { name: 'Terms of Service', href: '/terms' },
@@ -49,8 +57,8 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-950 border-t border-gray-800">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+      <div className="container mx-auto px-6 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 pl-4 md:pl-0">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center mb-3 sm:mb-4">
               <span className="text-xl sm:text-2xl font-bold text-primary">Luma</span>
@@ -89,6 +97,25 @@ export default function Footer() {
 
           <div>
             <h3 className="text-xs sm:text-sm font-semibold text-gray-100 tracking-wider uppercase mb-3 sm:mb-4">
+              Features
+            </h3>
+            <ul className="space-y-2 sm:space-y-3">
+              {footerLinks.features.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    onClick={(e) => { handleNavClick(e, link.href); event(`footer_click_${link.name.toLowerCase().replace(/\s+/g, '_')}`) }}
+                    className="text-gray-400 hover:text-primary text-xs sm:text-sm transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-xs sm:text-sm font-semibold text-gray-100 tracking-wider uppercase mb-3 sm:mb-4">
               Company
             </h3>
             <ul className="space-y-2 sm:space-y-3">
@@ -96,7 +123,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    onClick={() => event(`footer_click_${link.name.toLowerCase().replace(/\s+/g, '_')}`)}
+                    onClick={(e) => { handleNavClick(e, link.href); event(`footer_click_${link.name.toLowerCase().replace(/\s+/g, '_')}`) }}
                     className="text-gray-400 hover:text-primary text-xs sm:text-sm transition-colors"
                   >
                     {link.name}
@@ -115,7 +142,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    onClick={() => event(`footer_click_${link.name.toLowerCase().replace(/\s+/g, '_')}`)}
+                    onClick={(e) => { handleNavClick(e, link.href); event(`footer_click_${link.name.toLowerCase().replace(/\s+/g, '_')}`) }}
                     className="text-gray-400 hover:text-primary text-xs sm:text-sm transition-colors"
                   >
                     {link.name}

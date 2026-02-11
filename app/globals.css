@@ -358,12 +358,20 @@ input:-webkit-autofill:active {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0.625rem 1rem;
-  background-color: #111827;
+  padding: 0.625rem 0.75rem;
+  background-color: rgba(17, 24, 39, 0.5);
   border: 1px solid #374151;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   font-size: 0.875rem;
+  line-height: 1.25rem;
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+@media (min-width: 640px) {
+  .phone-input-dark {
+    padding: 0.625rem 1rem;
+    border-radius: 0.75rem;
+  }
 }
 
 .phone-input-dark:focus-within {
@@ -382,6 +390,10 @@ input:-webkit-autofill:active {
   color: #9CA3AF;
   font-size: 0.875rem;
   cursor: pointer;
+}
+
+.phone-input-dark .PhoneInputCountrySelect option {
+  color: #000;
 }
 
 .phone-input-dark .PhoneInputCountrySelect:focus {
@@ -407,6 +419,17 @@ input:-webkit-autofill:active {
   color: #fff;
   font-size: 0.875rem;
   outline: none;
+  padding: 0;
+  margin: 0;
+  height: auto;
+  line-height: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .phone-input-dark .PhoneInputInput {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
 }
 
 .phone-input-dark .PhoneInputInput::placeholder {

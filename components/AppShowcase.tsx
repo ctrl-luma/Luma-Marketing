@@ -113,7 +113,7 @@ export default function AppShowcase() {
   )
 
   return (
-    <section className="section-padding bg-gradient-to-b from-black to-gray-950 relative overflow-hidden">
+    <section id="app-showcase" className="section-padding bg-gradient-to-b from-black to-gray-950 relative overflow-hidden scroll-mt-24">
       {/* Background elements - hidden on mobile */}
       <div className="hidden lg:block absolute inset-0">
         <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />

@@ -63,6 +63,7 @@ export const pricingTiers: PricingTier[] = [
       'Revenue splits (venue/promoter)',
       'Tip reports & tracking',
       'Tip pooling & tip-out rules',
+      'Custom invoicing',
       'Analytics dashboard',
       'Export to CSV/PDF',
     ],

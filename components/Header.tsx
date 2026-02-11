@@ -117,7 +117,7 @@ export default function Header() {
       {/* Mobile menu - smooth slide down animation */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${
-          isOpen ? 'max-h-[400px]' : 'max-h-0'
+          isOpen ? 'max-h-[500px]' : 'max-h-0'
         }`}
       >
         <div className={`bg-gray-900/95 backdrop-blur-md border-t border-gray-800 px-4 py-4 space-y-1 transition-all duration-300 ${

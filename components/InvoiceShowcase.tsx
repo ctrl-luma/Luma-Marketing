@@ -1,105 +1,134 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { useIsMobile } from '@/hooks/useIsMobile'
-import { QrCode, ShoppingCart, CreditCard, Bell } from 'lucide-react'
+import { FileText, Mail, Clock, DollarSign, Check } from 'lucide-react'
 import Link from 'next/link'
 import { event } from '@/lib/analytics'
 import StarryBackground from './StarryBackground'
 
 const features = [
   {
-    icon: QrCode,
-    title: 'QR Code Menus',
-    description: 'Generate a QR code for any menu. Customers scan and browse your full menu instantly.',
+    icon: FileText,
+    title: 'Create & Send',
+    description: 'Build invoices with line items, tax, and notes. Send to your customer in one click.',
   },
   {
-    icon: ShoppingCart,
-    title: 'Online Ordering',
-    description: 'Customers add items, customize orders, and check out — all from their phone.',
+    icon: Mail,
+    title: 'Email Delivery',
+    description: 'Invoices are emailed with a secure Stripe payment link — customers pay online.',
   },
   {
-    icon: CreditCard,
-    title: 'Flexible Payments',
-    description: 'Accept payment upfront, at pickup, or let customers choose.',
+    icon: Clock,
+    title: 'Payment Tracking',
+    description: 'See invoice status in real time — draft, sent, paid, or overdue at a glance.',
   },
   {
-    icon: Bell,
-    title: 'Real-Time Updates',
-    description: 'Get instant notifications. Track order status from placed to picked up.',
+    icon: DollarSign,
+    title: 'Flexible Billing',
+    description: 'Custom line items, tax rates, due dates, and memos for any billing scenario.',
   },
 ]
 
-function PhoneFrame({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+const invoiceLines = [
+  { description: 'Bar service — Friday night event', qty: 1, price: 850.00 },
+  { description: 'Premium cocktail package (50 guests)', qty: 1, price: 625.00 },
+  { description: 'Glassware rental', qty: 50, price: 2.50 },
+]
+
+function MockInvoice({ animate = false }: { animate?: boolean }) {
+  const subtotal = invoiceLines.reduce((sum, line) => sum + line.qty * line.price, 0)
+  const tax = subtotal * 0.08
+  const total = subtotal + tax
+
   return (
-    <div className={`bg-gradient-to-b from-[#272f3b] to-[#161b24] shadow-2xl shadow-black/50 rounded-[2rem] sm:rounded-[3rem] p-1.5 sm:p-3 ${className}`}>
-      <div className="w-full h-full bg-gradient-to-br from-gray-950 to-black overflow-hidden relative rounded-[1.5rem] sm:rounded-[2.5rem]">
-        {/* Dynamic Island */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black z-20 w-16 h-4 sm:w-24 sm:h-6 rounded-b-lg sm:rounded-b-xl" />
-        {children}
+    <div className="rounded-xl border border-gray-800 bg-gray-900/80 shadow-2xl shadow-black/50 overflow-hidden">
+      {/* Invoice header */}
+      <div className="p-4 sm:p-6 border-b border-gray-800/80">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Invoice</div>
+            <div className="text-white font-semibold text-lg">#INV-2026-0047</div>
+          </div>
+          <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium px-2.5 py-1 rounded-full">
+            <Check className="h-3 w-3" />
+            Paid
+          </div>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <div className="text-gray-500 text-xs mb-0.5">From</div>
+            <div className="text-gray-300">The Craft Mobile Bar</div>
+          </div>
+          <div>
+            <div className="text-gray-500 text-xs mb-0.5">To</div>
+            <div className="text-gray-300">Riverside Event Co.</div>
+          </div>
+          <div>
+            <div className="text-gray-500 text-xs mb-0.5">Issued</div>
+            <div className="text-gray-300">Feb 8, 2026</div>
+          </div>
+          <div>
+            <div className="text-gray-500 text-xs mb-0.5">Due</div>
+            <div className="text-gray-300">Feb 22, 2026</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Line items */}
+      <div className="p-4 sm:p-6">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-gray-500 text-xs uppercase tracking-wider">
+              <th className="text-left pb-3 font-medium">Description</th>
+              <th className="text-right pb-3 font-medium w-12">Qty</th>
+              <th className="text-right pb-3 font-medium w-20">Amount</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-300">
+            {invoiceLines.map((line, i) => (
+              <tr key={i} className="border-t border-gray-800/50">
+                <td className="py-2.5 pr-4">{line.description}</td>
+                <td className="py-2.5 text-right text-gray-400">{line.qty}</td>
+                <td className="py-2.5 text-right">${(line.qty * line.price).toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Totals */}
+        <div className="mt-4 pt-4 border-t border-gray-800/80 space-y-2 text-sm">
+          <div className="flex justify-between text-gray-400">
+            <span>Subtotal</span>
+            <span>${subtotal.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between text-gray-400">
+            <span>Tax (8%)</span>
+            <span>${tax.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between text-white font-semibold text-base pt-2 border-t border-gray-800/80">
+            <span>Total</span>
+            <span>${total.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="px-4 sm:px-6 py-3 bg-gray-950/50 border-t border-gray-800/50 flex items-center justify-between">
+        <span className="text-xs text-gray-500">Paid via Stripe on Feb 10, 2026</span>
+        <div className="flex items-center gap-1">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <span className="text-xs text-emerald-400">Payment received</span>
+        </div>
       </div>
     </div>
   )
 }
 
-function PhoneWithScreenshot({ src, alt }: { src: string; alt: string }) {
-  const [hasError, setHasError] = useState(false)
-
-  if (hasError) {
-    return (
-      <div className="w-full h-full bg-gradient-to-b from-[#272f3b] to-[#161b24] flex items-center justify-center">
-        <span className="text-gray-600 text-sm">Screenshot</span>
-      </div>
-    )
-  }
-
-  return (
-    <Image
-      src={src}
-      alt={alt}
-      fill
-      className="object-contain"
-      onError={() => setHasError(true)}
-    />
-  )
-}
-
-function DualPhones({ animate = true }: { animate?: boolean }) {
-  return (
-    <div className="relative flex items-center justify-center" style={{ height: 420 }}>
-      {/* Glow */}
-      <div className="absolute inset-0 bg-primary/10 rounded-full" style={{ filter: 'blur(60px)' }} />
-
-      <div className="relative z-10 flex items-end gap-4 sm:gap-6">
-        {/* Left phone - Menu */}
-        <div className={animate ? '' : 'transition-all duration-700 ease-out'}>
-          <div className="text-center mb-2 sm:mb-3">
-            <span className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Browse Menu</span>
-          </div>
-          <PhoneFrame className="w-[155px] h-[320px] sm:w-[220px] sm:h-[455px]">
-            <PhoneWithScreenshot src="/screenshots/mobile-preorder.webp" alt="Customer browsing menu on phone" />
-          </PhoneFrame>
-        </div>
-
-        {/* Right phone - Order Tracking */}
-        <div className={animate ? '' : 'transition-all duration-700 ease-out'}>
-          <div className="text-center mb-2 sm:mb-3">
-            <span className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Track Order</span>
-          </div>
-          <PhoneFrame className="w-[155px] h-[320px] sm:w-[220px] sm:h-[455px]">
-            <PhoneWithScreenshot src="/screenshots/mobile-tracking.webp" alt="Customer tracking order status on phone" />
-          </PhoneFrame>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default function PreorderShowcase() {
+export default function InvoiceShowcase() {
   const isMobile = useIsMobile()
   const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
@@ -120,7 +149,7 @@ export default function PreorderShowcase() {
   // Mobile version
   if (isMobile) {
     return (
-      <section id="preorder-showcase" className="section-padding bg-gradient-to-b from-black to-gray-950 relative overflow-hidden scroll-mt-24">
+      <section id="invoice-showcase" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
         <StarryBackground subtle className="z-[1]" />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
 
@@ -130,16 +159,16 @@ export default function PreorderShowcase() {
         >
           <div className="text-center max-w-3xl mx-auto mb-8">
             <h2 className="heading-2 mb-3">
-              Let customers order before they arrive
+              Professional invoices in seconds
             </h2>
             <p className="text-base text-gray-400">
-              Share a QR code or link. Customers browse your menu, place orders, and pay — all from their phone.
+              Create, send, and track invoices — get paid faster without leaving your dashboard.
             </p>
           </div>
 
-          {/* Dual phone mockups */}
+          {/* Mock invoice */}
           <div className="mb-10">
-            <DualPhones animate={false} />
+            <MockInvoice />
           </div>
 
           {/* Features grid */}
@@ -163,7 +192,7 @@ export default function PreorderShowcase() {
           <div className="text-center mt-8">
             <Link
               href="/get-started"
-              onClick={() => event('preorder_showcase_get_started_click')}
+              onClick={() => event('invoice_showcase_cta_click')}
               className="text-sm text-primary hover:text-primary-400 font-medium"
             >
               Get started for free →
@@ -176,7 +205,7 @@ export default function PreorderShowcase() {
 
   // Desktop version
   return (
-    <section id="preorder-showcase" className="section-padding bg-gradient-to-b from-black to-gray-950 relative overflow-hidden scroll-mt-24">
+    <section id="invoice-showcase" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
       <StarryBackground subtle className="z-[1]" />
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
       <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2" />
@@ -190,7 +219,7 @@ export default function PreorderShowcase() {
             transition={{ duration: 0.5 }}
             className="heading-2 mb-4"
           >
-            Let customers order before they arrive
+            Professional invoices in seconds
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -198,18 +227,18 @@ export default function PreorderShowcase() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-lg text-gray-400"
           >
-            Share a QR code or link. Customers browse your menu, place orders, and pay — all from their phone.
+            Create, send, and track invoices — get paid faster without leaving your dashboard.
           </motion.p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-          {/* Dual phone mockups */}
+          {/* Mock invoice */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0, x: -20 }}
+            animate={shouldAnimate ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <DualPhones />
+            <MockInvoice animate={shouldAnimate} />
           </motion.div>
 
           {/* Features */}
@@ -249,7 +278,7 @@ export default function PreorderShowcase() {
             >
               <Link
                 href="/get-started"
-                onClick={() => event('preorder_showcase_get_started_click')}
+                onClick={() => event('invoice_showcase_cta_click')}
                 className="text-sm text-primary hover:text-primary-400 font-medium"
               >
                 Get started for free →

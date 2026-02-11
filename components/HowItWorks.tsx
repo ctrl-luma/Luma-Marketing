@@ -6,7 +6,7 @@ import { useFadeIn } from '@/hooks/useFadeIn'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { Download, LayoutGrid, CreditCard, Banknote } from 'lucide-react'
+import { Download, LayoutGrid, CreditCard, Banknote, ArrowUpRight, Clock, Zap, Building2 } from 'lucide-react'
 import BrandedQRCode from '@/components/ui/BrandedQRCode'
 import StarryBackground from './StarryBackground'
 import { event } from '@/lib/analytics'
@@ -27,8 +27,7 @@ const steps = [
     description: 'Create products with images, set prices, and organize categories. Build different menus for each venue or event — switch between them instantly.',
     icon: LayoutGrid,
     gradient: 'from-primary-400 to-primary-600',
-    image: '/screenshots/howit-menu.webp',
-    imageAlt: 'Luma vendor dashboard showing menu editor with products and categories',
+    customComponent: 'menu',
   },
   {
     number: '3',
@@ -46,8 +45,7 @@ const steps = [
     description: 'Cash out to your bank anytime. Choose free standard payouts or instant transfers. Track every dollar from sale to settlement.',
     icon: Banknote,
     gradient: 'from-primary-500 to-primary-800',
-    image: '/screenshots/howit-payout.webp',
-    imageAlt: 'Luma vendor dashboard showing cash out payout screen with instant and standard options',
+    customComponent: 'payout',
   },
 ]
 
@@ -94,6 +92,140 @@ function QrDownload() {
         )}
       </a>
       <p className="text-xs text-gray-500 text-center">Scan or tap to download</p>
+    </div>
+  )
+}
+
+function MockMenuBuilder() {
+  const cocktails = [
+    { name: 'Margarita', price: '14.00' },
+    { name: 'Old Fashioned', price: '16.00' },
+    { name: 'Espresso Martini', price: '15.00' },
+  ]
+  const beers = [
+    { name: 'IPA Draft', price: '8.00' },
+    { name: 'Lager Draft', price: '7.00' },
+  ]
+
+  const DragDots = () => (
+    <div className="flex flex-col gap-[3px] opacity-30">
+      <div className="flex gap-[3px]"><div className="w-[3px] h-[3px] rounded-full bg-gray-400" /><div className="w-[3px] h-[3px] rounded-full bg-gray-400" /></div>
+      <div className="flex gap-[3px]"><div className="w-[3px] h-[3px] rounded-full bg-gray-400" /><div className="w-[3px] h-[3px] rounded-full bg-gray-400" /></div>
+      <div className="flex gap-[3px]"><div className="w-[3px] h-[3px] rounded-full bg-gray-400" /><div className="w-[3px] h-[3px] rounded-full bg-gray-400" /></div>
+    </div>
+  )
+
+  return (
+    <div className="rounded-xl border border-gray-800 bg-gray-900/80 shadow-2xl shadow-black/50 overflow-hidden">
+      {/* Header */}
+      <div className="p-4 sm:p-5 border-b border-gray-800/80 flex items-center justify-between">
+        <div>
+          <div className="text-xs text-gray-500 mb-0.5">Menu</div>
+          <div className="text-white font-semibold">Friday Night Pop-Up</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="text-xs text-gray-500 bg-gray-800 px-2.5 py-1 rounded-md">5 items</div>
+          <div className="text-xs text-primary bg-primary/10 border border-primary/25 px-2.5 py-1 rounded-md">+ Add</div>
+        </div>
+      </div>
+
+      {/* Cocktails category */}
+      <div className="border-b border-gray-800/50">
+        <div className="px-4 sm:px-5 py-2.5 bg-gray-800/30 flex items-center justify-between">
+          <span className="text-xs font-medium text-gray-300 uppercase tracking-wider">Cocktails</span>
+          <span className="text-[10px] text-gray-500">{cocktails.length} items</span>
+        </div>
+        {cocktails.map((item, i) => (
+          <div key={item.name} className={`px-4 sm:px-5 py-3 flex items-center gap-3 ${i < cocktails.length - 1 ? 'border-b border-gray-800/30' : ''}`}>
+            <DragDots />
+            <div className="flex-1 min-w-0">
+              <div className="text-sm text-white font-medium">{item.name}</div>
+            </div>
+            <div className="text-sm text-gray-300 font-medium">${item.price}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Beer category */}
+      <div>
+        <div className="px-4 sm:px-5 py-2.5 bg-gray-800/30 flex items-center justify-between">
+          <span className="text-xs font-medium text-gray-300 uppercase tracking-wider">Beer</span>
+          <span className="text-[10px] text-gray-500">{beers.length} items</span>
+        </div>
+        {beers.map((item, i) => (
+          <div key={item.name} className={`px-4 sm:px-5 py-3 flex items-center gap-3 ${i < beers.length - 1 ? 'border-b border-gray-800/30' : ''}`}>
+            <DragDots />
+            <div className="flex-1 min-w-0">
+              <div className="text-sm text-white font-medium">{item.name}</div>
+            </div>
+            <div className="text-sm text-gray-300 font-medium">${item.price}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function MockPayoutCard() {
+  const recentPayouts = [
+    { date: 'Feb 9', amount: '1,247.50', method: 'Instant', status: 'Paid' },
+    { date: 'Feb 7', amount: '892.00', method: 'Standard', status: 'Paid' },
+    { date: 'Feb 4', amount: '2,105.75', method: 'Instant', status: 'Paid' },
+  ]
+
+  return (
+    <div className="rounded-xl border border-gray-800 bg-gray-900/80 shadow-2xl shadow-black/50 overflow-hidden">
+      {/* Balance */}
+      <div className="p-4 sm:p-5 border-b border-gray-800/80">
+        <div className="text-xs text-gray-500 mb-1">Available Balance</div>
+        <div className="text-2xl font-bold text-white">$3,842.25</div>
+        <div className="flex items-center gap-1 mt-1">
+          <ArrowUpRight className="h-3 w-3 text-emerald-400" />
+          <span className="text-xs text-emerald-400">+$1,247.50 today</span>
+        </div>
+      </div>
+
+      {/* Payout options */}
+      <div className="p-4 sm:p-5 border-b border-gray-800/80 grid grid-cols-2 gap-2.5">
+        <div className="bg-primary/10 border border-primary/25 rounded-lg p-3 text-center">
+          <Zap className="h-4 w-4 text-primary mx-auto mb-1.5" />
+          <div className="text-xs font-medium text-white">Instant</div>
+          <div className="text-[10px] text-gray-400 mt-0.5">1% fee · seconds</div>
+        </div>
+        <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 text-center">
+          <Clock className="h-4 w-4 text-gray-400 mx-auto mb-1.5" />
+          <div className="text-xs font-medium text-white">Standard</div>
+          <div className="text-[10px] text-gray-400 mt-0.5">Free · 1–2 days</div>
+        </div>
+      </div>
+
+      {/* Bank destination */}
+      <div className="px-4 sm:px-5 py-3 border-b border-gray-800/80 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center">
+          <Building2 className="h-4 w-4 text-gray-400" />
+        </div>
+        <div>
+          <div className="text-xs text-white font-medium">Chase ••• 4829</div>
+          <div className="text-[10px] text-gray-500">Checking account</div>
+        </div>
+      </div>
+
+      {/* Recent payouts */}
+      <div className="p-4 sm:p-5">
+        <div className="text-xs text-gray-500 uppercase tracking-wider mb-2.5">Recent Payouts</div>
+        <div className="space-y-2">
+          {recentPayouts.map((payout) => (
+            <div key={payout.date} className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="text-gray-400 text-xs">{payout.date}</span>
+                <span className="text-[10px] text-gray-600">{payout.method}</span>
+              </div>
+              <span className="text-white text-xs font-medium">${payout.amount}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
@@ -146,7 +278,11 @@ function StepItem({ step, index, initialLoad }: { step: typeof steps[number]; in
 
       {/* Image side */}
       <div className="flex-1">
-        {step.image ? (
+        {step.customComponent === 'menu' ? (
+          <MockMenuBuilder />
+        ) : step.customComponent === 'payout' ? (
+          <MockPayoutCard />
+        ) : step.image ? (
           step.isPhone ? (
             <PhoneFrame src={step.image} alt={step.imageAlt!} />
           ) : (
@@ -188,7 +324,7 @@ export default function HowItWorks() {
   // Mobile version
   if (isMobile) {
     return (
-      <section className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
+      <section id="how-it-works" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
         <StarryBackground subtle className="z-[1]" />
         <div
           ref={fadeRef}
@@ -220,8 +356,12 @@ export default function HowItWorks() {
                   </div>
                   <p className="text-sm text-gray-400 leading-relaxed mb-4">{step.description}</p>
 
-                  {/* Screenshot or QR */}
-                  {step.image ? (
+                  {/* Visual */}
+                  {step.customComponent === 'menu' ? (
+                    <MockMenuBuilder />
+                  ) : step.customComponent === 'payout' ? (
+                    <MockPayoutCard />
+                  ) : step.image ? (
                     step.isPhone ? (
                       <PhoneFrame src={step.image} alt={step.imageAlt!} />
                     ) : (
@@ -241,7 +381,7 @@ export default function HowItWorks() {
 
   // Desktop version — alternating layout
   return (
-    <section className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
+    <section id="how-it-works" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
       <StarryBackground subtle className="z-[1]" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
 

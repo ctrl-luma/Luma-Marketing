@@ -81,7 +81,7 @@ export default function EventsShowcase() {
   // Mobile version
   if (isMobile) {
     return (
-      <section className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
+      <section id="events-showcase" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
         <StarryBackground subtle className="z-[1]" />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
 
@@ -140,7 +140,7 @@ export default function EventsShowcase() {
 
   // Desktop version
   return (
-    <section className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
+    <section id="events-showcase" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
       <StarryBackground subtle className="z-[1]" />
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
       <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2" />
