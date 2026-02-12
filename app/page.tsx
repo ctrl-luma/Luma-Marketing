@@ -1,19 +1,22 @@
+import dynamic from 'next/dynamic'
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
-import TrustedBy from '@/components/TrustedBy'
-import HowItWorks from '@/components/HowItWorks'
-import Features from '@/components/Features'
-import AppShowcase from '@/components/AppShowcase'
-import EventsShowcase from '@/components/EventsShowcase'
-import PreorderShowcase from '@/components/PreorderShowcase'
-import InvoiceShowcase from '@/components/InvoiceShowcase'
-import Comparison from '@/components/Comparison'
-import Pricing from '@/components/Pricing'
-import FAQ from '@/components/FAQ'
-import CTA from '@/components/CTA'
-import Newsletter from '@/components/Newsletter'
-import Footer from '@/components/Footer'
 import SectionTracker from '@/components/SectionTracker'
+
+// Lazy-load below-the-fold sections for faster initial page load
+const TrustedBy = dynamic(() => import('@/components/TrustedBy'))
+const HowItWorks = dynamic(() => import('@/components/HowItWorks'))
+const Features = dynamic(() => import('@/components/Features'))
+const AppShowcase = dynamic(() => import('@/components/AppShowcase'))
+const EventsShowcase = dynamic(() => import('@/components/EventsShowcase'))
+const PreorderShowcase = dynamic(() => import('@/components/PreorderShowcase'))
+const InvoiceShowcase = dynamic(() => import('@/components/InvoiceShowcase'))
+const Comparison = dynamic(() => import('@/components/Comparison'))
+const Pricing = dynamic(() => import('@/components/Pricing'))
+const FAQ = dynamic(() => import('@/components/FAQ'))
+const CTA = dynamic(() => import('@/components/CTA'))
+const Newsletter = dynamic(() => import('@/components/Newsletter'))
+const Footer = dynamic(() => import('@/components/Footer'))
 
 export default function Home() {
   return (

@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useState, useEffect } from 'react'
-import { useFadeIn } from '@/hooks/useFadeIn'
 import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { getTierById } from '@/lib/pricing'
@@ -51,12 +50,9 @@ const faqs = [
 ]
 
 export default function FAQ() {
-  const [isMobile, setIsMobile] = useState(true)
   const [initialLoad, setInitialLoad] = useState(false)
-  const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 1024)
     if (window.location.hash) {
       setInitialLoad(true)
     }
@@ -71,71 +67,6 @@ export default function FAQ() {
 
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
-  const FAQList = () => (
-    <div className="space-y-2 sm:space-y-3">
-      {faqs.map((faq, index) => (
-        <div
-          key={index}
-          className="border border-gray-800 rounded-lg sm:rounded-xl overflow-hidden bg-gray-900/50"
-        >
-          <button
-            onClick={() => { setOpenIndex(openIndex === index ? null : index); event('faq_toggle', { question: faq.question }) }}
-            className="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left cursor-pointer"
-          >
-            <span className="font-medium text-white text-sm sm:text-base pr-4">{faq.question}</span>
-            <ChevronDown
-              className={`h-4 w-4 sm:h-5 sm:w-5 text-gray-400 transition-transform duration-200 flex-shrink-0 ${
-                openIndex === index ? 'rotate-180' : ''
-              }`}
-            />
-          </button>
-          <div
-            className={`overflow-hidden transition-all duration-200 ${
-              openIndex === index ? 'max-h-48' : 'max-h-0'
-            }`}
-          >
-            <p className="px-4 sm:px-6 pb-3 sm:pb-4 text-gray-400 text-xs sm:text-sm leading-relaxed">
-              {faq.answer}
-              {faq.hasContactLink && (
-                <>
-                  <Link href="/contact" onClick={() => event('faq_contact_click')} className="text-primary hover:text-primary-400 underline">contact us</Link>
-                  {faq.answerSuffix}
-                </>
-              )}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-
-  // Mobile version - with subtle CSS fade-in
-  if (isMobile) {
-    return (
-      <section id="faq" className="section-padding bg-black relative overflow-hidden">
-        <StarryBackground subtle className="z-[1]" />
-        <div
-          ref={fadeRef}
-          className={`container relative z-10 transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-        >
-          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-            <h2 className="heading-2 mb-3 sm:mb-4">
-              Frequently asked questions
-            </h2>
-            <p className="text-base sm:text-lg text-gray-400">
-              Quick answers to common questions.
-            </p>
-          </div>
-
-          <div className="max-w-2xl mx-auto">
-            <FAQList />
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  // Desktop version - with animations
   return (
     <section id="faq" className="section-padding bg-black relative overflow-hidden">
       <StarryBackground subtle className="z-[1]" />
@@ -166,7 +97,41 @@ export default function FAQ() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="max-w-2xl mx-auto"
         >
-          <FAQList />
+          <div className="space-y-2 sm:space-y-3">
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className="border border-gray-800 rounded-lg sm:rounded-xl overflow-hidden bg-gray-900/50"
+              >
+                <button
+                  onClick={() => { setOpenIndex(openIndex === index ? null : index); event('faq_toggle', { question: faq.question }) }}
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left cursor-pointer"
+                >
+                  <span className="font-medium text-white text-sm sm:text-base pr-4">{faq.question}</span>
+                  <ChevronDown
+                    className={`h-4 w-4 sm:h-5 sm:w-5 text-gray-400 transition-transform duration-200 flex-shrink-0 ${
+                      openIndex === index ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-200 ${
+                    openIndex === index ? 'max-h-48' : 'max-h-0'
+                  }`}
+                >
+                  <p className="px-4 sm:px-6 pb-3 sm:pb-4 text-gray-400 text-xs sm:text-sm leading-relaxed">
+                    {faq.answer}
+                    {faq.hasContactLink && (
+                      <>
+                        <Link href="/contact" onClick={() => event('faq_contact_click')} className="text-primary hover:text-primary-400 underline">contact us</Link>
+                        {faq.answerSuffix}
+                      </>
+                    )}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>

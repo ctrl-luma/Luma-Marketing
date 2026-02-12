@@ -1,8 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface PhoneShowcaseProps {
   mobile?: boolean
@@ -38,6 +37,7 @@ function PhoneWithScreenshot({ src, alt, placeholder }: { src: string; alt: stri
           src={src}
           alt={alt}
           fill
+          sizes="280px"
           className="object-cover"
           onError={() => setHasError(true)}
         />
@@ -51,8 +51,10 @@ export default function PhoneShowcase({ mobile = false }: PhoneShowcaseProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 200)
-    return () => clearTimeout(timer)
+    // Wait for this component's own DOM to be painted at opacity-0,
+    // then trigger the transition. Self-contained — no prop timing issues.
+    const id = setTimeout(() => setMounted(true), 80)
+    return () => clearTimeout(id)
   }, [])
 
   if (mobile) {
@@ -123,7 +125,7 @@ export default function PhoneShowcase({ mobile = false }: PhoneShowcaseProps) {
     )
   }
 
-  // Desktop: 3 phones with Framer Motion fan-out
+  // Desktop: 3 phones with CSS fan-out
   return (
     <div className="relative flex items-center justify-center" style={{ minHeight: 620 }}>
       {/* Glow */}
@@ -131,43 +133,55 @@ export default function PhoneShowcase({ mobile = false }: PhoneShowcaseProps) {
 
       <div className="relative z-10" style={{ width: 500, height: 620 }}>
         {/* Left phone */}
-        <motion.div
-          initial={{ x: 0, rotate: 0, opacity: 0, scale: 0.9 }}
-          animate={{ x: -120, rotate: 15, opacity: 1, scale: 0.9 }}
-          transition={{ delay: 0.6, duration: 0.8, ease: 'easeOut' }}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 origin-center"
-          style={{ zIndex: 1 }}
+        <div
+          className="absolute left-1/2 top-1/2 origin-center"
+          style={{
+            zIndex: 1,
+            transform: mounted
+              ? 'translate(-50%, -50%) translateX(-120px) rotate(15deg) scale(0.9)'
+              : 'translate(-50%, -50%) translateX(0) rotate(0deg) scale(0.9)',
+            opacity: mounted ? 1 : 0,
+            transition: 'transform 0.8s ease-out 0.6s, opacity 0.8s ease-out 0.6s',
+          }}
         >
           <PhoneFrame className="w-[250px] h-[520px]">
             <PhoneWithScreenshot src="/screenshots/hero-left.webp" alt="Luma POS menu view" placeholder="Left Screenshot" />
           </PhoneFrame>
-        </motion.div>
+        </div>
 
         {/* Right phone */}
-        <motion.div
-          initial={{ x: 0, rotate: 0, opacity: 0, scale: 0.9 }}
-          animate={{ x: 120, rotate: -15, opacity: 1, scale: 0.9 }}
-          transition={{ delay: 0.6, duration: 0.8, ease: 'easeOut' }}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 origin-center"
-          style={{ zIndex: 1 }}
+        <div
+          className="absolute left-1/2 top-1/2 origin-center"
+          style={{
+            zIndex: 1,
+            transform: mounted
+              ? 'translate(-50%, -50%) translateX(120px) rotate(-15deg) scale(0.9)'
+              : 'translate(-50%, -50%) translateX(0) rotate(0deg) scale(0.9)',
+            opacity: mounted ? 1 : 0,
+            transition: 'transform 0.8s ease-out 0.6s, opacity 0.8s ease-out 0.6s',
+          }}
         >
           <PhoneFrame className="w-[250px] h-[520px]">
             <PhoneWithScreenshot src="/screenshots/hero-right.webp" alt="Luma POS order history" placeholder="Right Screenshot" />
           </PhoneFrame>
-        </motion.div>
+        </div>
 
         {/* Center phone (on top) */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5, ease: 'easeOut' }}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{ zIndex: 2 }}
+        <div
+          className="absolute left-1/2 top-1/2"
+          style={{
+            zIndex: 2,
+            opacity: mounted ? 1 : 0,
+            transform: mounted
+              ? 'translate(-50%, -50%) translateY(0)'
+              : 'translate(-50%, -50%) translateY(20px)',
+            transition: 'transform 0.5s ease-out 0.3s, opacity 0.5s ease-out 0.3s',
+          }}
         >
           <PhoneFrame className="w-[280px] h-[580px]">
             <PhoneWithScreenshot src="/screenshots/hero-center.webp" alt="Luma POS tap to pay" placeholder="Center Screenshot" />
           </PhoneFrame>
-        </motion.div>
+        </div>
       </div>
     </div>
   )

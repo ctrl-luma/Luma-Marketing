@@ -3,8 +3,6 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useState, useEffect } from 'react'
-import { useFadeIn } from '@/hooks/useFadeIn'
-import { useIsMobile } from '@/hooks/useIsMobile'
 import { Check, AlertTriangle } from 'lucide-react'
 import { getTierById } from '@/lib/pricing'
 import StarryBackground from './StarryBackground'
@@ -160,9 +158,7 @@ function AnimatedFeatureCard({ item, initialLoad }: { item: typeof comparison[nu
 }
 
 export default function Comparison() {
-  const isMobile = useIsMobile()
   const [initialLoad, setInitialLoad] = useState(false)
-  const { ref: fadeRef, isVisible } = useFadeIn(0.1)
 
   useEffect(() => {
     if (window.location.hash) {
@@ -186,49 +182,50 @@ export default function Comparison() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       </div>
 
-      <div
-        ref={isMobile ? fadeRef : undefined}
-        className={`container relative z-10 ${isMobile ? `transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}` : ''}`}
-      >
-        {isMobile ? (
-          <div className="text-center max-w-3xl mx-auto mb-6">
-            <h2 className="heading-2 mb-2 text-white">
-              Why Luma costs less
-            </h2>
-            <p className="text-sm text-gray-400">
-              No hidden fees. No expensive hardware.
-            </p>
-          </div>
-        ) : (
-          <motion.div
-            ref={ref}
-            initial={{ opacity: 0, y: 20 }}
+      <div className="container relative z-10">
+        <div ref={ref} className="text-center max-w-3xl mx-auto mb-6 sm:mb-8 lg:mb-12 overflow-hidden">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
             animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-3xl mx-auto mb-8 sm:mb-12"
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="heading-2 mb-3 sm:mb-5 text-white"
           >
-            <h2 className="heading-2 mb-3 sm:mb-4 text-white">
-              Why Luma costs less
-            </h2>
-            <p className="text-base sm:text-lg text-gray-300">
-              No hidden fees, no expensive hardware, no long-term contracts.
-            </p>
-          </motion.div>
-        )}
+            Why Luma costs less
+          </motion.h2>
+          <div className="flex flex-wrap justify-center gap-x-1.5 sm:gap-x-2 text-sm sm:text-base lg:text-lg">
+            {['No hidden fees.', 'No expensive hardware.', 'No long-term contracts.'].map((text, i) => (
+              <motion.span
+                key={text}
+                initial={{ opacity: 0, y: 20 }}
+                animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.2 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                className="text-gray-300"
+              >
+                {text}
+              </motion.span>
+            ))}
+          </div>
+        </div>
 
-        {isMobile ? (
-          <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto">
-            {comparison.map((item) => (
-              <FeatureCard key={item.feature} item={item} compact />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 max-w-5xl mx-auto">
-            {comparison.map((item, index) => (
-              <AnimatedFeatureCard key={item.feature} item={item} index={index} initialLoad={initialLoad} />
-            ))}
-          </div>
-        )}
+        {/* Mobile compact grid */}
+        <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto lg:hidden">
+          {comparison.map((item, index) => (
+            <motion.div
+              key={item.feature}
+              initial={{ opacity: 0, y: 15 }}
+              animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.3, delay: 0.1 + index * 0.04 }}
+            >
+              <FeatureCard item={item} compact />
+            </motion.div>
+          ))}
+        </div>
+        {/* Desktop full grid */}
+        <div className="hidden lg:grid grid-cols-2 gap-4 md:gap-5 max-w-5xl mx-auto">
+          {comparison.map((item, index) => (
+            <AnimatedFeatureCard key={item.feature} item={item} index={index} initialLoad={initialLoad} />
+          ))}
+        </div>
       </div>
     </section>
   )

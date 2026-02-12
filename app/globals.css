@@ -166,16 +166,6 @@ html {
   }
 }
 
-/* Reduce motion on mobile only for performance */
-@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
-  *:not(.animate-spin):not(.animate-pulse),
-  *:not(.animate-spin):not(.animate-pulse)::before,
-  *:not(.animate-spin):not(.animate-pulse)::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
 
 body {
   background-color: black;
@@ -296,6 +286,49 @@ body {
 @keyframes starTwinkle2 {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+/* Starry background — pure CSS, no child DOM nodes */
+.starry-group-1,
+.starry-group-2 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.starry-group-1 {
+  background-image:
+    radial-gradient(circle at 5% 8%, rgba(255,255,255,0.6) 0px, rgba(255,255,255,0.15) 3px, transparent 8px),
+    radial-gradient(circle at 90% 22%, rgba(255,255,255,0.45) 0px, rgba(255,255,255,0.1) 2px, transparent 6px),
+    radial-gradient(circle at 30% 50%, rgba(255,255,255,0.35) 0px, rgba(255,255,255,0.08) 2px, transparent 6px),
+    radial-gradient(circle at 85% 70%, rgba(255,255,255,0.4) 0px, rgba(255,255,255,0.1) 2px, transparent 6px),
+    radial-gradient(circle at 72% 90%, rgba(255,255,255,0.3) 0px, rgba(255,255,255,0.08) 2px, transparent 5px),
+    radial-gradient(circle at 18% 15%, rgba(255,255,255,0.5) 0px, transparent 2px),
+    radial-gradient(circle at 82% 10%, rgba(255,255,255,0.5) 0px, transparent 3px),
+    radial-gradient(circle at 12% 30%, rgba(255,255,255,0.4) 0px, transparent 1.5px),
+    radial-gradient(circle at 45% 12%, rgba(255,255,255,0.5) 0px, transparent 2.5px),
+    radial-gradient(circle at 75% 35%, rgba(255,255,255,0.4) 0px, transparent 2px),
+    radial-gradient(circle at 62% 60%, rgba(255,255,255,0.4) 0px, transparent 1.5px),
+    radial-gradient(circle at 8% 75%, rgba(255,255,255,0.45) 0px, transparent 2.5px),
+    radial-gradient(circle at 40% 85%, rgba(255,255,255,0.35) 0px, transparent 2px),
+    radial-gradient(circle at 65% 45%, rgba(255,255,255,0.4) 0px, transparent 1.5px);
+}
+
+.starry-group-2 {
+  background-image:
+    radial-gradient(circle at 85% 18%, rgba(255,255,255,0.55) 0px, rgba(255,255,255,0.12) 3px, transparent 9px),
+    radial-gradient(circle at 72% 6%, rgba(255,255,255,0.4) 0px, rgba(255,255,255,0.1) 2px, transparent 6px),
+    radial-gradient(circle at 58% 55%, rgba(255,255,255,0.35) 0px, rgba(255,255,255,0.08) 2px, transparent 7px),
+    radial-gradient(circle at 50% 72%, rgba(255,255,255,0.3) 0px, rgba(255,255,255,0.08) 2px, transparent 6px),
+    radial-gradient(circle at 13% 10%, rgba(255,255,255,0.5) 0px, transparent 2.5px),
+    radial-gradient(circle at 8% 25%, rgba(255,255,255,0.4) 0px, transparent 2px),
+    radial-gradient(circle at 55% 14%, rgba(255,255,255,0.45) 0px, transparent 3px),
+    radial-gradient(circle at 88% 32%, rgba(255,255,255,0.45) 0px, transparent 1.5px),
+    radial-gradient(circle at 35% 20%, rgba(255,255,255,0.5) 0px, transparent 2.5px),
+    radial-gradient(circle at 20% 65%, rgba(255,255,255,0.4) 0px, transparent 2px),
+    radial-gradient(circle at 90% 80%, rgba(255,255,255,0.4) 0px, transparent 2.5px),
+    radial-gradient(circle at 15% 88%, rgba(255,255,255,0.35) 0px, transparent 1.5px),
+    radial-gradient(circle at 42% 42%, rgba(255,255,255,0.4) 0px, transparent 2px);
 }
 
 /* Explicit animation classes for Tailwind v4 compatibility */

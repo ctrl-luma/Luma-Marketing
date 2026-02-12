@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { useFadeIn } from '@/hooks/useFadeIn'
-import { useIsMobile } from '@/hooks/useIsMobile'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { Download, LayoutGrid, CreditCard, Banknote, ArrowUpRight, Clock, Zap, Building2 } from 'lucide-react'
@@ -241,10 +239,15 @@ function PhoneFrame({ src, alt }: { src: string; alt: string }) {
   )
 }
 
-// Desktop step with its own intersection observer
+// Step with its own intersection observer — alternating x slide on desktop, y fade on mobile
 function StepItem({ step, index, initialLoad }: { step: typeof steps[number]; index: number; initialLoad: boolean }) {
   const Icon = step.icon
   const isEven = index % 2 === 0
+  const [isLg, setIsLg] = useState(false)
+
+  useEffect(() => {
+    setIsLg(window.innerWidth >= 1024)
+  }, [])
 
   const { ref, inView } = useInView({
     threshold: 0.2,
@@ -253,27 +256,33 @@ function StepItem({ step, index, initialLoad }: { step: typeof steps[number]; in
 
   const shouldAnimate = inView || initialLoad
 
+  // Desktop: alternate left/right slide. Mobile: simple fade up
+  // Key changes when isLg flips so Framer Motion remounts with the correct initial values
+  const initial = isLg
+    ? { opacity: 0, x: isEven ? -50 : 50, y: 0 }
+    : { opacity: 0, x: 0, y: 30 }
+
   return (
     <motion.div
       ref={ref}
-      key={step.number}
-      initial={{ opacity: 0, x: isEven ? 50 : -50 }}
-      animate={shouldAnimate ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.6 }}
-      className={`flex items-center gap-12 ${isEven ? 'flex-row' : 'flex-row-reverse'}`}
+      key={`${step.number}-${isLg ? 'lg' : 'sm'}`}
+      initial={initial}
+      animate={shouldAnimate ? { opacity: 1, x: 0, y: 0 } : {}}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className={`flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12 ${isEven ? '' : 'lg:flex-row-reverse'}`}
     >
       {/* Text side */}
       <div className="flex-1">
         <div className="flex items-center gap-4 mb-4">
-          <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${step.gradient} flex items-center justify-center shadow-lg relative`}>
-            <Icon className="w-7 h-7 text-white" />
-            <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-900 border-2 border-gray-700 flex items-center justify-center">
-              <span className="text-xs font-bold text-white">{step.number}</span>
+          <div className={`w-10 h-10 lg:w-14 lg:h-14 rounded-lg lg:rounded-xl bg-gradient-to-br ${step.gradient} flex items-center justify-center shadow-lg relative flex-shrink-0`}>
+            <Icon className="w-5 h-5 lg:w-7 lg:h-7 text-white" />
+            <div className="absolute -top-1.5 -right-1.5 lg:-top-2 lg:-right-2 w-5 h-5 lg:w-6 lg:h-6 rounded-full bg-gray-900 border lg:border-2 border-gray-700 flex items-center justify-center">
+              <span className="text-[9px] lg:text-xs font-bold text-white">{step.number}</span>
             </div>
           </div>
-          <h3 className="text-xl font-semibold text-white">{step.title}</h3>
+          <h3 className="text-base lg:text-xl font-semibold text-white">{step.title}</h3>
         </div>
-        <p className="text-gray-400 leading-relaxed">{step.description}</p>
+        <p className="text-sm lg:text-base text-gray-400 leading-relaxed">{step.description}</p>
       </div>
 
       {/* Image side */}
@@ -303,9 +312,6 @@ function StepItem({ step, index, initialLoad }: { step: typeof steps[number]; in
 }
 
 export default function HowItWorks() {
-  const isMobile = useIsMobile()
-  const { ref: fadeRef, isVisible } = useFadeIn(0.1)
-
   // Check if navigating to home page with any hash (from another page)
   const [initialLoad, setInitialLoad] = useState(false)
   useEffect(() => {
@@ -321,72 +327,13 @@ export default function HowItWorks() {
 
   const shouldAnimate = inView || initialLoad
 
-  // Mobile version
-  if (isMobile) {
-    return (
-      <section id="how-it-works" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
-        <StarryBackground subtle className="z-[1]" />
-        <div
-          ref={fadeRef}
-          className={`container relative z-10 transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-        >
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-            <h2 className="heading-2 mb-3 sm:mb-4">
-              Up and running in minutes
-            </h2>
-            <p className="text-base sm:text-lg text-gray-400">
-              Four simple steps to accepting payments and getting paid.
-            </p>
-          </div>
-
-          <div className="space-y-16 sm:space-y-14 max-w-md sm:max-w-lg mx-auto px-1">
-            {steps.map((step) => {
-              const Icon = step.icon
-              return (
-                <div key={step.number}>
-                  {/* Step header */}
-                  <div className="flex items-center gap-3 mb-2.5">
-                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${step.gradient} flex items-center justify-center shadow-lg relative flex-shrink-0`}>
-                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                      <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-gray-900 border border-gray-700 flex items-center justify-center">
-                        <span className="text-[9px] font-bold text-white">{step.number}</span>
-                      </div>
-                    </div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">{step.title}</h3>
-                  </div>
-                  <p className="text-sm text-gray-400 leading-relaxed mb-4">{step.description}</p>
-
-                  {/* Visual */}
-                  {step.customComponent === 'menu' ? (
-                    <MockMenuBuilder />
-                  ) : step.customComponent === 'payout' ? (
-                    <MockPayoutCard />
-                  ) : step.image ? (
-                    step.isPhone ? (
-                      <PhoneFrame src={step.image} alt={step.imageAlt!} />
-                    ) : (
-                      <BrowserFrame src={step.image} alt={step.imageAlt!} />
-                    )
-                  ) : step.hasQr ? (
-                    <QrDownload />
-                  ) : null}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  // Desktop version — alternating layout
   return (
     <section id="how-it-works" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
       <StarryBackground subtle className="z-[1]" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
 
       <div className="container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 lg:mb-20">
           <motion.h2
             ref={ref}
             initial={{ opacity: 0, y: 20 }}
@@ -406,7 +353,7 @@ export default function HowItWorks() {
           </motion.p>
         </div>
 
-        <div className="space-y-20 sm:space-y-28 max-w-5xl mx-auto">
+        <div className="space-y-14 sm:space-y-20 lg:space-y-28 max-w-5xl mx-auto">
           {steps.map((step, index) => (
             <StepItem key={step.number} step={step} index={index} initialLoad={initialLoad} />
           ))}
