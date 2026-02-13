@@ -69,7 +69,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 sm:h-20">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold text-primary">Luma</span>
+              <img src="/luma-wordmark.svg" alt="Luma" className="h-[88px] sm:h-32 w-auto -translate-y-[1px]" />
             </Link>
           </div>
 

@@ -1,12 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
+import { useFadeIn } from '@/hooks/useFadeIn'
 import { FileText, Mail, Clock, DollarSign, Check } from 'lucide-react'
 import Link from 'next/link'
 import { event } from '@/lib/analytics'
-import StarryBackground from './StarryBackground'
 
 const features = [
   {
@@ -37,13 +34,13 @@ const invoiceLines = [
   { description: 'Glassware rental', qty: 50, price: 2.50 },
 ]
 
-function MockInvoice({ animate = false }: { animate?: boolean }) {
+function MockInvoice() {
   const subtotal = invoiceLines.reduce((sum, line) => sum + line.qty * line.price, 0)
   const tax = subtotal * 0.08
   const total = subtotal + tax
 
   return (
-    <div className="rounded-xl border border-gray-800 bg-gray-900/80 shadow-2xl shadow-black/50 overflow-hidden">
+    <div className="rounded-xl border border-gray-800 border-t-2 border-t-primary/60 bg-gray-900/80 shadow-2xl shadow-black/50 overflow-hidden">
       {/* Invoice header */}
       <div className="p-4 sm:p-6 border-b border-gray-800/80">
         <div className="flex items-start justify-between">
@@ -127,72 +124,38 @@ function MockInvoice({ animate = false }: { animate?: boolean }) {
 }
 
 export default function InvoiceShowcase() {
-  const [initialLoad, setInitialLoad] = useState(false)
-  useEffect(() => {
-    if (window.location.hash) {
-      setInitialLoad(true)
-    }
-  }, [])
+  const { ref, isVisible } = useFadeIn()
 
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
-
-  const shouldAnimate = inView || initialLoad
   return (
     <section id="invoice-showcase" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
-      <StarryBackground subtle className="z-[1]" />
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-      <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2" />
 
       <div className="container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <motion.h2
-            ref={ref}
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="heading-2 mb-4"
-          >
+        <div ref={ref} className={`fade-in-section ${isVisible ? 'visible' : ''} text-center max-w-3xl mx-auto mb-8 sm:mb-12`}>
+          <h2 className="fade-child heading-2 mb-4">
             Professional invoices in seconds
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base sm:text-lg text-gray-400"
-          >
+          </h2>
+          <p className="fade-child text-base sm:text-lg text-gray-400">
             Create, send, and track invoices — get paid faster without leaving your dashboard.
-          </motion.p>
+          </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
           {/* Mock invoice */}
-          <motion.div
-            initial={{ opacity: 0, x: -40, scale: 0.96 }}
-            animate={shouldAnimate ? { opacity: 1, x: 0, scale: 1 } : {}}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <MockInvoice animate={shouldAnimate} />
-          </motion.div>
+          <div className={`fade-in-section from-left ${isVisible ? 'visible' : ''}`}>
+            <div className="fade-child">
+              <MockInvoice />
+            </div>
+          </div>
 
           {/* Features */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={shouldAnimate ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-6"
-          >
-            {features.map((feature, index) => {
+          <div className={`fade-in-section from-right ${isVisible ? 'visible' : ''} space-y-6`}>
+            {features.map((feature) => {
               const Icon = feature.icon
               return (
-                <motion.div
+                <div
                   key={feature.title}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.45 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex gap-4 p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors"
+                  className="fade-child flex gap-4 p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors"
                 >
                   <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
                     <Icon className="h-5 w-5 text-primary" />
@@ -201,17 +164,12 @@ export default function InvoiceShowcase() {
                     <h4 className="font-medium text-white mb-1">{feature.title}</h4>
                     <p className="text-sm text-gray-400 leading-relaxed">{feature.description}</p>
                   </div>
-                </motion.div>
+                </div>
               )
             })}
 
             {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={shouldAnimate ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: 0.8 }}
-              className="pt-2"
-            >
+            <div className="fade-child pt-2">
               <Link
                 href="/get-started"
                 onClick={() => event('invoice_showcase_cta_click')}
@@ -219,8 +177,8 @@ export default function InvoiceShowcase() {
               >
                 Get started for free →
               </Link>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -406,6 +406,14 @@ export default function SuccessPage() {
         >
           Order More
         </Link>
+
+        {/* Powered by Luma */}
+        <div className="mt-8 mb-2 flex items-center justify-center gap-2">
+          <span className="text-xs text-gray-600">Powered by</span>
+          <Link href="/" className="cursor-pointer">
+            <img src="/luma-wordmark.svg" alt="Luma" className="h-16 w-auto opacity-40 hover:opacity-60 transition-opacity -translate-x-[14px] translate-y-[0px]" />
+          </Link>
+        </div>
       </main>
     </div>
   )

@@ -1,8 +1,7 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
+import { useFadeIn } from '@/hooks/useFadeIn'
 import { event } from '@/lib/analytics'
 
 function DemoVideo() {
@@ -89,57 +88,24 @@ function DemoVideo() {
 }
 
 export default function AppShowcase() {
-  const [initialLoad, setInitialLoad] = useState(false)
-  useEffect(() => {
-    if (window.location.hash) {
-      setInitialLoad(true)
-    }
-  }, [])
-
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
-
-  const shouldAnimate = inView || initialLoad
+  const { ref, isVisible } = useFadeIn()
 
   return (
     <section id="app-showcase" className="section-padding bg-gradient-to-b from-black to-gray-950 relative overflow-hidden scroll-mt-24">
-      {/* Background elements - hidden on mobile */}
-      <div className="hidden lg:block absolute inset-0">
-        <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-      </div>
 
       <div className="container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <motion.h2
-            ref={ref}
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="heading-2 mb-3 sm:mb-4"
-          >
+        <div ref={ref} className={`fade-in-section ${isVisible ? 'visible' : ''} text-center max-w-3xl mx-auto mb-8 sm:mb-12`}>
+          <h2 className="fade-child heading-2 mb-3 sm:mb-4">
             See everything in real-time
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base sm:text-lg text-gray-400"
-          >
+          </h2>
+          <p className="fade-child text-base sm:text-lg text-gray-400">
             Your dashboard updates live as transactions happen. No refreshing, no waiting.
-          </motion.p>
+          </p>
         </div>
 
         {/* Dashboard screenshot */}
-        <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.97 }}
-          animate={shouldAnimate ? { opacity: 1, y: 0, scale: 1 } : {}}
-          transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="relative max-w-5xl mx-auto"
-        >
-          <div className="relative">
+        <div className={`fade-in-section ${isVisible ? 'visible' : ''} relative max-w-5xl mx-auto`}>
+          <div className="fade-child relative">
             {/* Browser chrome */}
             <div className="bg-gray-900 rounded-t-lg sm:rounded-t-xl p-2 sm:p-3 flex items-center gap-2 border border-gray-800 border-b-0">
               <div className="flex gap-1 sm:gap-1.5">
@@ -168,7 +134,7 @@ export default function AppShowcase() {
             {/* Glow effect - hidden on mobile */}
             <div className="hidden lg:block absolute -inset-4 bg-primary/10 blur-2xl -z-10 rounded-3xl" />
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

@@ -1,13 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
+import { useFadeIn } from '@/hooks/useFadeIn'
 import { QrCode, ShoppingCart, CreditCard, Bell } from 'lucide-react'
 import Link from 'next/link'
 import { event } from '@/lib/analytics'
-import StarryBackground from './StarryBackground'
 
 const features = [
   {
@@ -67,15 +65,13 @@ function PhoneWithScreenshot({ src, alt }: { src: string; alt: string }) {
   )
 }
 
-function DualPhones({ animate = true }: { animate?: boolean }) {
+function DualPhones() {
   return (
     <div className="relative flex items-center justify-center" style={{ height: 420 }}>
-      {/* Glow */}
-      <div className="absolute inset-0 bg-primary/10 rounded-full" style={{ filter: 'blur(60px)' }} />
 
       <div className="relative z-10 flex items-end gap-4 sm:gap-6">
         {/* Left phone - Menu */}
-        <div className={animate ? '' : 'transition-all duration-700 ease-out'}>
+        <div>
           <div className="text-center mb-2 sm:mb-3">
             <span className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Browse Menu</span>
           </div>
@@ -85,7 +81,7 @@ function DualPhones({ animate = true }: { animate?: boolean }) {
         </div>
 
         {/* Right phone - Order Tracking */}
-        <div className={animate ? '' : 'transition-all duration-700 ease-out'}>
+        <div>
           <div className="text-center mb-2 sm:mb-3">
             <span className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Track Order</span>
           </div>
@@ -99,73 +95,31 @@ function DualPhones({ animate = true }: { animate?: boolean }) {
 }
 
 export default function PreorderShowcase() {
-  const [initialLoad, setInitialLoad] = useState(false)
-  useEffect(() => {
-    if (window.location.hash) {
-      setInitialLoad(true)
-    }
-  }, [])
-
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
-
-  const shouldAnimate = inView || initialLoad
+  const { ref, isVisible } = useFadeIn()
 
   return (
     <section id="preorder-showcase" className="section-padding bg-gradient-to-b from-black to-gray-950 relative overflow-hidden scroll-mt-24">
-      <StarryBackground subtle className="z-[1]" />
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-      <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2" />
 
       <div className="container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <motion.h2
-            ref={ref}
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="heading-2 mb-4"
-          >
+        <div ref={ref} className={`fade-in-section ${isVisible ? 'visible' : ''} text-center max-w-3xl mx-auto mb-8 sm:mb-12`}>
+          <h2 className="fade-child heading-2 mb-4">
             Let customers order before they arrive
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base sm:text-lg text-gray-400"
-          >
+          </h2>
+          <p className="fade-child text-base sm:text-lg text-gray-400">
             Share a QR code or link. Customers browse your menu, place orders, and pay — all from their phone.
-          </motion.p>
+          </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-          {/* Dual phone mockups */}
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0, scale: 1 } : {}}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <DualPhones />
-          </motion.div>
-
           {/* Features */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={shouldAnimate ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-6"
-          >
-            {features.map((feature, index) => {
+          <div className={`fade-in-section from-left ${isVisible ? 'visible' : ''} space-y-6`}>
+            {features.map((feature) => {
               const Icon = feature.icon
               return (
-                <motion.div
+                <div
                   key={feature.title}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.45 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex gap-4 p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors"
+                  className="fade-child flex gap-4 p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors"
                 >
                   <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
                     <Icon className="h-5 w-5 text-primary" />
@@ -174,17 +128,12 @@ export default function PreorderShowcase() {
                     <h4 className="font-medium text-white mb-1">{feature.title}</h4>
                     <p className="text-sm text-gray-400 leading-relaxed">{feature.description}</p>
                   </div>
-                </motion.div>
+                </div>
               )
             })}
 
             {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={shouldAnimate ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: 0.8 }}
-              className="pt-2"
-            >
+            <div className="fade-child pt-2">
               <Link
                 href="/get-started"
                 onClick={() => event('preorder_showcase_get_started_click')}
@@ -192,8 +141,15 @@ export default function PreorderShowcase() {
               >
                 Get started for free →
               </Link>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
+
+          {/* Dual phone mockups */}
+          <div className={`fade-in-section ${isVisible ? 'visible' : ''}`}>
+            <div className="fade-child">
+              <DualPhones />
+            </div>
+          </div>
         </div>
       </div>
     </section>

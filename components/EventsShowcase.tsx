@@ -1,13 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
 import { Ticket, QrCode, Wallet, BarChart3 } from 'lucide-react'
 import Link from 'next/link'
 import { event } from '@/lib/analytics'
-import StarryBackground from './StarryBackground'
+import { useFadeIn } from '@/hooks/useFadeIn'
 
 const features = [
   {
@@ -58,77 +55,39 @@ function BrowserFrame({ src, alt }: { src: string; alt: string }) {
 }
 
 export default function EventsShowcase() {
-  // Check if navigating to home page with any hash (from another page)
-  const [initialLoad, setInitialLoad] = useState(false)
-  useEffect(() => {
-    if (window.location.hash) {
-      setInitialLoad(true)
-    }
-  }, [])
-
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
-
-  const shouldAnimate = inView || initialLoad
+  const { ref, isVisible } = useFadeIn()
 
   return (
     <section id="events-showcase" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
-      <StarryBackground subtle className="z-[1]" />
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-      <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2" />
 
       <div className="container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <motion.h2
-            ref={ref}
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="heading-2 mb-4"
-          >
+        <div ref={ref} className={`fade-in-section ${isVisible ? 'visible' : ''} text-center max-w-3xl mx-auto mb-8 sm:mb-12`}>
+          <h2 className="fade-child heading-2 mb-4">
             Sell tickets, not just drinks
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base sm:text-lg text-gray-400"
-          >
+          </h2>
+          <p className="fade-child text-base sm:text-lg text-gray-400">
             Host events, sell tickets online, and scan guests in — all from the same app you use for payments.
-          </motion.p>
+          </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
           {/* Browser screenshot */}
-          <motion.div
-            initial={{ opacity: 0, x: -40, scale: 0.96 }}
-            animate={shouldAnimate ? { opacity: 1, x: 0, scale: 1 } : {}}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <div className={`fade-in-section from-left ${isVisible ? 'visible' : ''}`}>
             <BrowserFrame
               src="/screenshots/events.webp"
               alt="Luma event page showing ticket tiers and purchase options"
             />
-          </motion.div>
+          </div>
 
           {/* Features */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={shouldAnimate ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-6"
-          >
-            {features.map((feature, index) => {
+          <div className={`fade-in-section from-right ${isVisible ? 'visible' : ''} space-y-6`}>
+            {features.map((feature) => {
               const Icon = feature.icon
               return (
-                <motion.div
+                <div
                   key={feature.title}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.45 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex gap-4 p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors"
+                  className="fade-child flex gap-4 p-4 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 transition-colors"
                 >
                   <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
                     <Icon className="h-5 w-5 text-primary" />
@@ -137,17 +96,12 @@ export default function EventsShowcase() {
                     <h4 className="font-medium text-white mb-1">{feature.title}</h4>
                     <p className="text-sm text-gray-400 leading-relaxed">{feature.description}</p>
                   </div>
-                </motion.div>
+                </div>
               )
             })}
 
             {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={shouldAnimate ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: 0.8 }}
-              className="pt-2"
-            >
+            <div className="fade-child pt-2">
               <Link
                 href="/events"
                 onClick={() => event('events_showcase_browse_click')}
@@ -155,8 +109,8 @@ export default function EventsShowcase() {
               >
                 Browse upcoming events →
               </Link>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

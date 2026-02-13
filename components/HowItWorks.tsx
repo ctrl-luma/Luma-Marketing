@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
+import { useFadeIn } from '@/hooks/useFadeIn'
 import { Download, LayoutGrid, CreditCard, Banknote, ArrowUpRight, Clock, Zap, Building2 } from 'lucide-react'
 import BrandedQRCode from '@/components/ui/BrandedQRCode'
-import StarryBackground from './StarryBackground'
 import { event } from '@/lib/analytics'
 
 const steps = [
@@ -114,7 +112,7 @@ function MockMenuBuilder() {
   )
 
   return (
-    <div className="rounded-xl border border-gray-800 bg-gray-900/80 shadow-2xl shadow-black/50 overflow-hidden">
+    <div className="rounded-xl border border-gray-800 border-t-2 border-t-primary/60 bg-gray-900/80 shadow-2xl shadow-black/50 overflow-hidden">
       {/* Header */}
       <div className="p-4 sm:p-5 border-b border-gray-800/80 flex items-center justify-between">
         <div>
@@ -172,7 +170,7 @@ function MockPayoutCard() {
   ]
 
   return (
-    <div className="rounded-xl border border-gray-800 bg-gray-900/80 shadow-2xl shadow-black/50 overflow-hidden">
+    <div className="rounded-xl border border-gray-800 border-t-2 border-t-primary/60 bg-gray-900/80 shadow-2xl shadow-black/50 overflow-hidden">
       {/* Balance */}
       <div className="p-4 sm:p-5 border-b border-gray-800/80">
         <div className="text-xs text-gray-500 mb-1">Available Balance</div>
@@ -239,37 +237,19 @@ function PhoneFrame({ src, alt }: { src: string; alt: string }) {
   )
 }
 
-// Step with its own intersection observer — alternating x slide on desktop, y fade on mobile
-function StepItem({ step, index, initialLoad }: { step: typeof steps[number]; index: number; initialLoad: boolean }) {
+// Step with its own intersection observer — alternating slide direction on desktop via CSS
+function StepItem({ step, index }: { step: typeof steps[number]; index: number }) {
   const Icon = step.icon
   const isEven = index % 2 === 0
-  const [isLg, setIsLg] = useState(false)
+  const { ref, isVisible } = useFadeIn(0.2)
 
-  useEffect(() => {
-    setIsLg(window.innerWidth >= 1024)
-  }, [])
-
-  const { ref, inView } = useInView({
-    threshold: 0.2,
-    triggerOnce: true,
-  })
-
-  const shouldAnimate = inView || initialLoad
-
-  // Desktop: alternate left/right slide. Mobile: simple fade up
-  // Key changes when isLg flips so Framer Motion remounts with the correct initial values
-  const initial = isLg
-    ? { opacity: 0, x: isEven ? -50 : 50, y: 0 }
-    : { opacity: 0, x: 0, y: 30 }
+  // On desktop (lg+), use from-left / from-right for alternating slide direction
+  const directionClass = isEven ? 'lg:from-left' : 'lg:from-right'
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      key={`${step.number}-${isLg ? 'lg' : 'sm'}`}
-      initial={initial}
-      animate={shouldAnimate ? { opacity: 1, x: 0, y: 0 } : {}}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className={`flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12 ${isEven ? '' : 'lg:flex-row-reverse'}`}
+      className={`fade-in-section ${directionClass} ${isVisible ? 'visible' : ''} flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12 ${isEven ? '' : 'lg:flex-row-reverse'}`}
     >
       {/* Text side */}
       <div className="flex-1">
@@ -307,55 +287,29 @@ function StepItem({ step, index, initialLoad }: { step: typeof steps[number]; in
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   )
 }
 
 export default function HowItWorks() {
-  // Check if navigating to home page with any hash (from another page)
-  const [initialLoad, setInitialLoad] = useState(false)
-  useEffect(() => {
-    if (window.location.hash) {
-      setInitialLoad(true)
-    }
-  }, [])
-
-  const { ref, inView } = useInView({
-    threshold: 0.05,
-    triggerOnce: true,
-  })
-
-  const shouldAnimate = inView || initialLoad
+  const { ref, isVisible } = useFadeIn()
 
   return (
     <section id="how-it-works" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
-      <StarryBackground subtle className="z-[1]" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
 
       <div className="container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 lg:mb-20">
-          <motion.h2
-            ref={ref}
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-            className="heading-2 mb-3 sm:mb-4"
-          >
+        <div ref={ref} className={`fade-in-section ${isVisible ? 'visible' : ''} text-center max-w-3xl mx-auto mb-10 sm:mb-14 lg:mb-20`}>
+          <h2 className="fade-child heading-2 mb-3 sm:mb-4">
             Up and running in minutes
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base sm:text-lg text-gray-400"
-          >
+          </h2>
+          <p className="fade-child text-base sm:text-lg text-gray-400">
             Four simple steps to accepting payments and getting paid.
-          </motion.p>
+          </p>
         </div>
 
         <div className="space-y-14 sm:space-y-20 lg:space-y-28 max-w-5xl mx-auto">
           {steps.map((step, index) => (
-            <StepItem key={step.number} step={step} index={index} initialLoad={initialLoad} />
+            <StepItem key={step.number} step={step} index={index} />
           ))}
         </div>
       </div>

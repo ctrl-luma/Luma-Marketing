@@ -1,13 +1,11 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
-import { useState, useEffect } from 'react'
+import { useFadeIn } from '@/hooks/useFadeIn'
+import { useState, useCallback, memo } from 'react'
 import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { getTierById } from '@/lib/pricing'
 import { event } from '@/lib/analytics'
-import StarryBackground from './StarryBackground'
 
 const starterTier = getTierById('starter')
 const proTier = getTierById('pro')
@@ -49,90 +47,93 @@ const faqs = [
   },
 ]
 
-export default function FAQ() {
-  const [initialLoad, setInitialLoad] = useState(false)
+const FAQItem = memo(function FAQItem({ faq, isOpen, onToggle }: {
+  faq: typeof faqs[number]
+  isOpen: boolean
+  onToggle: () => void
+}) {
+  return (
+    <div className="border border-gray-800 rounded-lg sm:rounded-xl overflow-hidden bg-gray-900/50">
+      <button
+        onClick={onToggle}
+        className="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left cursor-pointer"
+      >
+        <span className="font-medium text-white text-sm sm:text-base pr-4">{faq.question}</span>
+        <ChevronDown
+          className={`h-4 w-4 sm:h-5 sm:w-5 text-gray-400 transition-transform duration-200 flex-shrink-0 ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+      <div
+        className="grid transition-[grid-template-rows] duration-200 ease-out"
+        style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
+      >
+        <div className="overflow-hidden min-h-0">
+          <p className="px-4 sm:px-6 pb-3 sm:pb-4 text-gray-400 text-xs sm:text-sm leading-relaxed">
+            {faq.answer}
+            {faq.hasContactLink && (
+              <>
+                <Link href="/contact" onClick={() => event('faq_contact_click')} className="text-primary hover:text-primary-400 underline">contact us</Link>
+                {faq.answerSuffix}
+              </>
+            )}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+})
 
-  useEffect(() => {
-    if (window.location.hash) {
-      setInitialLoad(true)
-    }
+function FAQList() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+
+  const handleToggle = useCallback((index: number) => {
+    setOpenIndex(prev => prev === index ? null : index)
+    event('faq_toggle', { question: faqs[index].question })
   }, [])
 
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
+  return (
+    <div className="space-y-2 sm:space-y-3">
+      {faqs.map((faq, index) => (
+        <FAQItem
+          key={index}
+          faq={faq}
+          isOpen={openIndex === index}
+          onToggle={() => handleToggle(index)}
+        />
+      ))}
+    </div>
+  )
+}
 
-  const shouldAnimate = inView || initialLoad
-
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
+export default function FAQ() {
+  const { ref, isVisible } = useFadeIn()
 
   return (
     <section id="faq" className="section-padding bg-black relative overflow-hidden">
-      <StarryBackground subtle className="z-[1]" />
+      {/* Static radial glow — pure CSS, no JS, no re-renders */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 70%)',
+        }}
+      />
       <div className="container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <motion.h2
-            ref={ref}
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-            className="heading-2 mb-3 sm:mb-4"
-          >
+        <div ref={ref} className={`fade-in-section ${isVisible ? 'visible' : ''} text-center max-w-3xl mx-auto mb-8 sm:mb-12`}>
+          <h2 className="fade-child heading-2 mb-3 sm:mb-4">
             Frequently asked questions
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base sm:text-lg text-gray-400"
-          >
+          </h2>
+          <p className="fade-child text-base sm:text-lg text-gray-400">
             Quick answers to common questions.
-          </motion.p>
+          </p>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="max-w-2xl mx-auto"
-        >
-          <div className="space-y-2 sm:space-y-3">
-            {faqs.map((faq, index) => (
-              <div
-                key={index}
-                className="border border-gray-800 rounded-lg sm:rounded-xl overflow-hidden bg-gray-900/50"
-              >
-                <button
-                  onClick={() => { setOpenIndex(openIndex === index ? null : index); event('faq_toggle', { question: faq.question }) }}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left cursor-pointer"
-                >
-                  <span className="font-medium text-white text-sm sm:text-base pr-4">{faq.question}</span>
-                  <ChevronDown
-                    className={`h-4 w-4 sm:h-5 sm:w-5 text-gray-400 transition-transform duration-200 flex-shrink-0 ${
-                      openIndex === index ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-                <div
-                  className={`overflow-hidden transition-all duration-200 ${
-                    openIndex === index ? 'max-h-48' : 'max-h-0'
-                  }`}
-                >
-                  <p className="px-4 sm:px-6 pb-3 sm:pb-4 text-gray-400 text-xs sm:text-sm leading-relaxed">
-                    {faq.answer}
-                    {faq.hasContactLink && (
-                      <>
-                        <Link href="/contact" onClick={() => event('faq_contact_click')} className="text-primary hover:text-primary-400 underline">contact us</Link>
-                        {faq.answerSuffix}
-                      </>
-                    )}
-                  </p>
-                </div>
-              </div>
-            ))}
+        <div className={`fade-in-section ${isVisible ? 'visible' : ''} max-w-2xl mx-auto`}>
+          <div className="fade-child">
+            <FAQList />
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

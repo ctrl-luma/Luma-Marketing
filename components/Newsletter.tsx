@@ -42,10 +42,6 @@ export default function Newsletter() {
 
   return (
     <section className="section-padding relative overflow-hidden">
-      {/* Static gradient background - hidden on mobile for performance */}
-      <div className="hidden lg:block absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-      </div>
       <div className="container relative z-10">
         <div className="max-w-2xl mx-auto">
           {/* Card container */}

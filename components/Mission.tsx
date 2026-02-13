@@ -1,7 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
+import { useFadeIn } from '@/hooks/useFadeIn'
 import { Zap, Shield, Users } from 'lucide-react'
 
 const principles = [
@@ -49,54 +48,47 @@ const getColorClasses = (color: string) => {
 }
 
 export default function Mission() {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
+  const { ref, isVisible } = useFadeIn()
 
   return (
     <section className="section-padding">
       <div className="container">
         {/* Story Section */}
-        <motion.div
+        <div
           ref={ref}
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="max-w-3xl mx-auto mb-10 sm:mb-20"
+          className={`fade-in-section ${isVisible ? 'visible' : ''} max-w-3xl mx-auto mb-10 sm:mb-20`}
         >
-          <h2 className="text-lg sm:text-2xl font-semibold text-white mb-3 sm:mb-6">The problem</h2>
-          <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-gray-400 leading-relaxed">
-            <p>
-              Most POS systems are built for brick-and-mortar stores. They assume you have
-              a fixed location, reliable WiFi, and the budget for expensive hardware.
-            </p>
-            <p>
-              If you&apos;re running a mobile bar, food truck, or pop-up shop, you&apos;re
-              stuck with solutions that weren&apos;t designed for you. Clunky card readers,
-              confusing software, contracts that don&apos;t make sense for seasonal work,
-              and rates that seem to change every other month.
-            </p>
-            <p className="text-white font-medium">
-              Luma is different. We built a POS that runs on the phone you already have,
-              with pricing that scales with your business, and features that actually
-              matter for mobile vendors.
-            </p>
+          <div className="fade-child">
+            <h2 className="text-lg sm:text-2xl font-semibold text-white mb-3 sm:mb-6">The problem</h2>
+            <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-gray-400 leading-relaxed">
+              <p>
+                Most POS systems are built for brick-and-mortar stores. They assume you have
+                a fixed location, reliable WiFi, and the budget for expensive hardware.
+              </p>
+              <p>
+                If you&apos;re running a mobile bar, food truck, or pop-up shop, you&apos;re
+                stuck with solutions that weren&apos;t designed for you. Clunky card readers,
+                confusing software, contracts that don&apos;t make sense for seasonal work,
+                and rates that seem to change every other month.
+              </p>
+              <p className="text-white font-medium">
+                Luma is different. We built a POS that runs on the phone you already have,
+                with pricing that scales with your business, and features that actually
+                matter for mobile vendors.
+              </p>
+            </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Principles Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto">
-          {principles.map((principle, index) => {
+        <div className={`fade-in-section ${isVisible ? 'visible' : ''} grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto`}>
+          {principles.map((principle) => {
             const Icon = principle.icon
             const colors = getColorClasses(principle.color)
             return (
-              <motion.div
+              <div
                 key={principle.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-                className={`relative p-4 sm:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
+                className={`fade-child relative p-4 sm:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
               >
                 <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center mb-3 sm:mb-6 mx-auto`}>
                   <Icon className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
@@ -107,7 +99,7 @@ export default function Mission() {
                 <p className="text-xs sm:text-base text-gray-400 leading-relaxed text-center">
                   {principle.description}
                 </p>
-              </motion.div>
+              </div>
             )
           })}
         </div>

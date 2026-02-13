@@ -124,8 +124,7 @@ export default function CustomPlanRequestPage() {
         <header className="border-b border-gray-800 bg-black/50 backdrop-blur-sm">
           <div className="container py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold text-primary">Luma</span>
-              <span className="text-2xl font-bold text-white ml-1">POS</span>
+              <img src="/luma-wordmark.svg" alt="Luma" className="h-[76px] sm:h-28 w-auto" />
             </Link>
             <a href={process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard'} className="text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="h-5 w-5" />

@@ -7,215 +7,184 @@
 </head>
 <body style="background: #1a1a1a; padding: 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
   <h1 style="color: #3b82f6; margin-bottom: 40px;">Luma Icon Generator</h1>
-  
   <p style="color: #fff; margin-bottom: 20px;">
-    This page generates PNG icons for your manifest. Right-click each icon and "Save as" to download.
+    Click any icon to download it as a PNG file.
   </p>
-  
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-    <!-- 2048x2048 -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-2048" width="2048" height="2048" style="background: #0a0a0a; border-radius: 12px; max-width: 300px; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">2048x2048 (iOS Splash - Retina)</p>
-    </div>
 
-    <!-- 1024x1024 -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-1024" width="1024" height="1024" style="background: #0a0a0a; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">1024x1024 (Splash Icon)</p>
-    </div>
+  <!-- ===== Dark Gradient (Square) ===== -->
+  <h2 style="color: #3b82f6; margin-top: 40px;">Dark Gradient — Square</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;" id="section-dark-square"></div>
 
-    <!-- 512x512 -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-512" width="512" height="512" style="background: #0a0a0a; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">512x512 (Main Icon)</p>
-    </div>
-    
-    <!-- 192x192 -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-192" width="192" height="192" style="background: #0a0a0a; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">192x192 (PWA Icon)</p>
-    </div>
-    
-    <!-- 180x180 -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-180" width="180" height="180" style="background: #0a0a0a; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">180x180 (Apple Touch)</p>
-    </div>
-    
-    <!-- 128x128 -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-128" width="128" height="128" style="background: #0a0a0a; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">128x128</p>
-    </div>
-    
-    <!-- 64x64 -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-64" width="64" height="64" style="background: #0a0a0a; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">64x64</p>
-    </div>
-    
-    <!-- 32x32 -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-32" width="32" height="32" style="background: #0a0a0a; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">32x32 (Favicon)</p>
-    </div>
-    
-    <!-- 16x16 -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-16" width="16" height="16" style="background: #0a0a0a; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">16x16 (Small Favicon)</p>
-    </div>
-  </div>
+  <!-- ===== Dark Gradient (Rounded) ===== -->
+  <h2 style="color: #3b82f6; margin-top: 40px;">Dark Gradient — Rounded</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;" id="section-dark-rounded"></div>
 
-  <h2 style="color: #3b82f6; margin-top: 40px;">Alternative Design (With Background)</h2>
-  
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-    <!-- 512x512 with background -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-bg-512" width="512" height="512" style="background: #fff; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">512x512 (With Background)</p>
-    </div>
-    
-    <!-- 192x192 with background -->
-    <div style="background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;">
-      <canvas id="icon-bg-192" width="192" height="192" style="background: #fff; border-radius: 12px; max-width: 100%; height: auto;"></canvas>
-      <p style="color: #888; margin-top: 10px;">192x192 (With Background)</p>
-    </div>
-  </div>
+  <!-- ===== White Background, Blue Logo (Square) ===== -->
+  <h2 style="color: #3b82f6; margin-top: 40px;">White + Blue Logo — Square</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;" id="section-white-square"></div>
 
-  <!-- Load Inter font for crisp rendering -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&display=swap" rel="stylesheet">
+  <!-- ===== White Background, Blue Logo (Rounded) ===== -->
+  <h2 style="color: #3b82f6; margin-top: 40px;">White + Blue Logo — Rounded</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;" id="section-white-rounded"></div>
+
+  <!-- ===== Black Background, Blue Logo (Square) ===== -->
+  <h2 style="color: #3b82f6; margin-top: 40px;">Black + Blue Logo — Square</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;" id="section-black-square"></div>
+
+  <!-- ===== Black Background, Blue Logo (Rounded) ===== -->
+  <h2 style="color: #3b82f6; margin-top: 40px;">Black + Blue Logo — Rounded</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;" id="section-black-rounded"></div>
 
   <script>
-    // Wait for Inter font to load before drawing
-    document.fonts.ready.then(() => {
+    const sizes = [1024, 512, 256, 192, 180, 128, 64, 32, 16];
 
-    // Function to draw Luma logo with supersampling for crisp text
-    function drawLumaLogo(canvas, backgroundColor = null, padding = 0.15) {
-      const ctx = canvas.getContext('2d');
-      const size = canvas.width;
+    const variants = [
+      { id: 'dark-square',    label: 'Dark Gradient',     bg: 'gradient', tint: null,    rounded: false },
+      { id: 'dark-rounded',   label: 'Dark Gradient',     bg: 'gradient', tint: null,    rounded: true  },
+      { id: 'white-square',   label: 'White + Blue',      bg: '#FFFFFF',  tint: null,    rounded: false },
+      { id: 'white-rounded',  label: 'White + Blue',      bg: '#FFFFFF',  tint: null,    rounded: true  },
+      { id: 'black-square',   label: 'Dark + Glow',          bg: '#000000',  tint: null,    rounded: false, glow: true },
+      { id: 'black-rounded',  label: 'Dark + Glow',          bg: '#000000',  tint: null,    rounded: true,  glow: true },
+    ];
 
-      // Use 2x supersampling for sharper text
-      const scale = 2;
-      const renderSize = size * scale;
+    // Create canvases
+    variants.forEach(variant => {
+      const container = document.getElementById(`section-${variant.id}`);
+      sizes.forEach(size => {
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'background: #0a0a0a; padding: 20px; border-radius: 8px; text-align: center;';
+        if (variant.bg === '#FFFFFF') wrapper.style.background = '#333';
 
-      // Create offscreen canvas at 2x resolution
-      const offscreen = document.createElement('canvas');
-      offscreen.width = renderSize;
-      offscreen.height = renderSize;
-      const offCtx = offscreen.getContext('2d');
+        const canvas = document.createElement('canvas');
+        canvas.id = `icon-${variant.id}-${size}`;
+        canvas.width = size;
+        canvas.height = size;
+        canvas.style.cssText = `border-radius: ${variant.rounded ? '12px' : '0'}; max-width: ${Math.min(size, 300)}px; height: auto;`;
 
-      // Clear
-      offCtx.clearRect(0, 0, renderSize, renderSize);
+        const label = document.createElement('p');
+        label.style.cssText = 'color: #888; margin-top: 10px; font-size: 13px;';
+        label.textContent = `${size}x${size}`;
 
-      // Add background if specified
-      if (backgroundColor) {
-        const radius = renderSize * 0.1;
-        offCtx.fillStyle = backgroundColor;
-        offCtx.beginPath();
-        offCtx.moveTo(radius, 0);
-        offCtx.lineTo(renderSize - radius, 0);
-        offCtx.quadraticCurveTo(renderSize, 0, renderSize, radius);
-        offCtx.lineTo(renderSize, renderSize - radius);
-        offCtx.quadraticCurveTo(renderSize, renderSize, renderSize - radius, renderSize);
-        offCtx.lineTo(radius, renderSize);
-        offCtx.quadraticCurveTo(0, renderSize, 0, renderSize - radius);
-        offCtx.lineTo(0, radius);
-        offCtx.quadraticCurveTo(0, 0, radius, 0);
-        offCtx.closePath();
-        offCtx.fill();
-      }
-
-      // Calculate font size based on render size
-      const fontSize = renderSize * (1 - padding * 2) * 0.35;
-
-      // Use Inter font for consistency with the app
-      offCtx.font = `800 ${fontSize}px "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif`;
-      offCtx.fillStyle = '#3b82f6';
-      offCtx.textAlign = 'center';
-      offCtx.textBaseline = 'middle';
-
-      // Draw text on the 2x canvas
-      offCtx.fillText('Luma', renderSize / 2, renderSize / 2);
-
-      // Now draw the 2x canvas down to the target canvas with high-quality scaling
-      ctx.clearRect(0, 0, size, size);
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(offscreen, 0, 0, size, size);
-    }
-
-    // Generate all icon sizes
-    const sizes = [2048, 1024, 512, 192, 180, 128, 64, 32, 16];
-    sizes.forEach(size => {
-      const canvas = document.getElementById(`icon-${size}`);
-      drawLumaLogo(canvas);
-    });
-
-    // Generate icons with background
-    const bgSizes = [512, 192];
-    bgSizes.forEach(size => {
-      const canvas = document.getElementById(`icon-bg-${size}`);
-      drawLumaLogo(canvas, '#0a0a0a', 0.2);
-    });
-
-    // Add download functionality
-    document.querySelectorAll('canvas').forEach(canvas => {
-      canvas.style.cursor = 'pointer';
-      canvas.title = 'Click to download';
-      canvas.addEventListener('click', function() {
-        const link = document.createElement('a');
-        link.download = `luma-icon-${canvas.width}x${canvas.height}.png`;
-        link.href = canvas.toDataURL();
-        link.click();
+        wrapper.appendChild(canvas);
+        wrapper.appendChild(label);
+        container.appendChild(wrapper);
       });
     });
 
-    }); // end fonts.ready
+    // Load the L icon
+    const logoImg = new Image();
+    logoImg.src = 'luma-L-icon.png';
+
+    logoImg.onload = () => {
+      variants.forEach(variant => {
+        sizes.forEach(size => {
+          const canvas = document.getElementById(`icon-${variant.id}-${size}`);
+          drawIcon(canvas, logoImg, variant);
+        });
+      });
+
+      // Download on click
+      document.querySelectorAll('canvas').forEach(canvas => {
+        canvas.style.cursor = 'pointer';
+        canvas.title = 'Click to download';
+        canvas.addEventListener('click', function() {
+          const link = document.createElement('a');
+          link.download = `luma-${canvas.id.replace('icon-', '')}.png`;
+          link.href = canvas.toDataURL();
+          link.click();
+        });
+      });
+    };
+
+    function drawIcon(canvas, img, variant) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const radius = variant.rounded ? size * 0.22 : 0;
+
+      // Clip to rounded rect if needed
+      if (radius > 0) {
+        ctx.beginPath();
+        ctx.moveTo(radius, 0);
+        ctx.lineTo(size - radius, 0);
+        ctx.quadraticCurveTo(size, 0, size, radius);
+        ctx.lineTo(size, size - radius);
+        ctx.quadraticCurveTo(size, size, size - radius, size);
+        ctx.lineTo(radius, size);
+        ctx.quadraticCurveTo(0, size, 0, size - radius);
+        ctx.lineTo(0, radius);
+        ctx.quadraticCurveTo(0, 0, radius, 0);
+        ctx.closePath();
+        ctx.clip();
+      }
+
+      // Background
+      if (variant.bg === 'gradient') {
+        const gradient = ctx.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, '#030712');
+        gradient.addColorStop(0.5, '#0f172a');
+        gradient.addColorStop(1, '#030712');
+        ctx.fillStyle = gradient;
+      } else {
+        ctx.fillStyle = variant.bg;
+      }
+      ctx.fillRect(0, 0, size, size);
+
+      // Subtle radial glow behind the L
+      if (variant.glow) {
+        const glow = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size * 0.45);
+        glow.addColorStop(0, 'rgba(37, 99, 235, 0.15)');
+        glow.addColorStop(1, 'rgba(37, 99, 235, 0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, size, size);
+      }
+
+      // Draw L centered
+      const padding = size * 0.20;
+      const drawArea = size - padding * 2;
+      const imgRatio = img.width / img.height;
+      let drawW, drawH;
+      if (imgRatio > 1) {
+        drawW = drawArea;
+        drawH = drawArea / imgRatio;
+      } else {
+        drawH = drawArea;
+        drawW = drawArea * imgRatio;
+      }
+      const x = (size - drawW) / 2;
+      const y = (size - drawH) / 2;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      if (variant.tint === 'black') {
+        // Draw L in black: use the image as an alpha mask
+        // Create offscreen canvas, draw image, then composite to black
+        const off = document.createElement('canvas');
+        off.width = size;
+        off.height = size;
+        const offCtx = off.getContext('2d');
+        offCtx.drawImage(img, x, y, drawW, drawH);
+
+        // Replace all colors with black, keep alpha
+        offCtx.globalCompositeOperation = 'source-in';
+        offCtx.fillStyle = '#000000';
+        offCtx.fillRect(0, 0, size, size);
+
+        ctx.drawImage(off, 0, 0);
+      } else {
+        ctx.drawImage(img, x, y, drawW, drawH);
+      }
+    }
   </script>
-  
+
   <div style="margin-top: 40px; padding: 20px; background: #171717; border-radius: 8px; color: #888;">
     <h3 style="color: #3b82f6; margin-top: 0;">Instructions:</h3>
     <ol style="line-height: 1.8;">
       <li>Click on any icon to download it as a PNG file</li>
       <li>Place the downloaded files in your <code style="background: #262626; padding: 2px 6px; border-radius: 4px;">public</code> folder</li>
-      <li>Update your <code style="background: #262626; padding: 2px 6px; border-radius: 4px;">manifest.json</code> with the correct filenames</li>
-      <li>For favicon.ico, you can use an online converter with the 32x32 or 16x16 PNG</li>
+      <li>For Luma-App: save 1024x1024 dark as <code style="background: #262626; padding: 2px 6px; border-radius: 4px;">logo-dark.png</code>, white as <code style="background: #262626; padding: 2px 6px; border-radius: 4px;">logo-light.png</code></li>
+      <li>For favicon: use the 32x32 or convert to .ico</li>
     </ol>
-    
-    <h3 style="color: #3b82f6; margin-top: 20px;">Manifest Example:</h3>
-    <pre style="background: #0a0a0a; padding: 16px; border-radius: 8px; overflow-x: auto; color: #fafafa;">
-{
-  "name": "Luma Dashboard",
-  "short_name": "Luma",
-  "icons": [
-    {
-      "src": "/luma-icon-16x16.png",
-      "sizes": "16x16",
-      "type": "image/png"
-    },
-    {
-      "src": "/luma-icon-32x32.png",
-      "sizes": "32x32",
-      "type": "image/png"
-    },
-    {
-      "src": "/luma-icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/luma-icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "theme_color": "#0a0a0a",
-  "background_color": "#0a0a0a",
-  "display": "standalone"
-}
-    </pre>
   </div>
 </body>
 </html>

@@ -60,8 +60,8 @@ export default function Footer() {
       <div className="container mx-auto px-6 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 pl-4 md:pl-0">
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center mb-3 sm:mb-4">
-              <span className="text-xl sm:text-2xl font-bold text-primary">Luma</span>
+            <Link href="/" className="flex items-center">
+              <img src="/luma-wordmark.svg" alt="Luma" className="h-24 sm:h-32 w-auto" />
             </Link>
             <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">
               The mobile POS for events. Lower fees, no contracts.

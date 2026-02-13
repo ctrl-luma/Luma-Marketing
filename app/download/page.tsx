@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import StarryBackground from '@/components/StarryBackground'
 import {
   QrCode,
   Zap,
@@ -103,7 +102,6 @@ export default function DownloadPage() {
 
       {/* Full-page starry background + grid */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-20 [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-      <StarryBackground className="absolute inset-0 z-0" />
 
       <div className="relative z-10">
         <Header />

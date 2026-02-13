@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, memo } from 'react'
+import { memo } from 'react'
 
 interface StarryBackgroundProps {
   children?: React.ReactNode
@@ -10,31 +10,16 @@ interface StarryBackgroundProps {
 }
 
 export default memo(function StarryBackground({ children, className = '', subtle = false, opacity }: StarryBackgroundProps) {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   return (
     <div
       className={`absolute inset-0 overflow-hidden ${className}`}
-      style={{ opacity: opacity ?? (subtle ? 0.4 : 1) }}
+      style={{
+        opacity: opacity ?? (subtle ? 0.4 : 1),
+        contain: 'strict',
+      }}
     >
-      <div
-        className="starry-group-1"
-        style={{
-          animation: mounted ? 'starTwinkle1 4s ease-in-out infinite' : 'none',
-          opacity: mounted ? undefined : 0,
-        }}
-      />
-      <div
-        className="starry-group-2"
-        style={{
-          animation: mounted ? 'starTwinkle2 4s ease-in-out infinite' : 'none',
-          opacity: mounted ? undefined : 0,
-        }}
-      />
+      <div className="starry-group-1" style={{ opacity: 0.7 }} />
+      <div className="starry-group-2" style={{ opacity: 0.5 }} />
       {children && (
         <div className="relative z-10">
           {children}

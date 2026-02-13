@@ -1,8 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
 import {
   Smartphone,
   DollarSign,
@@ -15,7 +12,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { getTierById } from '@/lib/pricing'
-import StarryBackground from './StarryBackground'
+import { useFadeIn } from '@/hooks/useFadeIn'
 
 const proTier = getTierById('pro')
 
@@ -73,62 +70,25 @@ const additionalFeatures = [
 ]
 
 export default function Features() {
-  // Check if navigating to home page with any hash (from another page)
-  const [initialLoad, setInitialLoad] = useState(false)
-  useEffect(() => {
-    if (window.location.hash) {
-      setInitialLoad(true)
-    }
-  }, [])
-
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
+  const { ref, isVisible } = useFadeIn()
 
   // Separate observer for bottom section
-  const { ref: bottomRef, inView: bottomInView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
-
-  // Show content if in view OR if we navigated directly to this section
-  const shouldAnimate = inView || initialLoad
-  const shouldAnimateBottom = bottomInView || initialLoad
+  const { ref: bottomRef, isVisible: bottomVisible } = useFadeIn()
 
   return (
     <section className="section-padding bg-black relative overflow-hidden scroll-mt-24" id="features">
       <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 to-black" />
-      <StarryBackground subtle className="z-[1]" />
 
-      {/* Subtle background accent */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
-          <motion.h2
-            ref={ref}
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="heading-2 mb-3 sm:mb-4"
-          >
+        <div ref={ref} className={`fade-in-section ${isVisible ? 'visible' : ''} text-center max-w-3xl mx-auto mb-10 sm:mb-16`}>
+          <h2 className="fade-child heading-2 mb-3 sm:mb-4">
             Everything you need to run events
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base sm:text-lg text-gray-400"
-          >
+          </h2>
+          <p className="fade-child text-base sm:text-lg text-gray-400">
             From weddings to farmer&apos;s markets. Set up in minutes, not hours.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-wrap justify-center gap-2 mt-4 sm:mt-5"
-          >
+          </p>
+          <div className="fade-child flex flex-wrap justify-center gap-2 mt-4 sm:mt-5">
             {audiencePills.map((pill) => (
               <span
                 key={pill}
@@ -137,25 +97,22 @@ export default function Features() {
                 {pill}
               </span>
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {/* Hero features - prominent cards with glow */}
         <div className="grid sm:grid-cols-3 gap-5 sm:gap-6 mb-16 items-stretch">
-          {heroFeatures.map((feature, index) => {
+          {heroFeatures.map((feature) => {
             const Icon = feature.icon
             return (
-              <motion.div
+              <div
                 key={feature.name}
-                initial={{ opacity: 0, y: 30, scale: 0.97 }}
-                animate={shouldAnimate ? { opacity: 1, y: 0, scale: 1 } : {}}
-                transition={{ duration: 0.6, delay: 0.1 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
                 className="group relative h-full"
               >
                 {/* Hover glow */}
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-primary/0 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                <div className="relative p-6 sm:p-8 rounded-2xl bg-gray-900/90 border border-gray-800 group-hover:border-primary/30 transition-colors duration-300 h-full">
+                <div className="relative p-6 sm:p-8 rounded-2xl bg-gray-900/90 border border-gray-800 border-t-2 border-t-primary/60 group-hover:border-primary/30 group-hover:border-t-primary transition-colors duration-300 h-full">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                       <Icon className="h-5 w-5 text-primary" />
@@ -168,18 +125,15 @@ export default function Features() {
                     {feature.description}
                   </p>
                 </div>
-              </motion.div>
+              </div>
             )
           })}
         </div>
 
         {/* Additional features - 3x2 grid */}
-        <motion.div
+        <div
           ref={bottomRef}
-          initial={{ opacity: 0, y: 20 }}
-          animate={shouldAnimateBottom ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="max-w-5xl mx-auto"
+          className={`fade-in-section ${bottomVisible ? 'visible' : ''} max-w-5xl mx-auto`}
         >
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-8 text-center">
             Everything else you need
@@ -203,7 +157,7 @@ export default function Features() {
               )
             })}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

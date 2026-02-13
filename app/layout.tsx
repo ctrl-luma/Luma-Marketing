@@ -18,11 +18,11 @@ const robotoMono = Roboto_Mono({
 })
 
 export const viewport: Viewport = {
-  themeColor: '#000000',
+  themeColor: '#050505',
 }
 
 export const metadata: Metadata = {
-  title: `${process.env.NEXT_PUBLIC_APP_NAME} - Mobile POS for Bars, Food Trucks & Events`,
+  title: `${process.env.NEXT_PUBLIC_APP_NAME} - Mobile Point of Sale`,
   description: 'Accept payments anywhere with Tap to Pay on your phone. Built for mobile bars, food trucks, and event vendors. No hardware needed, lower fees, instant payouts.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3333'),
   alternates: {
@@ -30,30 +30,21 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   icons: {
-    icon: '/favicon.svg',
-    apple: '/favicon.png',
+    icon: '/favicon.png',
+    apple: '/apple-touch-icon.png',
   },
   openGraph: {
-    title: 'Luma POS - Mobile Payments for Bars, Food Trucks & Events',
-    description: 'Accept payments anywhere with Tap to Pay on your phone. Built for mobile bars, food trucks, and event vendors. No hardware, lower fees, instant payouts.',
+    title: 'Luma - Mobile Point of Sale',
+    description: 'Accept payments anywhere with Tap to Pay. Built for bars, food trucks, and event vendors.',
     url: process.env.NEXT_PUBLIC_APP_URL || 'https://lumapos.co',
     siteName: 'Luma POS',
-    images: [
-      {
-        url: '/app-icon-black-square.png',
-        width: 1024,
-        height: 1024,
-        alt: 'Luma POS',
-      },
-    ],
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary',
-    title: 'Luma POS - Mobile Payments for Bars, Food Trucks & Events',
-    description: 'Accept payments anywhere with Tap to Pay. Built for mobile bars, food trucks, and event vendors. No hardware, lower fees.',
-    images: ['/app-icon-black-square.png'],
+    title: 'Luma - Mobile Point of Sale',
+    description: 'Accept payments anywhere with Tap to Pay. Built for bars, food trucks, and event vendors.',
   },
   appleWebApp: {
     capable: true,

@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { publicEventsApi, type PublicEvent, type PublicTier } from '@/lib/api/events'
 import { CalendarDays, MapPin, Ticket, ArrowLeft, ExternalLink, Mail, ShieldAlert, AlertTriangle, Plus, Minus, Share2, Flame } from 'lucide-react'
 import { io, type Socket } from 'socket.io-client'
-import StarryBackground from '@/components/StarryBackground'
 
 // --- Countdown hook ---
 
@@ -209,15 +208,7 @@ export default function EventPage() {
   if (loading) {
     return (
       <div className="relative min-h-screen bg-black">
-        <StarryBackground className="fixed inset-0 z-0" opacity={0.25} />
         <div className="relative z-10">
-          <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/80 border-b border-white/5">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3">
-              <Link href="/events" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                <span className="text-xl font-bold text-primary">Luma</span>
-              </Link>
-            </div>
-          </header>
           <main className="pb-16">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-6 animate-pulse">
               {/* Banner skeleton */}
@@ -245,15 +236,7 @@ export default function EventPage() {
   if (error || !event) {
     return (
       <div className="relative min-h-screen bg-black">
-        <StarryBackground className="fixed inset-0 z-0" opacity={0.25} />
         <div className="relative z-10">
-          <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/80 border-b border-white/5">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3">
-              <Link href="/events" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                <span className="text-xl font-bold text-primary">Luma</span>
-              </Link>
-            </div>
-          </header>
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
             <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gray-800/50 flex items-center justify-center mb-4 sm:mb-6">
               <CalendarDays className="h-8 w-8 sm:h-10 sm:w-10 text-gray-600" />
@@ -271,19 +254,8 @@ export default function EventPage() {
 
   return (
     <div className="relative min-h-screen bg-black">
-      <StarryBackground className="fixed inset-0 z-0" opacity={0.25} />
       <div className="relative z-10">
         <EventMeta event={event} />
-        <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/80 border-b border-white/5">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-            <Link href="/events" className="flex items-center hover:opacity-80 transition-opacity">
-              <span className="text-xl font-bold text-primary">Luma</span>
-            </Link>
-            {event.organizationName && (
-              <span className="text-sm text-gray-500 hidden sm:block">by {event.organizationName}</span>
-            )}
-          </div>
-        </header>
         <main className="pb-28 lg:pb-16">
           {/* Hero Banner */}
           <div className="w-full h-48 sm:h-72 md:h-96 bg-gray-900 relative overflow-hidden">
@@ -450,7 +422,7 @@ export default function EventPage() {
 
             {/* Ticket Tiers Sidebar (desktop) */}
             <div className="lg:col-span-1 hidden lg:block">
-              <div className="sticky top-28">
+              <div className="sticky top-6">
                 <TicketSidebar
                   event={event}
                   slug={slug}
@@ -485,6 +457,15 @@ export default function EventPage() {
             </div>
           </div>
         </div>
+          {/* Footer logo */}
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-8 sm:mt-10">
+            <div className="border-t border-gray-800/60 pt-6 flex items-center justify-center gap-2">
+              <span className="text-xs text-gray-600">Powered by</span>
+              <Link href="/events" className="inline-flex items-center hover:opacity-80 transition-opacity">
+                <img src="/luma-wordmark.svg" alt="Luma" className="h-16 w-auto opacity-40 hover:opacity-60 transition-opacity -translate-x-[14px] translate-y-[0px]" />
+              </Link>
+            </div>
+          </div>
       </main>
 
         {/* Sticky mobile checkout bar */}

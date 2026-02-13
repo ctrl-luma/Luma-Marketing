@@ -1,12 +1,10 @@
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ContactForm from '@/components/ContactForm'
-import StarryBackground from '@/components/StarryBackground'
 
 export default function ContactPage() {
   return (
     <div className="relative min-h-screen bg-black">
-      <StarryBackground className="fixed inset-0 z-0" />
       <div className="relative z-10">
         <Header />
         <main>

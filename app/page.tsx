@@ -27,11 +27,7 @@ export default function Home() {
       </div>
       <div className="absolute top-0 left-0 right-0 h-[150px] bg-gradient-to-b from-primary/20 via-primary/5 to-transparent z-30 pointer-events-none" />
 
-      {/* Background gradients - hidden on mobile for performance */}
-      <div className="hidden lg:block fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[20%] left-[10%] w-[400px] h-[400px] rounded-full bg-gradient-radial from-primary/15 to-transparent" />
-        <div className="absolute bottom-[10%] right-[10%] w-[500px] h-[500px] rounded-full bg-gradient-radial from-primary/10 to-transparent" />
-      </div>
+      {/* Background gradients removed — fixed-position blurred blobs cause scroll jank */}
 
       <div className="relative z-10">
         <Header />

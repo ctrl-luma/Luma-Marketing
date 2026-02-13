@@ -341,9 +341,9 @@ export default function GetStartedPage() {
       <div className="relative z-10">
         {/* Header */}
         <header className="border-b border-gray-800 bg-black/50 backdrop-blur-sm">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between">
             <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold text-primary">Luma</span>
+              <img src="/luma-wordmark.svg" alt="Luma" className="h-[76px] sm:h-28 w-auto" />
             </Link>
             <div className="flex items-center gap-3 sm:gap-4">
               <a
@@ -408,7 +408,7 @@ export default function GetStartedPage() {
                         />
 
                         {tier.recommended && (
-                          <span className="absolute -top-1.5 left-3 bg-gradient-to-r from-primary-600/80 to-primary-700/80 px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold text-white/90 shadow-md shadow-primary/15 z-20 whitespace-nowrap">
+                          <span className="absolute -top-[11px] left-3 bg-gradient-to-r from-primary-600/80 to-primary-700/80 px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold text-white/90 shadow-md shadow-primary/15 z-20 whitespace-nowrap">
                             Most Popular
                           </span>
                         )}
@@ -417,24 +417,24 @@ export default function GetStartedPage() {
                           <div className="flex items-baseline gap-2 mb-1">
                             <h3 className="text-lg sm:text-xl font-semibold text-white">{tier.name}</h3>
                             <div className="flex flex-col">
+                              <span className="text-xl sm:text-2xl font-bold text-primary">{tier.price}{tier.period}</span>
                               {tier.trialDays && (
                                 <span className="text-[10px] sm:text-xs text-green-400 font-medium">{tier.trialDays}-day free trial</span>
                               )}
-                              <span className="text-xl sm:text-2xl font-bold text-primary">{tier.price}{tier.period}</span>
                               {tier.regularPrice && (
                                 <span className="text-[10px] sm:text-xs text-gray-400">then {tier.regularPrice}/month</span>
                               )}
                             </div>
                           </div>
                           <p className="text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3">{tier.description}</p>
-                          <ul className="space-y-0.5">
-                            <li className="flex items-center text-xs sm:text-sm text-gray-300 font-medium">
-                              <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary mr-1.5 sm:mr-2 flex-shrink-0" />
+                          <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+                            <li className="flex items-center text-[11px] sm:text-xs text-gray-300 font-medium">
+                              <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary mr-1 sm:mr-1.5 flex-shrink-0" />
                               {tier.transactionFee}
                             </li>
-                            {tier.features.slice(0, 2).map((feature, i) => (
-                              <li key={i} className="flex items-center text-xs sm:text-sm text-gray-300">
-                                <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary mr-1.5 sm:mr-2 flex-shrink-0" />
+                            {tier.features.map((feature, i) => (
+                              <li key={i} className="flex items-center text-[11px] sm:text-xs text-gray-300">
+                                <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary mr-1 sm:mr-1.5 flex-shrink-0" />
                                 {feature}
                               </li>
                             ))}

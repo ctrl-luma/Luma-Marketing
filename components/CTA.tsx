@@ -1,22 +1,12 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
-import { useState, useEffect } from 'react'
+import { useFadeIn } from '@/hooks/useFadeIn'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { Button, GradientBackground } from './ui'
 import { event } from '@/lib/analytics'
 
 export default function CTA() {
-  const [initialLoad, setInitialLoad] = useState(false)
-
-  useEffect(() => {
-    if (window.location.hash) {
-      setInitialLoad(true)
-    }
-  }, [])
-
   const handlePricingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     const element = document.querySelector('#pricing')
@@ -25,28 +15,16 @@ export default function CTA() {
     }
   }
 
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
-
-  const shouldAnimate = inView || initialLoad
+  const { ref, isVisible } = useFadeIn()
 
   return (
     <GradientBackground variant="subtle" className="section-padding">
       <div className="container">
-        <motion.div
+        <div
           ref={ref}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={shouldAnimate ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.5 }}
-          className="relative"
+          className={`fade-in-section ${isVisible ? 'visible' : ''} relative`}
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
+          <div className="fade-child">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="heading-2 text-white mb-4 sm:mb-6">
                 Ready to get started?
@@ -79,8 +57,8 @@ export default function CTA() {
                 No credit card required • Cancel anytime
               </p>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </GradientBackground>
   )

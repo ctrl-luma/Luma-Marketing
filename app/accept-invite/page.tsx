@@ -181,8 +181,8 @@ function AcceptInviteContent() {
       <div className="max-w-md w-full">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="text-3xl font-bold text-primary mb-4 inline-block">
-            Luma
+          <Link href="/" className="inline-block mb-4">
+            <img src="/luma-wordmark.svg" alt="Luma" className="h-12 sm:h-14 w-auto" />
           </Link>
           <h1 className="text-2xl font-bold text-white mb-2">
             Welcome, {inviteInfo.firstName}!

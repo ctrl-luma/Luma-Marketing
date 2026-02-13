@@ -22,7 +22,7 @@ export default function BrandedQRCode({ value, size = 160, id, variant = 'dark',
         bgColor={isDark ? '#000000' : '#ffffff'}
         fgColor={isDark ? '#ffffff' : '#000000'}
         ecLevel="H"
-        logoImage={isDark ? '/app-icon-black-square.png' : '/app-icon-white.svg'}
+        logoImage="/app-icon-black-square.png"
         logoWidth={size * 0.25}
         logoHeight={size * 0.25}
         logoPadding={3}
