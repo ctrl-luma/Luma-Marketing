@@ -8,7 +8,7 @@ export default function TermsOfService() {
       <main className="pt-20 sm:pt-24 pb-12 sm:pb-16">
         <div className="container max-w-3xl mx-auto px-4">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">Luma POS Terms of Service</h1>
-          <p className="text-gray-400 text-sm sm:text-base mb-6 sm:mb-8">Last Updated: January 4, 2026</p>
+          <p className="text-gray-400 text-sm sm:text-base mb-6 sm:mb-8">Last Updated: February 14, 2026</p>
 
           <div className="prose prose-invert prose-gray max-w-none">
             {/* Section 1 */}
@@ -56,7 +56,7 @@ export default function TermsOfService() {
 
               <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">4.1 Customer Responsibility</h3>
               <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 uppercase font-semibold">
-                You, the Merchant, are solely responsible for all chargebacks, fraud, and disputed transactions processed through your Luma POS account, including but not limited to:
+                You, the Merchant, are solely responsible for all chargebacks, refunds, fraud, and disputed transactions processed through your Luma POS account, including but not limited to:
               </p>
               <ul className="list-disc list-inside text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 space-y-1">
                 <li>Credit card chargebacks</li>
@@ -64,6 +64,7 @@ export default function TermsOfService() {
                 <li>ACH returns and disputes</li>
                 <li>Fraudulent transactions</li>
                 <li>Unauthorized transactions</li>
+                <li>Refunds issued by you or your staff for any reason</li>
                 <li>Claims of non-delivery or non-receipt of goods/services</li>
                 <li>Claims of defective or not-as-described goods/services</li>
               </ul>
@@ -176,7 +177,22 @@ export default function TermsOfService() {
                 <li>Adjust your account balance to recover amounts owed</li>
               </ul>
 
-              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.4 Disputed Fees</h3>
+              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.4 Refunds and Platform Fee Retention</h3>
+              <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">
+                When you issue a refund to a customer — whether for an in-person transaction, invoice, ticket, or preorder — the following applies:
+              </p>
+              <ul className="list-disc list-inside text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 space-y-1">
+                <li>The refund amount is debited from <strong className="text-white">your Stripe Connect account balance</strong>, not from Luma POS</li>
+                <li>You are solely responsible for maintaining sufficient funds in your Stripe account to cover any refunds you issue</li>
+                <li><strong className="text-white">Luma POS platform fees (application fees) are non-refundable</strong> and are retained by Luma POS on all refunded transactions, whether full or partial</li>
+                <li>Stripe&apos;s own processing fees on refunded transactions are governed by Stripe&apos;s Terms of Service and fee schedule</li>
+                <li>Luma POS is not liable for any financial loss you incur as a result of issuing refunds</li>
+              </ul>
+              <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 uppercase font-semibold">
+                By using Luma POS to process payments, you acknowledge and agree that all refund liability rests solely with you, the Merchant, and that Luma POS platform fees are earned upon the original transaction and are non-refundable under any circumstances.
+              </p>
+
+              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.5 Disputed Fees</h3>
               <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">
                 Any disputes regarding Luma POS fees must be submitted within 30 days of the charge. After 30 days, all charges are considered accepted.
               </p>
@@ -191,7 +207,7 @@ export default function TermsOfService() {
               <ul className="list-disc list-inside text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 space-y-1">
                 <li>Your violation of these Terms</li>
                 <li>Your violation of any applicable laws or regulations</li>
-                <li>Chargebacks and fraud associated with your account</li>
+                <li>Chargebacks, refunds, and fraud associated with your account</li>
                 <li>Disputes with your customers</li>
                 <li>Your products, services, or business practices</li>
                 <li>Infringement of any intellectual property or other rights of any third party</li>
@@ -202,9 +218,9 @@ export default function TermsOfService() {
             <section className="mb-6 sm:mb-8">
               <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">8. Limitation of Liability</h2>
 
-              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">8.1 No Liability for Chargebacks</h3>
+              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">8.1 No Liability for Chargebacks or Refunds</h3>
               <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 uppercase font-semibold">
-                Luma POS is not liable for any chargebacks, fraud, or payment disputes. These are solely your responsibility as the merchant.
+                Luma POS is not liable for any chargebacks, refunds, fraud, or payment disputes. All refunds are debited from your Stripe Connect account. Luma POS platform fees are non-refundable and retained on all refunded transactions. These financial obligations are solely your responsibility as the merchant.
               </p>
 
               <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">8.2 Service Availability</h3>
@@ -355,11 +371,11 @@ export default function TermsOfService() {
             <section className="mb-6 sm:mb-8">
               <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">15. Acknowledgment</h2>
               <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 uppercase font-semibold">
-                By creating an account and using Luma POS, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service, including the provisions regarding your sole liability for chargebacks and fraud.
+                By creating an account and using Luma POS, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service, including the provisions regarding your sole liability for chargebacks, refunds, and fraud, and that Luma POS platform fees are non-refundable.
               </p>
               <div className="bg-yellow-900/20 border border-yellow-600/30 rounded-lg p-4 mt-4">
                 <p className="text-yellow-500 text-sm sm:text-base font-medium">
-                  <strong>Important Notice:</strong> These Terms of Service contain important provisions regarding your liability for chargebacks and fraud. Please read them carefully. If you have questions, consult with legal counsel before accepting.
+                  <strong>Important Notice:</strong> These Terms of Service contain important provisions regarding your liability for chargebacks, refunds, and fraud, including that all refunds are debited from your Stripe Connect account and that Luma POS platform fees are non-refundable. Please read them carefully. If you have questions, consult with legal counsel before accepting.
                 </p>
               </div>
             </section>

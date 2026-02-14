@@ -150,7 +150,7 @@ export default function MenuPage() {
       <div className="relative min-h-screen bg-black">
         <header className="sticky top-0 z-40 backdrop-blur-xl bg-black/80 border-b border-white/5">
           <div className="container mx-auto px-4 sm:px-6 max-w-2xl py-3 flex items-center gap-2.5">
-            <img src="/luma-wordmark.svg" alt="Luma" className="h-12 sm:h-14 w-auto" />
+            <img src="/luma-wordmark.svg" alt="Luma" className="h-[4.5rem] sm:h-20 w-auto" />
           </div>
         </header>
         <main className="pb-24">
@@ -181,7 +181,7 @@ export default function MenuPage() {
       <div className="relative min-h-screen bg-black">
         <header className="sticky top-0 z-40 backdrop-blur-xl bg-black/80 border-b border-white/5">
           <div className="container mx-auto px-4 sm:px-6 max-w-2xl py-3 flex items-center gap-2.5">
-            <img src="/luma-wordmark.svg" alt="Luma" className="h-12 sm:h-14 w-auto" />
+            <img src="/luma-wordmark.svg" alt="Luma" className="h-[4.5rem] sm:h-20 w-auto" />
           </div>
         </header>
         <div className="flex flex-col items-center justify-center min-h-[80vh] text-center px-4">
@@ -205,7 +205,7 @@ export default function MenuPage() {
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-black/80 border-b border-white/5">
         <div className="container mx-auto px-4 sm:px-6 max-w-2xl py-3 flex items-center justify-between">
           <Link href="https://lumapos.co" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-            <img src="/luma-wordmark.svg" alt="Luma" className="h-12 sm:h-14 w-auto" />
+            <img src="/luma-wordmark.svg" alt="Luma" className="h-[4.5rem] sm:h-20 w-auto" />
           </Link>
           {catalog.organizationName && (
             <span className="text-sm text-gray-500 truncate ml-4">by {catalog.organizationName}</span>
