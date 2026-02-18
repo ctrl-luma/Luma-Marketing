@@ -56,6 +56,7 @@ const FAQItem = memo(function FAQItem({ faq, isOpen, onToggle }: {
     <div className="border border-gray-800 rounded-lg sm:rounded-xl overflow-hidden bg-gray-900/50">
       <button
         onClick={onToggle}
+        aria-expanded={isOpen}
         className="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left cursor-pointer"
       >
         <span className="font-medium text-white text-sm sm:text-base pr-4">{faq.question}</span>

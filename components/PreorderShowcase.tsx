@@ -113,7 +113,7 @@ export default function PreorderShowcase() {
 
         <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
           {/* Features */}
-          <div className={`fade-in-section from-left ${isVisible ? 'visible' : ''} space-y-6`}>
+          <div className={`fade-in-section from-left ${isVisible ? 'visible' : ''} space-y-6 order-2 lg:order-1`}>
             {features.map((feature) => {
               const Icon = feature.icon
               return (
@@ -145,7 +145,7 @@ export default function PreorderShowcase() {
           </div>
 
           {/* Dual phone mockups */}
-          <div className={`fade-in-section ${isVisible ? 'visible' : ''}`}>
+          <div className={`fade-in-section ${isVisible ? 'visible' : ''} order-1 lg:order-2`}>
             <div className="fade-child">
               <DualPhones />
             </div>

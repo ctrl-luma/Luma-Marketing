@@ -6,13 +6,10 @@ let cachedPublishableKey: string | null = null;
 // Fetch the publishable key from the backend
 async function fetchPublishableKey(): Promise<string> {
   if (cachedPublishableKey) {
-    console.log('[Stripe] Using cached publishable key:', cachedPublishableKey);
     return cachedPublishableKey;
   }
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3334';
-  console.log('[Stripe] Fetching publishable key from:', `${apiUrl}/stripe/config`);
-
   const response = await fetch(`${apiUrl}/stripe/config`);
 
   if (!response.ok) {
@@ -20,7 +17,6 @@ async function fetchPublishableKey(): Promise<string> {
   }
 
   const data = await response.json();
-  console.log('[Stripe] Received publishable key:', data.publishableKey);
   cachedPublishableKey = data.publishableKey;
   return data.publishableKey;
 }

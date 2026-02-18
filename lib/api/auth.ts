@@ -79,14 +79,10 @@ class AuthService {
   }
 
   async signup(data: SignupData): Promise<SignupResponse> {
-    console.log('AuthService.signup called with:', data);
-    
     const response = await apiClient.post<SignupResponse>('/auth/signup', data);
-    
-    console.log('Signup response:', response);
-    
+
     this.saveAuthData(response);
-    
+
     return response;
   }
 
@@ -96,8 +92,8 @@ class AuthService {
     if (refreshToken) {
       try {
         await apiClient.post('/auth/logout', { refreshToken });
-      } catch (error) {
-        console.error('Logout error:', error);
+      } catch {
+        // Silently handle - user is already logged out locally
       }
     }
     

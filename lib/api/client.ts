@@ -70,16 +70,12 @@ class ApiClient {
   }
 
   async post<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
-    console.log('API POST:', `${this.baseURL}${endpoint}`, data);
-    
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       ...options,
       method: 'POST',
       headers: this.getHeaders(options?.headers),
       body: data ? JSON.stringify(data) : undefined,
     });
-    
-    console.log('API Response status:', response.status);
 
     return this.handleResponse<T>(response);
   }

@@ -33,8 +33,7 @@ export default function Newsletter() {
       setStatus('success')
       setEmail('')
       setTimeout(() => setStatus('idle'), 3000)
-    } catch (error) {
-      console.error('Subscription error:', error)
+    } catch {
       setStatus('error')
       setTimeout(() => setStatus('idle'), 3000)
     }

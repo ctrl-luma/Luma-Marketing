@@ -17,7 +17,6 @@ export function redirectToVendorDashboard() {
   const user = authService.getUser();
   
   if (!accessToken || !refreshToken) {
-    console.error('No authentication tokens available for handoff');
     window.location.href = dashboardUrl;
     return;
   }

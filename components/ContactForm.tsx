@@ -22,23 +22,19 @@ export default function ContactForm() {
     event('contact_form_submit')
 
     try {
-      const response = await apiClient.post('/contact', {
+      await apiClient.post('/contact', {
         name: formData.name.trim(),
         email: formData.email.trim(),
         company: formData.company.trim(),
         message: formData.message.trim()
       })
 
-      console.log('Contact form submitted successfully:', response)
       setStatus('success')
       setFormData({ name: '', email: '', company: '', message: '' })
 
       // Reset to idle after 5 seconds
       setTimeout(() => setStatus('idle'), 5000)
-    } catch (error: unknown) {
-      const err = error as { details?: unknown }
-      console.error('Contact form error:', error)
-      console.error('Error details:', err.details)
+    } catch {
       setStatus('error')
 
       // Reset to idle after 5 seconds
@@ -76,6 +72,7 @@ export default function ContactForm() {
                     value={formData.name}
                     onChange={handleChange}
                     required
+                    maxLength={100}
                     className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     placeholder="John Doe"
                   />
@@ -92,6 +89,7 @@ export default function ContactForm() {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    maxLength={254}
                     className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     placeholder="john@example.com"
                   />
@@ -108,6 +106,7 @@ export default function ContactForm() {
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
+                  maxLength={200}
                   className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Mobile Bar Co."
                 />
@@ -123,6 +122,7 @@ export default function ContactForm() {
                   value={formData.message}
                   onChange={handleChange}
                   required
+                  maxLength={5000}
                   rows={5}
                   className="w-full rounded-lg border border-gray-800 bg-gray-950/50 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Tell us about your business and what you're looking for..."

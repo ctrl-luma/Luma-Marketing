@@ -173,7 +173,6 @@ export default function GetStartedPage() {
       }
     } catch (error: unknown) {
       const err = error as { error?: string }
-      console.error('Signup error:', error)
       event('onboarding_error', { step: currentStep, error: err.error || 'signup_failed' })
       setApiError(err.error || 'Failed to create account. Please try again.')
       setIsLoading(false)
@@ -211,8 +210,7 @@ export default function GetStartedPage() {
           setIsCheckingEmail(false)
           return
         }
-      } catch (error) {
-        console.error('Email check error:', error)
+      } catch {
         setErrors(prev => ({ ...prev, email: 'Unable to verify email availability. Please try again.' }))
         setIsCheckingEmail(false)
         return
@@ -228,8 +226,7 @@ export default function GetStartedPage() {
           setIsCheckingPassword(false)
           return
         }
-      } catch (error) {
-        console.error('Password check error:', error)
+      } catch {
         setErrors(prev => ({ ...prev, password: 'Unable to validate password. Please try again.' }))
         setIsCheckingPassword(false)
         return
@@ -283,7 +280,6 @@ export default function GetStartedPage() {
           }
         } catch (error: unknown) {
           const err = error as { error?: string }
-          console.error('Signup error:', error)
           event('onboarding_error', { step: 'payment_setup', error: err.error || 'signup_failed' })
           setApiError(err.error || 'Failed to create account. Please try again.')
         }

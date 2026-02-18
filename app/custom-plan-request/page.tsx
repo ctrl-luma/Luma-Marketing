@@ -63,8 +63,7 @@ export default function CustomPlanRequestPage() {
       setTimeout(() => {
         redirectToVendorDashboard()
       }, 3000)
-    } catch (error) {
-      console.error('Failed to submit custom plan request:', error)
+    } catch {
       setErrors({ submit: 'Failed to submit request. Please try again.' })
       setIsLoading(false)
     }

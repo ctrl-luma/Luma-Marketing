@@ -149,8 +149,8 @@ export default function MenuPage() {
     return (
       <div className="relative min-h-screen bg-black">
         <header className="sticky top-0 z-40 backdrop-blur-xl bg-black/80 border-b border-white/5">
-          <div className="container mx-auto px-4 sm:px-6 max-w-2xl py-3 flex items-center gap-2.5">
-            <img src="/luma-wordmark.svg" alt="Luma" className="h-[4.5rem] sm:h-20 w-auto" />
+          <div className="container mx-auto px-4 sm:px-6 max-w-2xl py-2 flex items-center gap-2.5">
+            <img src="/luma-wordmark.svg" alt="Luma" className="h-14 sm:h-16 w-auto" />
           </div>
         </header>
         <main className="pb-24">
@@ -180,8 +180,8 @@ export default function MenuPage() {
     return (
       <div className="relative min-h-screen bg-black">
         <header className="sticky top-0 z-40 backdrop-blur-xl bg-black/80 border-b border-white/5">
-          <div className="container mx-auto px-4 sm:px-6 max-w-2xl py-3 flex items-center gap-2.5">
-            <img src="/luma-wordmark.svg" alt="Luma" className="h-[4.5rem] sm:h-20 w-auto" />
+          <div className="container mx-auto px-4 sm:px-6 max-w-2xl py-2 flex items-center gap-2.5">
+            <img src="/luma-wordmark.svg" alt="Luma" className="h-14 sm:h-16 w-auto" />
           </div>
         </header>
         <div className="flex flex-col items-center justify-center min-h-[80vh] text-center px-4">
@@ -203,9 +203,9 @@ export default function MenuPage() {
   return (
     <div className="relative min-h-screen bg-black">
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-black/80 border-b border-white/5">
-        <div className="container mx-auto px-4 sm:px-6 max-w-2xl py-3 flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 max-w-2xl py-2 flex items-center justify-between">
           <Link href="https://lumapos.co" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-            <img src="/luma-wordmark.svg" alt="Luma" className="h-[4.5rem] sm:h-20 w-auto" />
+            <img src="/luma-wordmark.svg" alt="Luma" className="h-14 sm:h-16 w-auto" />
           </Link>
           {catalog.organizationName && (
             <span className="text-sm text-gray-500 truncate ml-4">by {catalog.organizationName}</span>
@@ -315,6 +315,8 @@ export default function MenuPage() {
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent pt-4 pb-2 px-2">
                           <div className="flex items-center justify-center gap-2">
                             <div
+                              role="button"
+                              aria-label={`Decrease quantity of ${product.name}`}
                               onClick={(e) => {
                                 e.stopPropagation()
                                 updateQuantity(product.catalogProductId, -1)
@@ -324,9 +326,11 @@ export default function MenuPage() {
                               <Minus className="h-4 w-4" />
                             </div>
                             <div className="h-8 min-w-[32px] px-3 rounded-full bg-primary flex items-center justify-center">
-                              <span className="text-white font-bold text-sm">{qty}</span>
+                              <span className="text-white font-bold text-sm" aria-label={`Quantity: ${qty}`}>{qty}</span>
                             </div>
                             <div
+                              role="button"
+                              aria-label={`Increase quantity of ${product.name}`}
                               onClick={(e) => {
                                 e.stopPropagation()
                                 addToCart(product)
@@ -444,6 +448,7 @@ export default function MenuPage() {
                   <div className="flex items-center gap-1 flex-shrink-0">
                     <button
                       onClick={() => updateQuantity(item.product.catalogProductId, -1)}
+                      aria-label={`Decrease quantity of ${item.product.name}`}
                       className="h-6 w-6 rounded flex items-center justify-center text-white bg-gray-700 hover:bg-gray-600 transition-colors cursor-pointer"
                     >
                       <Minus className="h-3 w-3" />
@@ -453,6 +458,7 @@ export default function MenuPage() {
                     </span>
                     <button
                       onClick={() => updateQuantity(item.product.catalogProductId, 1)}
+                      aria-label={`Increase quantity of ${item.product.name}`}
                       className="h-6 w-6 rounded flex items-center justify-center text-white bg-gray-700 hover:bg-gray-600 transition-colors cursor-pointer"
                     >
                       <Plus className="h-3 w-3" />
@@ -462,6 +468,7 @@ export default function MenuPage() {
                   {/* Remove */}
                   <button
                     onClick={() => removeFromCart(item.product.catalogProductId)}
+                    aria-label={`Remove ${item.product.name} from cart`}
                     className="text-gray-500 hover:text-red-400 transition-colors p-0.5 flex-shrink-0 cursor-pointer"
                   >
                     <X className="h-3.5 w-3.5" />

@@ -1,7 +1,7 @@
 'use client'
 
 import { useFadeIn } from '@/hooks/useFadeIn'
-import { FileText, Mail, Clock, DollarSign, Check } from 'lucide-react'
+import { FileText, Mail, Clock, Check } from 'lucide-react'
 import Link from 'next/link'
 import { event } from '@/lib/analytics'
 
@@ -20,11 +20,6 @@ const features = [
     icon: Clock,
     title: 'Payment Tracking',
     description: 'See invoice status in real time — draft, sent, paid, or overdue at a glance.',
-  },
-  {
-    icon: DollarSign,
-    title: 'Flexible Billing',
-    description: 'Custom line items, tax rates, due dates, and memos for any billing scenario.',
   },
 ]
 

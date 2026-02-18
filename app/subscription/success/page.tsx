@@ -58,8 +58,7 @@ export default function SubscriptionSuccessPage() {
             redirectToVendorDashboard()
           }, 3000)
         }
-      } catch (err) {
-        console.error('Failed to process subscription:', err)
+      } catch {
         setError('Failed to complete setup. Please contact support.')
       } finally {
         setIsProcessing(false)

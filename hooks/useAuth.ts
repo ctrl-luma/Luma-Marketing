@@ -24,8 +24,8 @@ export function useAuth(): UseAuthReturn {
       try {
         const savedUser = authService.getUser();
         setUser(savedUser);
-      } catch (error) {
-        console.error('Error loading user:', error);
+      } catch {
+        // Silently handle - user will need to re-authenticate
       } finally {
         setIsLoading(false);
       }
@@ -81,8 +81,8 @@ export function useAuth(): UseAuthReturn {
       await authService.logout();
       setUser(null);
       router.push('/');
-    } catch (error) {
-      console.error('Logout error:', error);
+    } catch {
+      // Silently handle - user is already logged out locally
     } finally {
       setIsLoading(false);
     }

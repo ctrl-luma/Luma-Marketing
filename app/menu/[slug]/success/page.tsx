@@ -134,13 +134,11 @@ export default function SuccessPage() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3334'
 
     const fetchPreorder = () => {
-      console.log('Fetching preorder data...')
       publicMenuApi.getPreorderStatus(slug, preorderId, customerEmail)
         .then(res => {
-          console.log('Preorder fetched:', res.preorder.status)
           setPreorder(res.preorder)
         })
-        .catch(console.error)
+        .catch(() => {})
     }
 
     const socket = io(`${apiUrl}/public`, {
@@ -155,30 +153,27 @@ export default function SuccessPage() {
 
     // Handle initial connection
     socket.on('connect', () => {
-      console.log('Socket connected, joining preorder room')
       setIsConnected(true)
       socket.emit('join', `preorder:${preorderId}`)
       // Always fetch fresh data on connect/reconnect
       fetchPreorder()
     })
 
-    socket.on('disconnect', (reason) => {
-      console.log('Socket disconnected:', reason)
+    socket.on('disconnect', () => {
       setIsConnected(false)
     })
 
     // Handle all preorder events by fetching fresh data
-    const handlePreorderEvent = (eventName: string) => (data: { preorderId?: string; status?: string }) => {
-      console.log(`${eventName} event:`, data)
+    const handlePreorderEvent = (data: { preorderId?: string; status?: string }) => {
       if (data.preorderId === preorderId) {
         fetchPreorder()
       }
     }
 
-    socket.on('preorder:updated', handlePreorderEvent('preorder:updated'))
-    socket.on('preorder:ready', handlePreorderEvent('preorder:ready'))
-    socket.on('preorder:completed', handlePreorderEvent('preorder:completed'))
-    socket.on('preorder:cancelled', handlePreorderEvent('preorder:cancelled'))
+    socket.on('preorder:updated', handlePreorderEvent)
+    socket.on('preorder:ready', handlePreorderEvent)
+    socket.on('preorder:completed', handlePreorderEvent)
+    socket.on('preorder:cancelled', handlePreorderEvent)
 
     return () => {
       socket.disconnect()

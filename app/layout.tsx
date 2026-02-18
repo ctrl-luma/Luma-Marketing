@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   icons: {
-    icon: '/favicon.png',
-    apple: '/apple-touch-icon.png',
+    icon: '/app-icon-black-square.png',
+    apple: '/app-icon-black-square.png',
   },
   openGraph: {
     title: 'Luma - Mobile Point of Sale',
@@ -40,11 +40,20 @@ export const metadata: Metadata = {
     siteName: 'Luma POS',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: '/apple-thumbnail.png',
+        width: 1200,
+        height: 630,
+        alt: 'Luma POS - Accept payments anywhere',
+      },
+    ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Luma - Mobile Point of Sale',
     description: 'Accept payments anywhere with Tap to Pay. Built for bars, food trucks, and event vendors.',
+    images: ['/apple-thumbnail.png'],
   },
   appleWebApp: {
     capable: true,
@@ -61,35 +70,41 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
       <head>
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="gtag-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
-          `}
-        </Script>
-        <Script id="gtm" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        {process.env.NODE_ENV === 'production' && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="gtag-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
+              `}
+            </Script>
+            <Script id="gtm" strategy="afterInteractive">
+              {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-PCNRKR3G');`}
-        </Script>
+            </Script>
+          </>
+        )}
       </head>
       <body>
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-PCNRKR3G"
-            height="0"
-            width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
+        {process.env.NODE_ENV === 'production' && (
+          <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-PCNRKR3G"
+              height="0"
+              width="0"
+              style={{ display: 'none', visibility: 'hidden' }}
+            />
+          </noscript>
+        )}
         <AuthProvider>
           <Analytics />
           <ScrollToTop />

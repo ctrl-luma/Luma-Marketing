@@ -23,8 +23,7 @@ export default function OnboardingRefreshPage() {
         } else {
           setError('Unable to refresh onboarding link. Please contact support.')
         }
-      } catch (err) {
-        console.error('Failed to refresh onboarding:', err)
+      } catch {
         setError('Failed to refresh onboarding link. Please try again.')
       } finally {
         setIsLoading(false)
