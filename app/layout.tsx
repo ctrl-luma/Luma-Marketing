@@ -30,7 +30,10 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   icons: {
-    icon: '/app-icon-black-square.png',
+    icon: [
+      { url: '/og-icon.png', sizes: '192x192', type: 'image/png' },
+      { url: '/app-icon-black-square.png', sizes: '1024x1024', type: 'image/png' },
+    ],
     apple: '/app-icon-black-square.png',
   },
   openGraph: {
