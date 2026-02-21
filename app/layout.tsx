@@ -31,10 +31,12 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: [
-      { url: '/og-icon.png', sizes: '192x192', type: 'image/png' },
-      { url: '/app-icon-black-square.png', sizes: '1024x1024', type: 'image/png' },
+      { url: '/favicon.ico', sizes: '64x64 48x48 32x32 16x16', type: 'image/x-icon' },
+      { url: '/luma-black-rounded.png', sizes: '192x192', type: 'image/png' },
+      { url: '/luma-black-rounded.png', sizes: '512x512', type: 'image/png' },
     ],
-    apple: '/app-icon-black-square.png',
+    apple: '/luma-black-rounded.png',
+    shortcut: '/favicon.ico',
   },
   openGraph: {
     title: 'Luma - Mobile Point of Sale',
