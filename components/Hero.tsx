@@ -9,28 +9,13 @@ import { useEffect, useState, useRef } from 'react'
 import { event } from '@/lib/analytics'
 
 export default function Hero() {
-  const [isMobile, setIsMobile] = useState(true)
   const [isReady, setIsReady] = useState(false)
-  const [viewportChecked, setViewportChecked] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 1024)
-    check()
-    // React 18 batches setIsMobile + setViewportChecked in one render,
-    // so PhoneShowcase only ever mounts at the correct size
-    setViewportChecked(true)
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
-
-  // Trigger fade-in AFTER PhoneShowcase has mounted and been painted.
-  // setTimeout is more reliable than double-rAF across browsers/mobile.
-  useEffect(() => {
-    if (!viewportChecked) return
     const id = setTimeout(() => setIsReady(true), 60)
     return () => clearTimeout(id)
-  }, [viewportChecked])
+  }, [])
 
   const handlePricingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
@@ -78,8 +63,8 @@ export default function Hero() {
               </a>
             </div>
 
-            {/* Benefits row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            {/* Benefits row - hidden on mobile to keep phones visible */}
+            <div className="hidden sm:grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
               {[
                 { label: 'Processing', value: '<3 seconds', icon: Zap },
                 { label: 'Setup', value: '5 minutes', icon: Clock },
@@ -102,9 +87,12 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right side - Phone showcase (always in DOM to prevent CLS) */}
-          <div className={`transition-opacity duration-300 ${viewportChecked ? 'opacity-100' : 'opacity-0'}`}>
-            <PhoneShowcase mobile={isMobile} />
+          {/* Right side - Phone showcase: render both, CSS shows correct one */}
+          <div className="lg:hidden">
+            <PhoneShowcase mobile />
+          </div>
+          <div className="hidden lg:block">
+            <PhoneShowcase mobile={false} />
           </div>
         </div>
       </div>

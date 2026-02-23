@@ -10,13 +10,25 @@ import { authService } from '@/lib/api'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { redirectToVendorDashboard } from '@/lib/auth-handoff'
-import { Elements } from '@stripe/react-stripe-js'
-import { getStripePromise } from '@/lib/stripe'
-import StripePaymentForm from '@/components/StripePaymentForm'
+import dynamic from 'next/dynamic'
+
+const StripePaymentSection = dynamic(() => import('@/components/StripePaymentSection'), {
+  loading: () => (
+    <div className="flex items-center justify-center py-8">
+      <div className="text-center">
+        <div className="h-8 w-8 mx-auto mb-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <p className="text-gray-400">Loading payment...</p>
+      </div>
+    </div>
+  ),
+})
 import { pricingTiers, getTierById } from '@/lib/pricing'
 import { event } from '@/lib/analytics'
 
 type Step = 'account' | 'business' | 'usecase' | 'pricing' | 'payment' | 'confirmation'
+
+// Skip entrance animation on first render so LCP content paints immediately
+const noInitialAnimation = { opacity: 1, x: 0 }
 
 export default function GetStartedPage() {
   const searchParams = useSearchParams()
@@ -52,6 +64,7 @@ export default function GetStartedPage() {
   const [isCheckingEmail, setIsCheckingEmail] = useState(false)
   const [isCheckingPassword, setIsCheckingPassword] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
+  const [hasNavigated, setHasNavigated] = useState(false)
   
   const getSteps = (): Step[] => {
     // If we came from URL with tier and haven't gone back to pricing yet
@@ -198,9 +211,11 @@ export default function GetStartedPage() {
 
   const handleNext = async () => {
     if (!validateStep()) return
+    setHasNavigated(true)
     
     // Check email availability and password validity when moving from account step
-    if (currentStep === 'account') {
+    // Skip if account was already created (user went back from payment step)
+    if (currentStep === 'account' && !paymentIntentClientSecret) {
       // Check email availability
       setIsCheckingEmail(true)
       try {
@@ -253,6 +268,11 @@ export default function GetStartedPage() {
       event(`onboarding_step_${steps[nextIndex]}`)
       // If moving TO payment step, create account and get payment intent
       if (steps[nextIndex] === 'payment') {
+        // If account was already created (user went back), skip straight to payment
+        if (paymentIntentClientSecret) {
+          setCurrentStep(steps[nextIndex])
+          return
+        }
         event('onboarding_payment_started')
         setIsLoading(true)
         try {
@@ -271,7 +291,7 @@ export default function GetStartedPage() {
             expectedVolume: formData.expectedVolume?.trim() || undefined,
             additionalRequirements: formData.additionalRequirements?.trim() || undefined
           })
-          
+
           if (response.paymentIntentClientSecret) {
             setPaymentIntentClientSecret(response.paymentIntentClientSecret)
             setCurrentStep(steps[nextIndex])
@@ -297,6 +317,7 @@ export default function GetStartedPage() {
   }
 
   const handleBack = () => {
+    setHasNavigated(true)
     event('onboarding_step_back', { from_step: currentStep })
     // Special case: if we're on account step and came from a pricing tier URL
     if (currentStep === 'account' && tierFromUrl) {
@@ -339,7 +360,7 @@ export default function GetStartedPage() {
         <header className="border-b border-gray-800 bg-black/50 backdrop-blur-sm">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between">
             <Link href="/" className="flex items-center">
-              <img src="/luma-wordmark.svg" alt="Luma" width="1024" height="1024" className="h-[76px] sm:h-28 w-auto" />
+              <img src="/luma-wordmark.svg" alt="Luma" width="1024" height="1024" className="h-[76px] sm:h-28 w-auto" fetchPriority="high" />
             </Link>
             <div className="flex items-center gap-3 sm:gap-4">
               <a
@@ -370,7 +391,7 @@ export default function GetStartedPage() {
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
-              initial={{ opacity: 0, x: 20 }}
+              initial={hasNavigated ? { opacity: 0, x: 20 } : noInitialAnimation}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
@@ -810,59 +831,38 @@ export default function GetStartedPage() {
                   </div>
                   
                   {paymentIntentClientSecret ? (
-                    <Elements stripe={getStripePromise()} options={{
-                      clientSecret: paymentIntentClientSecret,
-                      appearance: {
-                        theme: 'night',
-                        variables: {
-                          colorPrimary: '#f97316',
-                          colorBackground: '#111827',
-                          colorText: '#f3f4f6',
-                          colorDanger: '#ef4444',
-                          fontFamily: 'system-ui, -apple-system, sans-serif',
-                          spacingUnit: '4px',
-                          borderRadius: '12px',
-                        },
-                        rules: {
-                          '.Tab': {
-                            border: '1px solid #374151',
-                            boxShadow: 'none',
-                          },
-                          '.Tab:hover': {
-                            border: '1px solid #4b5563',
-                          },
-                          '.Tab--selected': {
-                            borderColor: '#f97316',
-                            boxShadow: '0 0 0 1px #f97316',
-                          },
-                          '.Input': {
-                            border: '1px solid #374151',
-                            boxShadow: 'none',
-                          },
-                          '.Input:focus': {
-                            border: '1px solid #f97316',
-                            boxShadow: '0 0 0 1px #f97316',
-                          },
-                          '.Label': {
-                            fontWeight: '500',
-                          },
-                        },
-                      },
-                    }}>
-                      <StripePaymentForm
-                        onSuccess={handlePaymentSuccess}
-                        onError={handlePaymentError}
-                        isLoading={isLoading}
-                        setIsLoading={setIsLoading}
-                        clientSecret={paymentIntentClientSecret}
-                      />
-                    </Elements>
+                    <StripePaymentSection
+                      clientSecret={paymentIntentClientSecret}
+                      onSuccess={handlePaymentSuccess}
+                      onError={handlePaymentError}
+                      isLoading={isLoading}
+                      setIsLoading={setIsLoading}
+                    />
                   ) : (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="text-center">
-                        <div className="h-8 w-8 mx-auto mb-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                        <p className="text-gray-400">Setting up payment...</p>
+                    <div className="space-y-4 animate-pulse">
+                      {/* Card number skeleton */}
+                      <div>
+                        <div className="h-4 w-24 bg-gray-800 rounded mb-2" />
+                        <div className="h-12 bg-gray-900 rounded-xl border border-gray-700" />
                       </div>
+                      {/* Expiry + CVC row skeleton */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <div className="h-4 w-20 bg-gray-800 rounded mb-2" />
+                          <div className="h-12 bg-gray-900 rounded-xl border border-gray-700" />
+                        </div>
+                        <div>
+                          <div className="h-4 w-12 bg-gray-800 rounded mb-2" />
+                          <div className="h-12 bg-gray-900 rounded-xl border border-gray-700" />
+                        </div>
+                      </div>
+                      {/* Country skeleton */}
+                      <div>
+                        <div className="h-4 w-28 bg-gray-800 rounded mb-2" />
+                        <div className="h-12 bg-gray-900 rounded-xl border border-gray-700" />
+                      </div>
+                      {/* Button skeleton */}
+                      <div className="h-12 bg-gray-800 rounded-xl mt-6" />
                     </div>
                   )}
                 </div>
@@ -931,15 +931,7 @@ export default function GetStartedPage() {
               )}
 
               {currentStep === 'payment' ? (
-                <Button
-                  variant="ghost"
-                  onClick={handleBack}
-                  disabled={isLoading}
-                  className="disabled:opacity-30 text-sm sm:text-base"
-                >
-                  <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-                  Back
-                </Button>
+                <div />
               ) : (
                 <Button
                   onClick={handleNext}
