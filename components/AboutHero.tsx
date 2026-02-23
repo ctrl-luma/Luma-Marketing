@@ -17,8 +17,8 @@ export default function AboutHero() {
           ref={ref}
           className={`fade-in-section ${isVisible ? 'visible' : ''} max-w-3xl mx-auto text-center`}
         >
-          <p className="fade-child text-primary text-sm sm:text-base font-semibold tracking-wide mb-2 sm:mb-4">
-            About Luma
+          <p className="fade-child text-[#3B82F6] text-sm sm:text-base font-semibold tracking-wide mb-2 sm:mb-4 flex items-center justify-center gap-1.5">
+            About <img src="/luma-wordmark.svg" alt="Luma" width="1024" height="1024" className="h-16 sm:h-20 w-auto inline-block -ml-[15px]" />
           </p>
           <h1 className="fade-child text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-3 sm:mb-6">
             Payments should be{' '}

@@ -25,9 +25,7 @@ export const metadata: Metadata = {
   title: `${process.env.NEXT_PUBLIC_APP_NAME} - Mobile Point of Sale`,
   description: 'Accept payments anywhere with Tap to Pay on your phone. Built for mobile bars, food trucks, and event vendors. No hardware needed, lower fees, instant payouts.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3333'),
-  alternates: {
-    canonical: '/',
-  },
+  alternates: {},
   manifest: '/manifest.json',
   icons: {
     icon: [

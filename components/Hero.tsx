@@ -102,8 +102,10 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right side - Phone showcase (only renders after viewport check) */}
-          {viewportChecked && <PhoneShowcase mobile={isMobile} />}
+          {/* Right side - Phone showcase (always in DOM to prevent CLS) */}
+          <div className={`transition-opacity duration-300 ${viewportChecked ? 'opacity-100' : 'opacity-0'}`}>
+            <PhoneShowcase mobile={isMobile} />
+          </div>
         </div>
       </div>
 

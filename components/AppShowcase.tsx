@@ -1,16 +1,11 @@
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { event } from '@/lib/analytics'
 
 function DemoVideo() {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 1024)
-  }, [])
 
   useEffect(() => {
     const video = videoRef.current
@@ -56,7 +51,7 @@ function DemoVideo() {
       video.removeEventListener('click', onClick)
       video.removeEventListener('canplay', tryPlay)
     }
-  }, [isMobile])
+  }, [])
 
   return (
     <div
@@ -64,24 +59,17 @@ function DemoVideo() {
       style={{ backgroundImage: 'url(/analytics-poster.webp)' }}
     >
       <video
-        key={isMobile ? 'mobile' : 'desktop'}
         ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
-        preload="auto"
+        preload="none"
         className="absolute inset-0 w-full h-full object-cover"
       >
-        {isMobile ? (
-          <source src="/analytics-loop.mp4" type="video/mp4" />
-        ) : (
-          <>
-            <source src="/analytics-loop-av1.webm" type='video/webm; codecs="av01.0.05M.08"' />
-            <source src="/analytics-loop.webm" type="video/webm" />
-            <source src="/analytics-loop.mp4" type="video/mp4" />
-          </>
-        )}
+        <source src="/analytics-loop-av1.webm" type='video/webm; codecs="av01.0.05M.08"' />
+        <source src="/analytics-loop.webm" type="video/webm" />
+        <source src="/analytics-loop.mp4" type="video/mp4" />
       </video>
     </div>
   )

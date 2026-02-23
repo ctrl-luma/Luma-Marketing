@@ -3,6 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   trailingSlash: true,
+  experimental: {
+    inlineCss: true,
+  },
   images: {
     domains: [],
     remotePatterns: [

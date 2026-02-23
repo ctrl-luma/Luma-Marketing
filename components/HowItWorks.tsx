@@ -80,7 +80,7 @@ function QrDownload() {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <a href="/download" onClick={() => event('qr_code_click')} className="block">
+      <a href="/download" onClick={() => event('qr_code_click')} className="block" aria-label="Download Luma app">
         {url ? (
           <BrandedQRCode value={url} />
         ) : (

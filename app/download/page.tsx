@@ -177,7 +177,7 @@ export default function DownloadPage() {
                     )}
                   </div>
                   <div className="text-center md:text-left">
-                    <h3 className="text-2xl font-bold text-white mb-2">Scan to Download</h3>
+                    <h2 className="text-2xl font-bold text-white mb-2">Scan to Download</h2>
                     <p className="text-gray-400 text-sm mb-4">
                       Point your phone&apos;s camera at the QR code to download the app
                       instantly. Works with both iPhone and Android.

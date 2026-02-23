@@ -93,7 +93,7 @@ export default function EventsShowcase() {
                     <Icon className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-white mb-1">{feature.title}</h4>
+                    <h3 className="font-medium text-white mb-1">{feature.title}</h3>
                     <p className="text-sm text-gray-400 leading-relaxed">{feature.description}</p>
                   </div>
                 </div>

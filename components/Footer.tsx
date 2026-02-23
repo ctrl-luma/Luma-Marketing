@@ -61,7 +61,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 pl-4 md:pl-0">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center">
-              <img src="/luma-wordmark.svg" alt="Luma" className="h-24 sm:h-32 w-auto" />
+              <img src="/luma-wordmark.svg" alt="Luma" width="1024" height="1024" className="h-24 sm:h-32 w-auto" />
             </Link>
             <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">
               The mobile POS for events. Lower fees, no contracts.
@@ -69,7 +69,7 @@ export default function Footer() {
             <a
               href="mailto:support@lumapos.co"
               onClick={() => event('footer_click_email')}
-              className="text-gray-500 hover:text-primary transition-colors text-xs sm:text-sm flex items-center gap-2"
+              className="text-gray-400 hover:text-primary transition-colors text-xs sm:text-sm flex items-center gap-2"
             >
               <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               support@lumapos.co
@@ -77,9 +77,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xs sm:text-sm font-semibold text-gray-100 tracking-wider uppercase mb-3 sm:mb-4">
+            <p className="text-xs sm:text-sm font-semibold text-gray-100 tracking-wider uppercase mb-3 sm:mb-4">
               Product
-            </h3>
+            </p>
             <ul className="space-y-2 sm:space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.name}>
@@ -96,9 +96,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xs sm:text-sm font-semibold text-gray-100 tracking-wider uppercase mb-3 sm:mb-4">
+            <p className="text-xs sm:text-sm font-semibold text-gray-100 tracking-wider uppercase mb-3 sm:mb-4">
               Features
-            </h3>
+            </p>
             <ul className="space-y-2 sm:space-y-3">
               {footerLinks.features.map((link) => (
                 <li key={link.name}>
@@ -115,9 +115,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xs sm:text-sm font-semibold text-gray-100 tracking-wider uppercase mb-3 sm:mb-4">
+            <p className="text-xs sm:text-sm font-semibold text-gray-100 tracking-wider uppercase mb-3 sm:mb-4">
               Company
-            </h3>
+            </p>
             <ul className="space-y-2 sm:space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -134,9 +134,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xs sm:text-sm font-semibold text-gray-100 tracking-wider uppercase mb-3 sm:mb-4">
+            <p className="text-xs sm:text-sm font-semibold text-gray-100 tracking-wider uppercase mb-3 sm:mb-4">
               Legal
-            </h3>
+            </p>
             <ul className="space-y-2 sm:space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>

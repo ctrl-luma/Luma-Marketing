@@ -339,7 +339,7 @@ export default function GetStartedPage() {
         <header className="border-b border-gray-800 bg-black/50 backdrop-blur-sm">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between">
             <Link href="/" className="flex items-center">
-              <img src="/luma-wordmark.svg" alt="Luma" className="h-[76px] sm:h-28 w-auto" />
+              <img src="/luma-wordmark.svg" alt="Luma" width="1024" height="1024" className="h-[76px] sm:h-28 w-auto" />
             </Link>
             <div className="flex items-center gap-3 sm:gap-4">
               <a
@@ -347,9 +347,9 @@ export default function GetStartedPage() {
                 className="text-sm text-gray-400 hover:text-white transition-colors"
               >
                 <span className="hidden sm:inline">Already have an account? </span>
-                <span className="font-medium text-primary hover:text-primary-400">Sign in</span>
+                <span className="font-medium text-primary-400 hover:text-primary-300">Sign in</span>
               </a>
-              <Link href="/" className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+              <Link href="/" className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors" aria-label="Back to home">
                 <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
             </div>
@@ -411,7 +411,7 @@ export default function GetStartedPage() {
 
                         <div className="flex-1">
                           <div className="flex items-baseline gap-2 mb-1">
-                            <h3 className="text-lg sm:text-xl font-semibold text-white">{tier.name}</h3>
+                            <h2 className="text-lg sm:text-xl font-semibold text-white">{tier.name}</h2>
                             <div className="flex flex-col">
                               <span className="text-xl sm:text-2xl font-bold text-primary">{tier.price}{tier.period}</span>
                               {tier.trialDays && (
@@ -789,7 +789,7 @@ export default function GetStartedPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs sm:text-sm text-gray-400 mb-0.5 sm:mb-1">You're subscribing to:</p>
-                        <h3 className="text-base sm:text-lg font-semibold text-white">{getTierById(formData.selectedPlan)?.name} Plan</h3>
+                        <h2 className="text-base sm:text-lg font-semibold text-white">{getTierById(formData.selectedPlan)?.name} Plan</h2>
                       </div>
                       <div className="text-right">
                         {getTierById(formData.selectedPlan)?.trialDays && (
