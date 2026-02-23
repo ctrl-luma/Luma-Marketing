@@ -121,20 +121,20 @@ export default function DownloadPage() {
                 </p>
 
                 {/* Download Buttons */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+                <div className="flex flex-row items-center justify-center gap-6 sm:gap-8 mb-12">
                   <a
                     href={appLinks.ios || undefined}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => { if (!appLinks.ios) { e.preventDefault() } else { event('download_click_ios') } }}
-                    className={`w-full sm:w-auto flex justify-center ${!appLinks.ios ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] transition-transform duration-200'}`}
+                    className={`flex justify-center ${!appLinks.ios ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] transition-transform duration-200'}`}
                   >
                     <Image
                       src="/apple-download.png"
                       alt="Download on the App Store"
                       width={168}
                       height={56}
-                      className="h-14 w-auto"
+                      className="h-11 sm:h-14 w-auto"
                     />
                   </a>
 
@@ -143,14 +143,14 @@ export default function DownloadPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => { if (!appLinks.android) { e.preventDefault() } else { event('download_click_android') } }}
-                    className={`w-full sm:w-auto flex justify-center ${!appLinks.android ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] transition-transform duration-200'}`}
+                    className={`flex justify-center ${!appLinks.android ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] transition-transform duration-200'}`}
                   >
                     <Image
                       src="/google-download.png"
                       alt="Get it on Google Play"
                       width={189}
                       height={56}
-                      className="h-14 w-auto"
+                      className="h-11 sm:h-14 w-auto"
                     />
                   </a>
                 </div>
@@ -200,19 +200,19 @@ export default function DownloadPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 max-w-5xl mx-auto">
               {FEATURES.map((feature) => (
                 <div
                   key={feature.title}
-                  className="group bg-gray-900/60 border border-gray-800 rounded-2xl p-6 hover:border-gray-700 transition-colors backdrop-blur-sm"
+                  className="group bg-gray-900/60 border border-gray-800 rounded-2xl p-4 sm:p-6 hover:border-gray-700 transition-colors backdrop-blur-sm"
                 >
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-blue-600 shadow-lg mb-4">
-                    <feature.icon className="w-6 h-6 text-white" />
+                  <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-blue-600 shadow-lg mb-3 sm:mb-4">
+                    <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">
+                  <h3 className="text-sm sm:text-lg font-semibold text-white mb-1 sm:mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-gray-400">{feature.description}</p>
+                  <p className="text-xs sm:text-sm text-gray-400">{feature.description}</p>
                 </div>
               ))}
             </div>
