@@ -58,18 +58,18 @@ export default function Footer() {
   return (
     <footer className="bg-gray-950 border-t border-gray-800">
       <div className="container mx-auto px-6 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 pl-4 md:pl-0">
-          <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 pl-[30px] min-[340px]:pl-[45px] md:pl-0">
+          <div className="col-span-2 md:col-span-1 md:-mt-[50px]">
+            <Link href="/" className="flex items-center -ml-[30px] min-[340px]:-ml-[45px] md:ml-0">
               <img src="/luma-wordmark.svg" alt="Luma" width="1024" height="1024" className="h-24 sm:h-32 w-auto" />
             </Link>
-            <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">
+            <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 -ml-[10px] min-[340px]:-ml-[25px] md:ml-0">
               The mobile POS for events. Lower fees, no contracts.
             </p>
             <a
               href="mailto:support@lumapos.co"
               onClick={() => event('footer_click_email')}
-              className="text-gray-400 hover:text-primary transition-colors text-xs sm:text-sm flex items-center gap-2"
+              className="text-gray-400 hover:text-primary transition-colors text-xs sm:text-sm flex items-center gap-2 -ml-[10px] min-[340px]:-ml-[25px] md:ml-0"
             >
               <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               support@lumapos.co
