@@ -45,6 +45,10 @@ const faqs = [
     question: 'What about manual card entry?',
     answer: 'Manual card entry (typing in card numbers) has slightly higher fees due to increased fraud risk. Starter: 3.1% + $0.33 per transaction. Pro: 3.0% + $0.31 per transaction. This also applies to any online sales directly to customers, including ticket sales and online orders from your menu. Tap to Pay is always cheaper and faster.',
   },
+  {
+    question: 'Which countries do you support?',
+    answer: 'Luma is available in 23 countries: United States, Canada, United Kingdom, Australia, New Zealand, Ireland, France, Germany, Spain, Italy, Netherlands, Belgium, Austria, Portugal, Finland, Sweden, Denmark, Norway, Switzerland, Luxembourg, Czechia, Singapore, and Malaysia. Your currency is automatically set based on the country you select during signup.',
+  },
 ]
 
 const FAQItem = memo(function FAQItem({ faq, isOpen, onToggle }: {

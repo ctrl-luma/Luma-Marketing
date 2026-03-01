@@ -18,6 +18,8 @@ export interface PublicCatalog {
   allowCustomTip: boolean;
   // Payment capability
   canAcceptPayments?: boolean;
+  // Organization currency (ISO 4217)
+  currency?: string;
   categories: PublicCategory[];
   products: PublicProduct[];
 }
@@ -72,6 +74,7 @@ export interface PreorderResponse {
   estimatedReadyAt: string | null;
   pickupInstructions: string | null;
   catalogName: string;
+  currency?: string;
   createdAt: string;
   items: {
     id: string;

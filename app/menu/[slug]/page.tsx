@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { publicMenuApi, type PublicCatalog, type PublicProduct } from '@/lib/api/menu'
 import { io, Socket } from 'socket.io-client'
 import { ArrowLeft, Plus, Minus, ShoppingBag, MapPin, Clock, X, ChevronRight } from 'lucide-react'
+import { formatCurrency, formatCents } from '@/lib/currency'
 
 interface CartItem {
   product: PublicProduct
@@ -95,6 +96,8 @@ export default function MenuPage() {
     if (!selectedCategory) return catalog.products.filter(p => p.isActive)
     return catalog.products.filter(p => p.isActive && p.categoryId === selectedCategory)
   }, [catalog, selectedCategory])
+
+  const currency = catalog?.currency || 'usd'
 
   const cartTotal = useMemo(() => {
     return cart.reduce((sum, item) => sum + (item.product.price / 100) * item.quantity, 0)
@@ -355,7 +358,7 @@ export default function MenuPage() {
                         </p>
                       )}
                       <p className="text-primary font-semibold text-xs sm:text-sm">
-                        ${(product.price / 100).toFixed(2)}
+                        {formatCents(product.price, currency)}
                       </p>
                     </div>
                   </button>
@@ -386,7 +389,7 @@ export default function MenuPage() {
                 </div>
                 <span>View Cart</span>
               </div>
-              <span>${cartTotal.toFixed(2)}</span>
+              <span>{formatCurrency(cartTotal, currency)}</span>
             </button>
           </div>
         </div>
@@ -440,7 +443,7 @@ export default function MenuPage() {
                       {item.product.name}
                     </h3>
                     <p className="text-xs text-gray-400">
-                      ${((item.product.price / 100) * item.quantity).toFixed(2)}
+                      {formatCents(item.product.price * item.quantity, currency)}
                     </p>
                   </div>
 
@@ -481,7 +484,7 @@ export default function MenuPage() {
             <div className="p-4 border-t border-gray-800 space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-400">Subtotal</span>
-                <span className="text-white font-semibold">${cartTotal.toFixed(2)}</span>
+                <span className="text-white font-semibold">{formatCurrency(cartTotal, currency)}</span>
               </div>
               <p className="text-xs text-gray-500">
                 Tax calculated at checkout

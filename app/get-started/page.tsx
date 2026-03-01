@@ -27,6 +27,33 @@ import { event } from '@/lib/analytics'
 
 type Step = 'account' | 'business' | 'usecase' | 'pricing' | 'payment' | 'confirmation'
 
+// Countries where Stripe Terminal is generally available
+const SUPPORTED_COUNTRIES = [
+  { code: 'US', name: 'United States' },
+  { code: 'CA', name: 'Canada' },
+  { code: 'GB', name: 'United Kingdom' },
+  { code: 'AU', name: 'Australia' },
+  { code: 'NZ', name: 'New Zealand' },
+  { code: 'IE', name: 'Ireland' },
+  { code: 'FR', name: 'France' },
+  { code: 'DE', name: 'Germany' },
+  { code: 'ES', name: 'Spain' },
+  { code: 'IT', name: 'Italy' },
+  { code: 'NL', name: 'Netherlands' },
+  { code: 'BE', name: 'Belgium' },
+  { code: 'AT', name: 'Austria' },
+  { code: 'PT', name: 'Portugal' },
+  { code: 'FI', name: 'Finland' },
+  { code: 'SE', name: 'Sweden' },
+  { code: 'DK', name: 'Denmark' },
+  { code: 'NO', name: 'Norway' },
+  { code: 'CH', name: 'Switzerland' },
+  { code: 'LU', name: 'Luxembourg' },
+  { code: 'CZ', name: 'Czechia' },
+  { code: 'SG', name: 'Singapore' },
+  { code: 'MY', name: 'Malaysia' },
+]
+
 // Skip entrance animation on first render so LCP content paints immediately
 const noInitialAnimation = { opacity: 1, x: 0 }
 
@@ -49,6 +76,7 @@ export default function GetStartedPage() {
     lastName: '',
     businessName: '',
     businessType: '',
+    country: 'US',
     phone: '',
     selectedPlan: initialTier || '',
     acceptTerms: false,
@@ -156,6 +184,7 @@ export default function GetStartedPage() {
         lastName: formData.lastName.trim(),
         organizationName: formData.businessName.trim(),
         phone: formData.phone.trim(),
+        country: formData.country,
         acceptTerms: true,
         acceptPrivacy: true,
         subscriptionTier: formData.selectedPlan as 'starter' | 'pro' | 'enterprise',
@@ -164,7 +193,7 @@ export default function GetStartedPage() {
         expectedVolume: formData.expectedVolume?.trim() || undefined,
         additionalRequirements: formData.additionalRequirements?.trim() || undefined
       })
-      
+
       // Save auth tokens and user data
       // Auth service already handles this in the signup method
       
@@ -283,6 +312,7 @@ export default function GetStartedPage() {
             lastName: formData.lastName.trim(),
             organizationName: formData.businessName.trim(),
             phone: formData.phone.trim(),
+            country: formData.country,
             acceptTerms: true,
             acceptPrivacy: true,
             subscriptionTier: formData.selectedPlan as 'starter' | 'pro' | 'enterprise',
@@ -696,12 +726,27 @@ export default function GetStartedPage() {
 
                     <div>
                       <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                        Country
+                      </label>
+                      <select
+                        value={formData.country}
+                        onChange={(e) => handleInputChange('country', e.target.value)}
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-700 bg-gray-900/50 text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                      >
+                        {SUPPORTED_COUNTRIES.map((c) => (
+                          <option key={c.code} value={c.code} className="bg-gray-900">{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
                         Phone number <span className="text-gray-500">(optional)</span>
                       </label>
                       <PhoneInput
                         international
                         countryCallingCodeEditable={false}
-                        defaultCountry="US"
+                        defaultCountry={formData.country as any}
                         limitMaxLength
                         value={formData.phone}
                         onChange={(value) => handleInputChange('phone', value || '')}

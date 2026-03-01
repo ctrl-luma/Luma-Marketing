@@ -9,6 +9,7 @@ import { publicEventsApi, type PublicEvent } from '@/lib/api/events'
 import { getStripePromise } from '@/lib/stripe'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { ArrowLeft, Clock, AlertCircle, Minus, Plus, Ticket, ShieldCheck, CalendarDays, MapPin, ShieldAlert, XCircle } from 'lucide-react'
+import { formatCurrency } from '@/lib/currency'
 
 function CheckoutForm({
   event,
@@ -145,7 +146,7 @@ function CheckoutForm({
           <div>
             <h3 className="font-semibold text-white text-sm">{tier?.name}</h3>
             <p className="text-sm text-gray-400">
-              {tier?.price === 0 ? 'Free' : `$${tier?.price.toFixed(2)} each`}
+              {tier?.price === 0 ? 'Free' : `${formatCurrency(tier?.price || 0, event?.currency || 'usd')} each`}
             </p>
           </div>
 
@@ -178,7 +179,7 @@ function CheckoutForm({
         <div className="border-t border-gray-800 mt-3 pt-3 flex justify-between">
           <span className="text-white font-semibold text-sm">Total</span>
           <span className="text-white font-semibold">
-            {totalAmount === 0 ? 'Free' : `$${totalAmount.toFixed(2)}`}
+            {totalAmount === 0 ? 'Free' : formatCurrency(totalAmount, event?.currency || 'usd')}
           </span>
         </div>
       </div>
@@ -253,7 +254,7 @@ function CheckoutForm({
         ) : totalAmount === 0 ? (
           'Reserve Tickets'
         ) : (
-          `Pay $${totalAmount.toFixed(2)}`
+          `Pay ${formatCurrency(totalAmount, event?.currency || 'usd')}`
         )}
       </button>
 
@@ -584,7 +585,7 @@ export default function CheckoutPage() {
               options={totalAmount > 0 ? {
                 mode: 'payment' as const,
                 amount: Math.round(totalAmount * 100),
-                currency: 'usd',
+                currency: (event?.currency || 'usd').toLowerCase(),
                 paymentMethodCreation: 'manual',
                 appearance: {
                   theme: 'night',

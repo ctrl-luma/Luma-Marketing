@@ -25,6 +25,7 @@ export interface SignupData {
   lastName: string;
   organizationName: string;
   phone?: string;
+  country?: string;
   acceptTerms: boolean;
   acceptPrivacy: boolean;
   subscriptionTier: 'starter' | 'pro' | 'enterprise';

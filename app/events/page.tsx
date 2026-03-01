@@ -6,6 +6,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { publicEventsApi, type PublicEvent } from '@/lib/api/events'
 import { CalendarDays, MapPin, Search, Ticket } from 'lucide-react'
+import { formatCurrency } from '@/lib/currency'
 import { io, type Socket } from 'socket.io-client'
 
 // --- Date helpers ---
@@ -90,13 +91,14 @@ interface EventWithTiers {
   totalAvailable?: number
 }
 
-function getLowestPrice(evt: EventWithTiers): string | null {
+function getLowestPrice(evt: EventWithTiers & { currency?: string }): string | null {
+  const cur = evt.currency || 'usd'
   if (evt.minPrice !== undefined && evt.minPrice !== null) {
-    return evt.minPrice === 0 ? 'Free' : `$${parseFloat(String(evt.minPrice)).toFixed(2)}`
+    return evt.minPrice === 0 ? 'Free' : formatCurrency(evt.minPrice, cur)
   }
   if (evt.tiers?.length) {
     const min = Math.min(...evt.tiers.map((t) => t.price))
-    return min === 0 ? 'Free' : `$${min.toFixed(2)}`
+    return min === 0 ? 'Free' : formatCurrency(min, cur)
   }
   return null
 }

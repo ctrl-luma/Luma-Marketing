@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { publicEventsApi, type PublicEvent, type PublicTier } from '@/lib/api/events'
 import { CalendarDays, MapPin, Ticket, ArrowLeft, ExternalLink, Mail, ShieldAlert, AlertTriangle, Plus, Minus, Share2, Flame } from 'lucide-react'
+import { formatCurrency } from '@/lib/currency'
 import { io, type Socket } from 'socket.io-client'
 
 // --- Countdown hook ---
@@ -477,7 +478,7 @@ export default function EventPage() {
             >
               <Ticket className="h-4 w-4" />
               Get Tickets · {totalQuantity} {totalQuantity === 1 ? 'ticket' : 'tickets'}
-              {totalPrice > 0 ? ` · $${totalPrice.toFixed(2)}` : ' · Free'}
+              {totalPrice > 0 ? ` · ${formatCurrency(totalPrice, event?.currency || 'usd')}` : ' · Free'}
             </Link>
           </div>
         )}
@@ -551,7 +552,7 @@ function TicketSidebar({
                 <div className="flex items-start justify-between mb-1">
                   <h3 className="font-semibold text-white text-xs sm:text-sm">{tier.name}</h3>
                   <span className={`text-sm sm:text-base font-bold ${isSelected ? 'text-primary' : 'text-white'}`}>
-                    {tier.price === 0 ? 'Free' : `$${tier.price.toFixed(2)}`}
+                    {tier.price === 0 ? 'Free' : formatCurrency(tier.price, event?.currency || 'usd')}
                   </span>
                 </div>
 
@@ -609,7 +610,7 @@ function TicketSidebar({
         >
           <Ticket className="h-4 w-4" />
           Go to Checkout · {totalQuantity} {totalQuantity === 1 ? 'ticket' : 'tickets'}
-          {totalPrice > 0 ? ` · $${totalPrice.toFixed(2)}` : ' · Free'}
+          {totalPrice > 0 ? ` · ${formatCurrency(totalPrice, event?.currency || 'usd')}` : ' · Free'}
         </Link>
       )}
     </div>

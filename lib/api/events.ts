@@ -22,6 +22,7 @@ export interface PublicEvent {
   contactEmail: string | null;
   ageRestriction: string | null;
   organizationName: string | null;
+  currency?: string;
   tiers: PublicTier[];
 }
 

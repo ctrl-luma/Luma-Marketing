@@ -7,6 +7,7 @@ import { publicMenuApi, type PublicCatalog, type PublicProduct, type PreorderIte
 import { getStripePromise } from '@/lib/stripe'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { ArrowLeft, AlertCircle, ShoppingBag, CreditCard, Wallet, Clock, ShieldCheck } from 'lucide-react'
+import { formatCurrency, formatCents, getCurrencySymbol } from '@/lib/currency'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 
@@ -124,12 +125,13 @@ function CustomerForm({
 }
 
 // Order summary component
-function OrderSummary({ cart, subtotal, taxAmount, tipAmount, total }: {
+function OrderSummary({ cart, subtotal, taxAmount, tipAmount, total, currency = 'usd' }: {
   cart: CartItem[]
   subtotal: number
   taxAmount: number
   tipAmount: number
   total: number
+  currency?: string
 }) {
   return (
     <div className="rounded-xl bg-gray-900/60 border border-gray-800 p-4">
@@ -141,7 +143,7 @@ function OrderSummary({ cart, subtotal, taxAmount, tipAmount, total }: {
               {item.quantity} × {item.product.name}
             </span>
             <span className="text-gray-400">
-              ${((item.product.price / 100) * item.quantity).toFixed(2)}
+              {formatCents(item.product.price * item.quantity, currency)}
             </span>
           </div>
         ))}
@@ -149,21 +151,21 @@ function OrderSummary({ cart, subtotal, taxAmount, tipAmount, total }: {
       <div className="border-t border-gray-800 pt-3 space-y-1.5">
         <div className="flex justify-between text-sm">
           <span className="text-gray-400">Subtotal</span>
-          <span className="text-gray-300">${subtotal.toFixed(2)}</span>
+          <span className="text-gray-300">{formatCurrency(subtotal, currency)}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-gray-400">Tax</span>
-          <span className="text-gray-300">${taxAmount.toFixed(2)}</span>
+          <span className="text-gray-300">{formatCurrency(taxAmount, currency)}</span>
         </div>
         {tipAmount > 0 && (
           <div className="flex justify-between text-sm">
             <span className="text-gray-400">Tip</span>
-            <span className="text-gray-300">${tipAmount.toFixed(2)}</span>
+            <span className="text-gray-300">{formatCurrency(tipAmount, currency)}</span>
           </div>
         )}
         <div className="flex justify-between text-sm font-semibold pt-1.5 border-t border-gray-800">
           <span className="text-white">Total</span>
-          <span className="text-white">${total.toFixed(2)}</span>
+          <span className="text-white">{formatCurrency(total, currency)}</span>
         </div>
       </div>
     </div>
@@ -241,7 +243,7 @@ function PayNowCheckoutForm({ catalog, cart, subtotal, taxAmount, total, tipAmou
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <OrderSummary cart={cart} subtotal={subtotal} taxAmount={taxAmount} tipAmount={tipAmount} total={total} />
+      <OrderSummary cart={cart} subtotal={subtotal} taxAmount={taxAmount} tipAmount={tipAmount} total={total} currency={catalog.currency || 'usd'} />
 
       <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm bg-primary/10 border border-primary/30 text-primary-300">
         <CreditCard className="h-4 w-4 shrink-0" />
@@ -299,7 +301,7 @@ function PayNowCheckoutForm({ catalog, cart, subtotal, taxAmount, total, tipAmou
             Processing...
           </span>
         ) : (
-          `Pay $${total.toFixed(2)}`
+          `Pay ${formatCurrency(total, catalog.currency || 'usd')}`
         )}
       </button>
 
@@ -359,7 +361,7 @@ function PayAtPickupCheckoutForm({ catalog, cart, subtotal, taxAmount, total, ti
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <OrderSummary cart={cart} subtotal={subtotal} taxAmount={taxAmount} tipAmount={tipAmount} total={total} />
+      <OrderSummary cart={cart} subtotal={subtotal} taxAmount={taxAmount} tipAmount={tipAmount} total={total} currency={catalog.currency || 'usd'} />
 
       <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm bg-amber-500/10 border border-amber-500/30 text-amber-300">
         <Wallet className="h-4 w-4 shrink-0" />
@@ -617,7 +619,7 @@ export default function CheckoutPage() {
               </div>
               {catalog.allowCustomTip && (
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{getCurrencySymbol(catalog?.currency || 'usd')}</span>
                   <input
                     type="number"
                     min="0"
@@ -642,7 +644,7 @@ export default function CheckoutPage() {
               options={{
                 mode: 'payment' as const,
                 amount: Math.round(total * 100),
-                currency: 'usd',
+                currency: (catalog?.currency || 'usd').toLowerCase(),
                 paymentMethodCreation: 'manual',
                 appearance: {
                   theme: 'night',

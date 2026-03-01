@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { publicMenuApi, type PreorderResponse } from '@/lib/api/menu'
 import { io, Socket } from 'socket.io-client'
 import { Check, Clock, ChefHat, Bell, PartyPopper, XCircle, Mail, ArrowLeft, MapPin, Loader2 } from 'lucide-react'
+import { formatCurrency } from '@/lib/currency'
 
 type PreorderStatus = 'pending' | 'preparing' | 'ready' | 'picked_up' | 'cancelled' | 'refunded'
 
@@ -258,7 +259,7 @@ export default function SuccessPage() {
             </h1>
             <p className="text-gray-400 text-base mt-1">
               {isRefunded
-                ? `A refund of $${preorder.totalAmount.toFixed(2)} has been issued to your original payment method.`
+                ? `A refund of ${formatCurrency(preorder.totalAmount, preorder.currency || 'usd')} has been issued to your original payment method.`
                 : isCancelled
                   ? 'This order has been cancelled. No payment was collected.'
                   : config.description}
@@ -268,7 +269,7 @@ export default function SuccessPage() {
             </p>
             {isRefunded && (
               <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/15 px-2.5 py-1 rounded-full mt-2 inline-block">
-                Refunded ${preorder.totalAmount.toFixed(2)}
+                Refunded {formatCurrency(preorder.totalAmount, preorder.currency || 'usd')}
               </span>
             )}
           </div>
@@ -342,7 +343,7 @@ export default function SuccessPage() {
                     <span className="text-gray-500">{item.quantity}×</span> {item.name}
                   </span>
                   <span className="text-gray-400 tabular-nums text-base">
-                    ${(item.unitPrice * item.quantity).toFixed(2)}
+                    {formatCurrency(item.unitPrice * item.quantity, preorder.currency || 'usd')}
                   </span>
                 </div>
               ))}
@@ -352,21 +353,21 @@ export default function SuccessPage() {
             <div className="border-t border-white/5 pt-3 space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">Subtotal</span>
-                <span className="text-sm text-gray-400 tabular-nums">${preorder.subtotal.toFixed(2)}</span>
+                <span className="text-sm text-gray-400 tabular-nums">{formatCurrency(preorder.subtotal, preorder.currency || 'usd')}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">Tax</span>
-                <span className="text-sm text-gray-400 tabular-nums">${preorder.taxAmount.toFixed(2)}</span>
+                <span className="text-sm text-gray-400 tabular-nums">{formatCurrency(preorder.taxAmount, preorder.currency || 'usd')}</span>
               </div>
               {preorder.tipAmount > 0 && (
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-500">Tip</span>
-                  <span className="text-sm text-gray-400 tabular-nums">${preorder.tipAmount.toFixed(2)}</span>
+                  <span className="text-sm text-gray-400 tabular-nums">{formatCurrency(preorder.tipAmount, preorder.currency || 'usd')}</span>
                 </div>
               )}
               <div className="flex justify-between items-center pt-2 border-t border-white/5">
                 <span className="text-base font-semibold text-white">Total</span>
-                <span className="text-xl font-bold text-white tabular-nums">${preorder.totalAmount.toFixed(2)}</span>
+                <span className="text-xl font-bold text-white tabular-nums">{formatCurrency(preorder.totalAmount, preorder.currency || 'usd')}</span>
               </div>
             </div>
           </div>
