@@ -1,9 +1,13 @@
 'use client'
 
+import { useState, useEffect, useMemo } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { FileText, Mail, Clock, Check } from 'lucide-react'
 import Link from 'next/link'
 import { event } from '@/lib/analytics'
+import { getCountryRate } from '@/lib/stripe-rates'
+import { getVisitorCountry, detectCountry } from '@/lib/country'
+import { getCurrencySymbol } from '@/lib/currency'
 
 const features = [
   {
@@ -29,7 +33,7 @@ const invoiceLines = [
   { description: 'Glassware rental', qty: 50, price: 2.50 },
 ]
 
-function MockInvoice() {
+function MockInvoice({ sym }: { sym: string }) {
   const subtotal = invoiceLines.reduce((sum, line) => sum + line.qty * line.price, 0)
   const tax = subtotal * 0.08
   const total = subtotal + tax
@@ -83,7 +87,7 @@ function MockInvoice() {
               <tr key={i} className="border-t border-gray-800/50">
                 <td className="py-2.5 pr-4">{line.description}</td>
                 <td className="py-2.5 text-right text-gray-400">{line.qty}</td>
-                <td className="py-2.5 text-right">${(line.qty * line.price).toFixed(2)}</td>
+                <td className="py-2.5 text-right">{sym}{(line.qty * line.price).toFixed(2)}</td>
               </tr>
             ))}
           </tbody>
@@ -93,15 +97,15 @@ function MockInvoice() {
         <div className="mt-4 pt-4 border-t border-gray-800/80 space-y-2 text-sm">
           <div className="flex justify-between text-gray-400">
             <span>Subtotal</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>{sym}{subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-gray-400">
             <span>Tax (8%)</span>
-            <span>${tax.toFixed(2)}</span>
+            <span>{sym}{tax.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-white font-semibold text-base pt-2 border-t border-gray-800/80">
             <span>Total</span>
-            <span>${total.toFixed(2)}</span>
+            <span>{sym}{total.toFixed(2)}</span>
           </div>
         </div>
       </div>
@@ -120,6 +124,9 @@ function MockInvoice() {
 
 export default function InvoiceShowcase() {
   const { ref, isVisible } = useFadeIn()
+  const [countryCode, setCountryCode] = useState(getVisitorCountry)
+  useEffect(() => { detectCountry().then(setCountryCode) }, [])
+  const sym = useMemo(() => getCurrencySymbol(getCountryRate(countryCode).currency), [countryCode])
 
   return (
     <section id="invoice-showcase" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
@@ -139,7 +146,7 @@ export default function InvoiceShowcase() {
           {/* Mock invoice */}
           <div className={`fade-in-section from-left ${isVisible ? 'visible' : ''}`}>
             <div className="fade-child">
-              <MockInvoice />
+              <MockInvoice sym={sym} />
             </div>
           </div>
 

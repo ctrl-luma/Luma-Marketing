@@ -1,14 +1,31 @@
 'use client'
 
+import { useMemo, useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { Check, X } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { pricingTiers } from '@/lib/pricing'
 import { event } from '@/lib/analytics'
+import { getCountryRate, getTTPRate, formatRate, type LumaTier } from '@/lib/stripe-rates'
+import { getVisitorCountry, detectCountry } from '@/lib/country'
 
 export default function Pricing() {
   const { ref, isVisible } = useFadeIn()
+
+  const [countryCode, setCountryCode] = useState(getVisitorCountry)
+
+  useEffect(() => {
+    detectCountry().then(setCountryCode)
+  }, [])
+
+  const country = useMemo(() => getCountryRate(countryCode), [countryCode])
+  const ttp = useMemo(() => getTTPRate(country), [country])
+
+  const tierFees = useMemo(() => ({
+    starter: formatRate(ttp, country.currency, 'starter') + ' per tap',
+    pro: formatRate(ttp, country.currency, 'pro') + ' per tap',
+  }), [ttp, country])
 
   // Show Pro (highlighted) first on mobile — lead with best offer
   const mobileTiers = [...pricingTiers].sort((a, b) => (b.highlighted ? 1 : 0) - (a.highlighted ? 1 : 0))
@@ -91,7 +108,7 @@ export default function Pricing() {
                     ? 'bg-primary/10 text-primary-100'
                     : 'bg-gray-800 text-gray-300'
                 }`}>
-                  {tier.transactionFee}
+                  {tierFees[tier.id as LumaTier] || tier.transactionFee}
                 </div>
 
                 {/* Features — compact 2-column grid */}
@@ -123,135 +140,77 @@ export default function Pricing() {
           </div>
         </div>
 
-        {/* Desktop layout */}
-        <div className={`fade-in-section ${isVisible ? 'visible' : ''} relative max-w-4xl mx-auto hidden lg:block`}>
-          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 px-0">
-            {pricingTiers.map((tier) => (
-              <div
-                key={tier.name}
-                className={`fade-child relative rounded-2xl p-6 sm:p-7 md:p-8 overflow-visible transition-all duration-300 group flex flex-col ${
-                  tier.highlighted
-                    ? 'bg-gradient-to-br from-primary/25 via-primary/15 to-gray-900 text-white shadow-2xl shadow-primary/25 border-2 border-primary/60 ring-1 ring-primary/30 scale-[1.03]'
-                    : 'bg-gradient-to-br from-gray-800/80 to-gray-900/80 border border-gray-700/50 hover:border-gray-600'
-                }`}
-              >
-                {tier.highlighted && (
-                  <span className="absolute -top-3 sm:-top-4 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary-600 to-primary-700 px-4 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-primary/20 z-20 whitespace-nowrap">
-                    Most Popular
-                  </span>
-                )}
-
-                {/* Animated gradient overlay */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-700 ${
-                  tier.highlighted
-                    ? 'from-primary-700/20 via-primary-800/10 to-transparent'
-                    : 'from-primary/10 via-primary/5 to-transparent'
-                }`} />
-
-                {/* Glow effect */}
-                <div className="absolute -inset-1 bg-gradient-to-br from-primary/20 to-transparent rounded-2xl blur-2xl opacity-0 group-hover:opacity-40 transition-opacity duration-700 -z-10" />
-
-                <div className="relative z-10 flex flex-col h-full">
-                  <div className="mb-4 sm:mb-6">
-                    <h3 className={`text-xl sm:text-2xl font-bold ${
-                      tier.highlighted ? 'text-white' : 'text-gray-100'
-                    }`}>
-                      {tier.name}
-                    </h3>
-                    <p className={`mt-1.5 sm:mt-2 text-xs sm:text-sm ${
-                      tier.highlighted ? 'text-primary-100' : 'text-gray-400'
-                    }`}>
-                      {tier.description}
-                    </p>
-                    <div className="mt-3 sm:mt-4">
-                      {tier.trialDays && (
-                        <div className="inline-block bg-green-500/20 text-green-400 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full mb-2 border border-green-500/30">
-                          {tier.trialDays}-day free trial
-                        </div>
-                      )}
-                      {tier.promoPrice ? (
-                        <>
-                          <div className="flex items-baseline gap-2">
-                            <span className={`text-4xl sm:text-5xl font-bold ${
-                              tier.highlighted ? 'text-white' : 'text-gray-100'
-                            }`}>
-                              {tier.promoPrice}
-                            </span>
-                            <span className={`text-base sm:text-lg line-through opacity-50 ${
-                              tier.highlighted ? 'text-gray-300' : 'text-gray-500'
-                            }`}>
-                              {tier.regularPrice}
-                            </span>
-                          </div>
-                          <div className={`text-xs sm:text-sm mt-1 ${
-                            tier.highlighted ? 'text-primary-100' : 'text-gray-400'
-                          }`}>
-                            <span className="text-green-400 font-medium">{tier.promoPeriod}</span>
-                            <span className="mx-1">•</span>
-                            <span>then {tier.regularPrice}/month</span>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <span className={`text-4xl sm:text-5xl font-bold ${
-                            tier.highlighted ? 'text-white' : 'text-gray-100'
-                          }`}>
-                            {tier.price}
-                          </span>
-                          <span className={`text-lg sm:text-xl ${
-                            tier.highlighted ? 'text-primary-100' : 'text-gray-400'
-                          }`}>
-                            {tier.period}
-                          </span>
-                        </>
-                      )}
-                    </div>
+        {/* Desktop layout — single card, two tight columns */}
+        <div className={`fade-in-section ${isVisible ? 'visible' : ''} relative max-w-2xl mx-auto hidden lg:block`}>
+          <div className="fade-child relative rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900/80 to-gray-950/80 overflow-hidden">
+            <div className="grid grid-cols-2 divide-x divide-gray-800">
+              {pricingTiers.map((tier) => (
+                <div key={tier.name} className={`px-6 py-5 flex flex-col ${tier.highlighted ? 'bg-primary/6' : ''}`}>
+                  {/* Name + badge */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-base font-bold text-white">{tier.name}</h3>
+                    {tier.highlighted && (
+                      <span className="rounded-full bg-gradient-to-r from-primary-600 to-primary-700 px-2.5 py-0.5 text-[10px] font-semibold text-white">
+                        Popular
+                      </span>
+                    )}
                   </div>
 
-                  <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8 flex-grow">
-                    <li className="flex items-start">
-                      <Check className={`h-4 w-4 sm:h-5 sm:w-5 mr-2.5 sm:mr-3 mt-0.5 flex-shrink-0 ${
-                        tier.highlighted ? 'text-primary-100' : 'text-primary'
-                      }`} />
-                      <span className={`text-xs sm:text-sm font-medium ${
-                        tier.highlighted ? 'text-primary-50' : 'text-gray-300'
-                      }`}>
-                        {tier.transactionFee}
-                      </span>
-                    </li>
-                    {tier.features.map((feature) => (
-                      <li key={feature} className="flex items-start">
-                        <Check className={`h-4 w-4 sm:h-5 sm:w-5 mr-2.5 sm:mr-3 mt-0.5 flex-shrink-0 ${
-                          tier.highlighted ? 'text-primary-100' : 'text-primary'
-                        }`} />
-                        <span className={`text-xs sm:text-sm ${
-                          tier.highlighted ? 'text-primary-50' : 'text-gray-300'
-                        }`}>
-                          {feature}
-                        </span>
+                  {/* Price + fee on one line */}
+                  <div className="flex items-baseline gap-2 mb-1">
+                    {tier.promoPrice ? (
+                      <>
+                        <span className="text-xl font-bold text-white">{tier.promoPrice}</span>
+                        <span className="text-xs line-through text-gray-500">{tier.regularPrice}</span>
+                        <span className="text-[10px] text-gray-500">/ mo</span>
+                      </>
+                    ) : (
+                      <span className="text-xl font-bold text-white">{tier.price}</span>
+                    )}
+                    <span className="text-[10px] text-gray-500 ml-auto">{(tierFees[tier.id as LumaTier] || tier.transactionFee).replace(' per tap', '')}</span>
+                  </div>
+
+                  {/* Promo / trial info */}
+                  {(tier.promoPrice || tier.trialDays) && (
+                    <p className="text-[10px] text-gray-400 mb-3">
+                      {tier.trialDays && <span className="text-green-400 font-medium">{tier.trialDays}-day free trial</span>}
+                      {tier.trialDays && tier.promoPrice && <span className="mx-1">•</span>}
+                      {tier.promoPrice && <span>then {tier.regularPrice}/mo</span>}
+                    </p>
+                  )}
+                  {!tier.promoPrice && !tier.trialDays && <div className="mb-3" />}
+
+                  {/* Features — single tight column */}
+                  <ul className="space-y-1 mb-4 flex-grow">
+                    {tier.features.filter(f => f !== 'Everything in Starter').map((feature) => (
+                      <li key={feature} className="flex items-center gap-1.5">
+                        <Check className={`h-3 w-3 flex-shrink-0 ${tier.highlighted ? 'text-primary-200' : 'text-primary'}`} />
+                        <span className={`text-[11px] ${tier.highlighted ? 'text-gray-200' : 'text-gray-300'}`}>{feature}</span>
                       </li>
                     ))}
                     {tier.notIncluded.map((feature) => (
-                      <li key={feature} className="flex items-start opacity-60">
-                        <X className="h-4 w-4 sm:h-5 sm:w-5 mr-2.5 sm:mr-3 mt-0.5 flex-shrink-0 text-gray-600" />
-                        <span className="text-xs sm:text-sm text-gray-500 line-through">
-                          {feature}
-                        </span>
+                      <li key={feature} className="flex items-center gap-1.5 opacity-40">
+                        <X className="h-3 w-3 flex-shrink-0 text-gray-600" />
+                        <span className="text-[11px] text-gray-500 line-through">{feature}</span>
                       </li>
                     ))}
                   </ul>
 
+                  {tier.highlighted && tier.features.includes('Everything in Starter') && (
+                    <p className="text-[10px] text-primary-200/60 mb-3">+ everything in Starter</p>
+                  )}
+
                   <Link href={`/get-started?tier=${tier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`} className="block" onClick={() => event(`cta_pricing_${tier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`)}>
                     <Button
                       variant={tier.highlighted ? 'secondary' : 'primary'}
-                      className="w-full py-2.5 sm:py-3 text-sm sm:text-base"
+                      className="w-full py-2 text-sm"
                     >
                       {tier.cta}
                     </Button>
                   </Link>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

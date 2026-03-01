@@ -1,11 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { Download, LayoutGrid, CreditCard, Banknote, ArrowUpRight, Clock, Zap, Building2 } from 'lucide-react'
 import BrandedQRCode from '@/components/ui/BrandedQRCode'
 import { event } from '@/lib/analytics'
+import { getCountryRate } from '@/lib/stripe-rates'
+import { getVisitorCountry, detectCountry } from '@/lib/country'
+import { getCurrencySymbol } from '@/lib/currency'
 
 const steps = [
   {
@@ -38,7 +41,7 @@ const steps = [
   {
     number: '4',
     title: 'Get Paid',
-    description: 'Cash out to your bank anytime. Choose free standard payouts or instant transfers. Track every dollar from sale to settlement.',
+    description: 'Cash out to your bank anytime. Choose free standard payouts or instant transfers. Track every payment from sale to settlement.',
     icon: Banknote,
     gradient: 'from-primary-500 to-primary-800',
     customComponent: 'payout',
@@ -92,7 +95,7 @@ function QrDownload() {
   )
 }
 
-function MockMenuBuilder() {
+function MockMenuBuilder({ sym }: { sym: string }) {
   const cocktails = [
     { name: 'Margarita', price: '14.00' },
     { name: 'Old Fashioned', price: '16.00' },
@@ -137,7 +140,7 @@ function MockMenuBuilder() {
             <div className="flex-1 min-w-0">
               <div className="text-sm text-white font-medium">{item.name}</div>
             </div>
-            <div className="text-sm text-gray-300 font-medium">${item.price}</div>
+            <div className="text-sm text-gray-300 font-medium">{sym}{item.price}</div>
           </div>
         ))}
       </div>
@@ -154,7 +157,7 @@ function MockMenuBuilder() {
             <div className="flex-1 min-w-0">
               <div className="text-sm text-white font-medium">{item.name}</div>
             </div>
-            <div className="text-sm text-gray-300 font-medium">${item.price}</div>
+            <div className="text-sm text-gray-300 font-medium">{sym}{item.price}</div>
           </div>
         ))}
       </div>
@@ -162,7 +165,7 @@ function MockMenuBuilder() {
   )
 }
 
-function MockPayoutCard() {
+function MockPayoutCard({ sym }: { sym: string }) {
   const recentPayouts = [
     { date: 'Feb 9', amount: '1,247.50', method: 'Instant', status: 'Paid' },
     { date: 'Feb 7', amount: '892.00', method: 'Standard', status: 'Paid' },
@@ -174,10 +177,10 @@ function MockPayoutCard() {
       {/* Balance */}
       <div className="p-4 sm:p-5 border-b border-gray-800/80">
         <div className="text-xs text-gray-500 mb-1">Available Balance</div>
-        <div className="text-2xl font-bold text-white">$3,842.25</div>
+        <div className="text-2xl font-bold text-white">{sym}3,842.25</div>
         <div className="flex items-center gap-1 mt-1">
           <ArrowUpRight className="h-3 w-3 text-emerald-400" />
-          <span className="text-xs text-emerald-400">+$1,247.50 today</span>
+          <span className="text-xs text-emerald-400">+{sym}1,247.50 today</span>
         </div>
       </div>
 
@@ -217,7 +220,7 @@ function MockPayoutCard() {
                 <span className="text-gray-400 text-xs">{payout.date}</span>
                 <span className="text-[10px] text-gray-600">{payout.method}</span>
               </div>
-              <span className="text-white text-xs font-medium">${payout.amount}</span>
+              <span className="text-white text-xs font-medium">{sym}{payout.amount}</span>
             </div>
           ))}
         </div>
@@ -238,7 +241,7 @@ function PhoneFrame({ src, alt }: { src: string; alt: string }) {
 }
 
 // Step with its own intersection observer — alternating slide direction on desktop via CSS
-function StepItem({ step, index }: { step: typeof steps[number]; index: number }) {
+function StepItem({ step, index, sym }: { step: typeof steps[number]; index: number; sym: string }) {
   const Icon = step.icon
   const isEven = index % 2 === 0
   const { ref, isVisible } = useFadeIn(0.2)
@@ -268,9 +271,9 @@ function StepItem({ step, index }: { step: typeof steps[number]; index: number }
       {/* Image side */}
       <div className="flex-1">
         {step.customComponent === 'menu' ? (
-          <MockMenuBuilder />
+          <MockMenuBuilder sym={sym} />
         ) : step.customComponent === 'payout' ? (
-          <MockPayoutCard />
+          <MockPayoutCard sym={sym} />
         ) : step.image ? (
           step.isPhone ? (
             <PhoneFrame src={step.image} alt={step.imageAlt!} />
@@ -293,6 +296,9 @@ function StepItem({ step, index }: { step: typeof steps[number]; index: number }
 
 export default function HowItWorks() {
   const { ref, isVisible } = useFadeIn()
+  const [countryCode, setCountryCode] = useState(getVisitorCountry)
+  useEffect(() => { detectCountry().then(setCountryCode) }, [])
+  const sym = useMemo(() => getCurrencySymbol(getCountryRate(countryCode).currency), [countryCode])
 
   return (
     <section id="how-it-works" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
@@ -309,7 +315,7 @@ export default function HowItWorks() {
 
         <div className="space-y-14 sm:space-y-20 lg:space-y-28 max-w-5xl mx-auto">
           {steps.map((step, index) => (
-            <StepItem key={step.number} step={step} index={index} />
+            <StepItem key={step.number} step={step} index={index} sym={sym} />
           ))}
         </div>
       </div>

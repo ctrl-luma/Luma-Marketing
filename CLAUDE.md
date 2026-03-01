@@ -218,48 +218,34 @@ interface CreatePreorderRequest {
 
 ## Pricing Tiers
 
-```typescript
-// lib/pricing.ts
-export const PRICING_TIERS = {
-  starter: {
-    name: 'Starter',
-    price: 0,                       // Free
-    transactionFee: '2.9% + $0.18',
-    features: [
-      '1 custom menu',
-      '1-2 devices',
-      'Basic reporting',
-      'Email support',
-    ],
-  },
-  pro: {
-    name: 'Pro',
-    price: 19,                      // $19/month
-    transactionFee: '2.8% + $0.16',
-    features: [
-      'Unlimited menus',
-      'Unlimited events',
-      'Unlimited devices',
-      'Revenue splits & tip pooling',
-      'Analytics dashboard',
-      'Export to CSV/PDF',
-      'Priority support',
-    ],
-  },
-  enterprise: {
-    name: 'Enterprise',
-    price: null,                    // Custom pricing
-    transactionFee: 'Custom',
-    features: [
-      'Everything in Pro',
-      'Custom transaction rates',
-      'Dedicated account manager',
-      'Custom integrations',
-      'SLA guarantees',
-    ],
-  },
-};
-```
+Plan definitions: `lib/pricing.ts`. Transaction fee strings there are US defaults for the homepage.
+
+**Rate data is in `lib/stripe-rates.ts`** — Stripe base rates per country + Luma platform markup. Both the homepage `Pricing.tsx` and the dedicated `/pricing` page use country-aware rates via `getLumaMarkup(tier, currency)`.
+
+### Luma platform markup (on top of Stripe)
+
+**Default (US/CA/AU/NZ/SG/MY):** Starter 0.2% + 3, Pro 0.1% + 1
+**EU/UK (EUR/GBP/CHF/SEK/DKK/NOK/CZK):** Starter 0.5% + 5, Pro 0.4% + 2 (fixed scaled per currency)
+
+These mirror `Luma-API/src/config/platform-fees.ts` — keep them in sync.
+
+### Stripe base rates (Terminal / Tap to Pay)
+
+| Region | Terminal | TTP Extra | Online |
+|--------|---------|-----------|--------|
+| US/CA | 2.7% + $0.05 | +$0.10–$0.15 | 2.9% + $0.30 |
+| EU (EUR) | 1.4% + €0.10 | +€0.10 | 1.5% + €0.25 |
+| UK | 1.4% + £0.10 | +£0.10 | 1.5% + £0.20 |
+| AU | 1.7% + A$0.10 | 1.95%+A$0.15* | 1.75% + A$0.30 |
+| NZ | 2.6% + NZ$0.05 | +NZ$0.15 | 2.65% + NZ$0.30 |
+| SG | 3.4% + S$0.50 | +S$0.15 | 3.4% + S$0.50 |
+| MY | 2.8% + RM 0.50 | +RM 0.45 | 3.0% + RM 1.00 |
+
+*AU has a separate TTP rate, not a surcharge. Full data for all 23 countries in `lib/stripe-rates.ts`.
+
+### Country detection
+
+`middleware.ts` reads `x-vercel-ip-country` header (Vercel Edge), sets `luma-country` cookie. Client components read the cookie to show country-specific rates.
 
 ---
 
@@ -589,10 +575,11 @@ Deployable to: S3, Vercel, Cloudflare Pages, Netlify, GitHub Pages
 4. Follow existing page patterns
 
 ### Modify pricing tiers
-Edit `lib/pricing.ts` - changes propagate to:
-- Pricing component on landing page
+Edit `lib/pricing.ts` for plan names/features/prices. Edit `lib/stripe-rates.ts` for transaction rates (Stripe base + Luma markup). Changes propagate to:
+- Homepage Pricing component (country-aware rates)
+- `/pricing` dedicated rates page
+- FAQ component (fee answers)
 - Onboarding wizard tier selection
-- Feature comparison displays
 
 ### Update onboarding steps
 Edit `app/get-started/page.tsx`:

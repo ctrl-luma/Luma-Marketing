@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Check, Mail, Lock, Building, Eye, EyeOff, AlertCircle, MessageSquare } from 'lucide-react'
@@ -24,6 +24,8 @@ const StripePaymentSection = dynamic(() => import('@/components/StripePaymentSec
 })
 import { pricingTiers, getTierById } from '@/lib/pricing'
 import { event } from '@/lib/analytics'
+import { getCountryRate, getTTPRate, formatRate, type LumaTier } from '@/lib/stripe-rates'
+import { getVisitorCountry, detectCountry } from '@/lib/country'
 
 type Step = 'account' | 'business' | 'usecase' | 'pricing' | 'payment' | 'confirmation'
 
@@ -66,6 +68,9 @@ export default function GetStartedPage() {
   const [paymentIntentClientSecret, setPaymentIntentClientSecret] = useState<string | null>(null)
   useEffect(() => {
     event('onboarding_start')
+    detectCountry().then((code) => {
+      setFormData(prev => prev.country === getVisitorCountry() ? { ...prev, country: code } : prev)
+    })
   }, [])
 
   const [formData, setFormData] = useState({
@@ -76,7 +81,7 @@ export default function GetStartedPage() {
     lastName: '',
     businessName: '',
     businessType: '',
-    country: 'US',
+    country: getVisitorCountry(),
     phone: '',
     selectedPlan: initialTier || '',
     acceptTerms: false,
@@ -86,6 +91,16 @@ export default function GetStartedPage() {
     businessDescription: '',
     additionalRequirements: ''
   })
+  // Compute dynamic transaction fees based on selected country
+  const tierFees = useMemo(() => {
+    const country = getCountryRate(formData.country)
+    const ttp = getTTPRate(country)
+    return {
+      starter: formatRate(ttp, country.currency, 'starter') + ' per tap',
+      pro: formatRate(ttp, country.currency, 'pro') + ' per tap',
+    }
+  }, [formData.country])
+
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -477,7 +492,7 @@ export default function GetStartedPage() {
                           <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5">
                             <li className="flex items-center text-[11px] sm:text-xs text-gray-300 font-medium">
                               <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary mr-1 sm:mr-1.5 flex-shrink-0" />
-                              {tier.transactionFee}
+                              {tierFees[tier.id as LumaTier] || tier.transactionFee}
                             </li>
                             {tier.features.map((feature, i) => (
                               <li key={i} className="flex items-center text-[11px] sm:text-xs text-gray-300">

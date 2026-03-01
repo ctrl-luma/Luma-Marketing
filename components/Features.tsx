@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect, useMemo } from 'react'
 import {
   Smartphone,
   DollarSign,
@@ -11,30 +12,11 @@ import {
   BarChart3,
   Zap,
 } from 'lucide-react'
-import { getTierById } from '@/lib/pricing'
 import { useFadeIn } from '@/hooks/useFadeIn'
-
-const proTier = getTierById('pro')
+import { getCountryRate, getTTPRate, formatRate } from '@/lib/stripe-rates'
+import { getVisitorCountry, detectCountry } from '@/lib/country'
 
 const audiencePills = ['Mobile Bars', 'Food Trucks', 'Event Vendors', 'Pop-up Shops']
-
-const heroFeatures = [
-  {
-    name: 'Tap to Pay',
-    description: 'Accept payments directly on your iPhone or Android. No card readers, dongles, or proprietary hardware needed.',
-    icon: Smartphone,
-  },
-  {
-    name: 'Transparent Pricing',
-    description: `${proTier?.transactionFee?.replace(' per tap', '')}. No hidden fees, no fund holds, instant payouts available.`,
-    icon: DollarSign,
-  },
-  {
-    name: 'Live Dashboard',
-    description: 'Watch transactions flow in real-time. Track sales, tips, and inventory as they happen.',
-    icon: BarChart3,
-  },
-]
 
 const additionalFeatures = [
   {
@@ -71,9 +53,34 @@ const additionalFeatures = [
 
 export default function Features() {
   const { ref, isVisible } = useFadeIn()
-
-  // Separate observer for bottom section
   const { ref: bottomRef, isVisible: bottomVisible } = useFadeIn()
+
+  const [countryCode, setCountryCode] = useState(getVisitorCountry)
+  useEffect(() => { detectCountry().then(setCountryCode) }, [])
+
+  const proRate = useMemo(() => {
+    const country = getCountryRate(countryCode)
+    const ttp = getTTPRate(country)
+    return formatRate(ttp, country.currency, 'pro')
+  }, [countryCode])
+
+  const heroFeatures = useMemo(() => [
+    {
+      name: 'Tap to Pay',
+      description: 'Accept payments directly on your iPhone or Android. No card readers, dongles, or proprietary hardware needed.',
+      icon: Smartphone,
+    },
+    {
+      name: 'Transparent Pricing',
+      description: `${proRate}. No hidden fees, no fund holds, instant payouts available.`,
+      icon: DollarSign,
+    },
+    {
+      name: 'Live Dashboard',
+      description: 'Watch transactions flow in real-time. Track sales, tips, and inventory as they happen.',
+      icon: BarChart3,
+    },
+  ], [proRate])
 
   return (
     <section className="section-padding bg-black relative overflow-hidden scroll-mt-24" id="features">
