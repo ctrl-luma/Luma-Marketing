@@ -232,13 +232,14 @@ export default function Pricing() {
         </div>
 
         {/* Demo CTA */}
-        <DemoRequestForm isVisible={isVisible} />
+        <DemoRequestForm />
       </div>
     </section>
   )
 }
 
-function DemoRequestForm({ isVisible }: { isVisible: boolean }) {
+function DemoRequestForm() {
+  const { ref, isVisible } = useFadeIn()
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -265,7 +266,7 @@ function DemoRequestForm({ isVisible }: { isVisible: boolean }) {
   }
 
   return (
-    <div id="demo" className={`fade-in-section ${isVisible ? 'visible' : ''} mt-10 sm:mt-14 scroll-mt-24`}>
+    <div id="demo" ref={ref} className={`fade-in-section ${isVisible ? 'visible' : ''} mt-10 sm:mt-14 scroll-mt-24`}>
       <div className="max-w-md mx-auto">
         <div className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 rounded-2xl p-5 sm:p-6 border border-gray-800">
           <div className="flex items-center justify-center w-10 h-10 bg-primary/15 rounded-xl mb-3 mx-auto">
