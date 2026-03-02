@@ -1,6 +1,7 @@
 'use client'
 
 import { Mail, MessageSquare } from 'lucide-react'
+import { event } from '@/lib/analytics'
 
 const contactItems = [
   {
@@ -37,6 +38,7 @@ export default function ContactInfo() {
                   {item.link ? (
                     <a
                       href={item.link}
+                      onClick={() => event('contact_info_email_click')}
                       className="text-sm sm:text-base text-white hover:text-primary transition-colors font-medium cursor-pointer"
                     >
                       {item.content}

@@ -108,7 +108,7 @@ export default function Features() {
         </div>
 
         {/* Hero features - prominent cards with glow */}
-        <div className="grid sm:grid-cols-3 gap-5 sm:gap-6 mb-16 items-stretch">
+        <div className="grid sm:grid-cols-3 gap-3 sm:gap-6 mb-8 sm:mb-16 items-stretch">
           {heroFeatures.map((feature) => {
             const Icon = feature.icon
             return (
@@ -119,16 +119,16 @@ export default function Features() {
                 {/* Hover glow */}
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-primary/0 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                <div className="relative p-6 sm:p-8 rounded-2xl bg-gray-900/90 border border-gray-800 border-t-2 border-t-primary/60 group-hover:border-primary/30 group-hover:border-t-primary transition-colors duration-300 h-full">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <Icon className="h-5 w-5 text-primary" />
+                <div className="relative p-4 sm:p-8 rounded-2xl bg-gray-900/90 border border-gray-800 border-t-2 border-t-primary/60 group-hover:border-primary/30 group-hover:border-t-primary transition-colors duration-300 h-full">
+                  <div className="flex items-center gap-3 mb-2 sm:mb-4">
+                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
                       {feature.name}
                     </h3>
                   </div>
-                  <p className="text-sm text-gray-400 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -142,22 +142,22 @@ export default function Features() {
           ref={bottomRef}
           className={`fade-in-section ${bottomVisible ? 'visible' : ''} max-w-5xl mx-auto`}
         >
-          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-8 text-center">
+          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4 sm:mb-8 text-center">
             Everything else you need
           </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 items-stretch">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-5 items-stretch">
             {additionalFeatures.map((feature) => {
               const Icon = feature.icon
               return (
                 <div
                   key={feature.name}
-                  className="group p-5 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 hover:bg-gray-900/80 transition-all duration-300 h-full"
+                  className="group p-3 sm:p-5 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-gray-700 hover:bg-gray-900/80 transition-all duration-300 h-full"
                 >
-                  <div className="flex items-start gap-3">
-                    <Icon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary mt-0.5 flex-shrink-0" />
                     <div>
-                      <h4 className="font-medium text-white text-sm mb-1">{feature.name}</h4>
-                      <p className="text-xs text-gray-500 leading-relaxed">{feature.description}</p>
+                      <h4 className="font-medium text-white text-xs sm:text-sm mb-0.5 sm:mb-1">{feature.name}</h4>
+                      <p className="text-[11px] sm:text-xs text-gray-500 leading-relaxed">{feature.description}</p>
                     </div>
                   </div>
                 </div>

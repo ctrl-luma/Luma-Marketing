@@ -1,20 +1,12 @@
 'use client'
 
 import { useFadeIn } from '@/hooks/useFadeIn'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Mail } from 'lucide-react'
 import Link from 'next/link'
 import { Button, GradientBackground } from './ui'
 import { event } from '@/lib/analytics'
 
 export default function CTA() {
-  const handlePricingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    const element = document.querySelector('#pricing')
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
-
   const { ref, isVisible } = useFadeIn()
 
   return (
@@ -42,13 +34,22 @@ export default function CTA() {
                   </Button>
                 </Link>
 
-                <a href="#pricing" onClick={(e) => { handlePricingClick(e); event('cta_bottom_view_pricing') }} className="w-full sm:w-auto">
+                <a
+                  href="#demo"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    document.querySelector('#demo')?.scrollIntoView({ behavior: 'smooth' })
+                    event('cta_bottom_get_demo')
+                  }}
+                  className="w-full sm:w-auto"
+                >
                   <Button
                     variant="secondary"
                     size="lg"
                     className="w-full sm:w-auto text-sm sm:text-base"
                   >
-                    View Pricing
+                    <Mail className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    Request a Demo
                   </Button>
                 </a>
               </div>

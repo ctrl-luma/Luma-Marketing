@@ -413,7 +413,7 @@ export default function GetStartedPage() {
                 className="text-sm text-gray-400 hover:text-white transition-colors"
               >
                 <span className="hidden sm:inline">Already have an account? </span>
-                <span className="font-medium text-[#3B82F6] hover:text-blue-400">Sign in</span>
+                <span className="font-medium text-[#3B82F6] hover:text-blue-400 ml-[2px]">Sign in</span>
               </a>
               <Link href="/" className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors" aria-label="Back to home">
                 <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -452,12 +452,23 @@ export default function GetStartedPage() {
                   
                   <div className="grid gap-6 sm:gap-8">
                     {pricingTiers.map((tier) => (
+                      <div key={tier.id} className={`relative ${tier.recommended ? 'scale-[1.03]' : ''}`}>
+                        {tier.recommended && (
+                          <div className="absolute -top-[13px] left-3 sm:left-5 z-20">
+                            <span className="rounded-full bg-gradient-to-r from-primary-400 to-primary-600 px-5 py-1.5 text-sm font-bold text-white shadow-xl shadow-primary/40 whitespace-nowrap tracking-wide">
+                              Most Popular
+                            </span>
+                          </div>
+                        )}
                       <label
-                        key={tier.id}
-                        className={`relative flex items-start p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 cursor-pointer transition-all duration-300 group ${
-                          formData.selectedPlan === tier.id
-                            ? 'border-primary bg-gradient-to-br from-primary/10 to-primary/5'
-                            : 'border-gray-700 hover:border-gray-600 bg-gradient-to-br from-gray-800/50 to-gray-900/50'
+                        className={`relative flex items-start p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 cursor-pointer transition-all duration-300 group ${
+                          tier.recommended
+                            ? formData.selectedPlan === tier.id
+                              ? 'border-primary bg-gradient-to-br from-primary/10 to-primary/5 shadow-[0_0_40px_0px_rgba(37,99,235,0.45)]'
+                              : 'border-primary/70 bg-gradient-to-br from-primary/5 to-gray-900 hover:border-primary shadow-[0_0_40px_0px_rgba(37,99,235,0.25)]'
+                            : formData.selectedPlan === tier.id
+                              ? 'border-primary bg-gradient-to-br from-primary/10 to-primary/5'
+                              : 'border-gray-700 hover:border-gray-600 bg-gradient-to-br from-gray-800/50 to-gray-900/50'
                         }`}
                       >
                         <input
@@ -468,12 +479,6 @@ export default function GetStartedPage() {
                           onChange={(e) => handleInputChange('selectedPlan', e.target.value)}
                           className="sr-only"
                         />
-
-                        {tier.recommended && (
-                          <span className="absolute -top-[11px] left-3 bg-gradient-to-r from-primary-600/80 to-primary-700/80 px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold text-white/90 shadow-md shadow-primary/15 z-20 whitespace-nowrap">
-                            Most Popular
-                          </span>
-                        )}
 
                         <div className="flex-1">
                           <div className="flex items-baseline gap-2 mb-1">
@@ -513,6 +518,7 @@ export default function GetStartedPage() {
                           )}
                         </div>
                       </label>
+                      </div>
                     ))}
                   </div>
                   {errors.selectedPlan && (

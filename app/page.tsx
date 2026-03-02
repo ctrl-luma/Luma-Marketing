@@ -15,7 +15,6 @@ const Comparison = dynamic(() => import('@/components/Comparison'))
 const Pricing = dynamic(() => import('@/components/Pricing'))
 const FAQ = dynamic(() => import('@/components/FAQ'))
 const CTA = dynamic(() => import('@/components/CTA'))
-const Newsletter = dynamic(() => import('@/components/Newsletter'))
 const Footer = dynamic(() => import('@/components/Footer'))
 
 export default function Home() {
@@ -44,7 +43,6 @@ export default function Home() {
           <SectionTracker section="pricing"><Pricing /></SectionTracker>
           <SectionTracker section="faq"><FAQ /></SectionTracker>
           <SectionTracker section="cta"><CTA /></SectionTracker>
-          <SectionTracker section="newsletter"><Newsletter /></SectionTracker>
         </main>
         <Footer />
       </div>

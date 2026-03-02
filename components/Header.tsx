@@ -116,6 +116,14 @@ export default function Header() {
         </div>
       </nav>
 
+      {/* Backdrop to close menu on outside click */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[-1] md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
       {/* Mobile menu - smooth slide down animation */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${

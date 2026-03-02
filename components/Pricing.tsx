@@ -2,11 +2,12 @@
 
 import { useMemo, useState, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
-import { Check, X } from 'lucide-react'
+import { Check, X, Mail, Send } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { pricingTiers } from '@/lib/pricing'
 import { event } from '@/lib/analytics'
+import { apiClient } from '@/lib/api'
 import { getCountryRate, getTTPRate, formatRate, type LumaTier } from '@/lib/stripe-rates'
 import { getVisitorCountry, detectCountry } from '@/lib/country'
 
@@ -140,80 +141,191 @@ export default function Pricing() {
           </div>
         </div>
 
-        {/* Desktop layout — single card, two tight columns */}
-        <div className={`fade-in-section ${isVisible ? 'visible' : ''} relative max-w-2xl mx-auto hidden lg:block`}>
-          <div className="fade-child relative rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900/80 to-gray-950/80 overflow-hidden">
-            <div className="grid grid-cols-2 divide-x divide-gray-800">
-              {pricingTiers.map((tier) => (
-                <div key={tier.name} className={`px-6 py-5 flex flex-col ${tier.highlighted ? 'bg-primary/6' : ''}`}>
-                  {/* Name + badge */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-base font-bold text-white">{tier.name}</h3>
-                    {tier.highlighted && (
-                      <span className="rounded-full bg-gradient-to-r from-primary-600 to-primary-700 px-2.5 py-0.5 text-[10px] font-semibold text-white">
-                        Popular
-                      </span>
-                    )}
+        {/* Desktop layout — two separate cards */}
+        <div className={`fade-in-section ${isVisible ? 'visible' : ''} relative max-w-3xl mx-auto hidden lg:block`}>
+          <div className="fade-child grid grid-cols-2 gap-8 items-center">
+            {pricingTiers.map((tier) => (
+              <div key={tier.name} className={`relative ${tier.highlighted ? 'scale-105' : ''}`}>
+                {/* Most Popular badge — raised above card */}
+                {tier.highlighted && (
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20">
+                    <span className="rounded-full bg-gradient-to-r from-primary-400 to-primary-600 px-6 py-2 text-sm font-bold text-white shadow-xl shadow-primary/40 whitespace-nowrap tracking-wide">
+                      Most Popular
+                    </span>
                   </div>
+                )}
 
-                  {/* Price + fee on one line */}
+                <div className={`relative rounded-2xl px-7 py-7 flex flex-col ${
+                  tier.highlighted
+                    ? 'bg-gradient-to-br from-primary/10 via-gray-900 to-gray-950 border-2 border-primary/70 shadow-[0_0_40px_0px_rgba(37,99,235,0.45)]'
+                    : 'bg-gradient-to-br from-gray-900/80 to-gray-950/80 border border-gray-800'
+                }`}>
+                  {/* Name */}
+                  <h3 className={`text-lg font-bold mb-2 ${tier.highlighted ? 'text-white' : 'text-gray-100'}`}>
+                    {tier.name}
+                  </h3>
+
+                  {/* Price + fee */}
                   <div className="flex items-baseline gap-2 mb-1">
                     {tier.promoPrice ? (
                       <>
-                        <span className="text-xl font-bold text-white">{tier.promoPrice}</span>
-                        <span className="text-xs line-through text-gray-500">{tier.regularPrice}</span>
-                        <span className="text-[10px] text-gray-500">/ mo</span>
+                        <span className="text-3xl font-bold text-white">{tier.promoPrice}</span>
+                        <span className="text-sm line-through text-gray-500">{tier.regularPrice}</span>
+                        <span className="text-xs text-gray-500">/ mo</span>
                       </>
                     ) : (
-                      <span className="text-xl font-bold text-white">{tier.price}</span>
+                      <span className="text-3xl font-bold text-white">{tier.price}</span>
                     )}
-                    <span className="text-[10px] text-gray-500 ml-auto">{(tierFees[tier.id as LumaTier] || tier.transactionFee).replace(' per tap', '')}</span>
+                  </div>
+
+                  {/* Transaction fee */}
+                  <div className={`text-xs font-medium mb-3 px-2.5 py-1 rounded-lg w-fit ${
+                    tier.highlighted
+                      ? 'bg-primary/10 text-primary-100'
+                      : 'bg-gray-800 text-gray-400'
+                  }`}>
+                    {tierFees[tier.id as LumaTier] || tier.transactionFee}
                   </div>
 
                   {/* Promo / trial info */}
                   {(tier.promoPrice || tier.trialDays) && (
-                    <p className="text-[10px] text-gray-400 mb-3">
+                    <p className="text-xs text-gray-400 mb-4">
                       {tier.trialDays && <span className="text-green-400 font-medium">{tier.trialDays}-day free trial</span>}
-                      {tier.trialDays && tier.promoPrice && <span className="mx-1">•</span>}
+                      {tier.trialDays && tier.promoPrice && <span className="mx-1">·</span>}
                       {tier.promoPrice && <span>then {tier.regularPrice}/mo</span>}
                     </p>
                   )}
-                  {!tier.promoPrice && !tier.trialDays && <div className="mb-3" />}
+                  {!tier.promoPrice && !tier.trialDays && <div className="mb-4" />}
 
-                  {/* Features — single tight column */}
-                  <ul className="space-y-1 mb-4 flex-grow">
+                  {/* Features */}
+                  <ul className="space-y-1.5 mb-5 flex-grow">
                     {tier.features.filter(f => f !== 'Everything in Starter').map((feature) => (
-                      <li key={feature} className="flex items-center gap-1.5">
-                        <Check className={`h-3 w-3 flex-shrink-0 ${tier.highlighted ? 'text-primary-200' : 'text-primary'}`} />
-                        <span className={`text-[11px] ${tier.highlighted ? 'text-gray-200' : 'text-gray-300'}`}>{feature}</span>
+                      <li key={feature} className="flex items-center gap-2">
+                        <Check className={`h-3.5 w-3.5 flex-shrink-0 ${tier.highlighted ? 'text-primary-200' : 'text-primary'}`} />
+                        <span className={`text-xs ${tier.highlighted ? 'text-gray-200' : 'text-gray-300'}`}>{feature}</span>
                       </li>
                     ))}
                     {tier.notIncluded.map((feature) => (
-                      <li key={feature} className="flex items-center gap-1.5 opacity-40">
-                        <X className="h-3 w-3 flex-shrink-0 text-gray-600" />
-                        <span className="text-[11px] text-gray-500 line-through">{feature}</span>
+                      <li key={feature} className="flex items-center gap-2 opacity-40">
+                        <X className="h-3.5 w-3.5 flex-shrink-0 text-gray-600" />
+                        <span className="text-xs text-gray-500 line-through">{feature}</span>
                       </li>
                     ))}
                   </ul>
 
                   {tier.highlighted && tier.features.includes('Everything in Starter') && (
-                    <p className="text-[10px] text-primary-200/60 mb-3">+ everything in Starter</p>
+                    <p className="text-xs text-primary-200/60 mb-4">+ everything in Starter</p>
                   )}
 
                   <Link href={`/get-started?tier=${tier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`} className="block" onClick={() => event(`cta_pricing_${tier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`)}>
                     <Button
                       variant={tier.highlighted ? 'secondary' : 'primary'}
-                      className="w-full py-2 text-sm"
+                      className="w-full py-2.5 text-sm"
                     >
                       {tier.cta}
                     </Button>
                   </Link>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
+
+        {/* Demo CTA */}
+        <DemoRequestForm isVisible={isVisible} />
       </div>
     </section>
+  )
+}
+
+function DemoRequestForm({ isVisible }: { isVisible: boolean }) {
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('loading')
+    event('demo_request_submit')
+
+    try {
+      await apiClient.post('/contact', {
+        email: email.trim(),
+        message: message.trim(),
+        subject: 'Demo Request',
+      })
+      setStatus('success')
+      setEmail('')
+      setMessage('')
+      setTimeout(() => setStatus('idle'), 4000)
+    } catch {
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 4000)
+    }
+  }
+
+  return (
+    <div id="demo" className={`fade-in-section ${isVisible ? 'visible' : ''} mt-10 sm:mt-14 scroll-mt-24`}>
+      <div className="max-w-md mx-auto">
+        <div className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 rounded-2xl p-5 sm:p-6 border border-gray-800">
+          <div className="flex items-center justify-center w-10 h-10 bg-primary/15 rounded-xl mb-3 mx-auto">
+            <Mail className="h-5 w-5 text-primary" />
+          </div>
+          <h3 className="text-base font-semibold text-white mb-1 text-center">Request a Demo</h3>
+          <p className="text-xs text-gray-400 mb-4 text-center">
+            Want to see Luma in action? We&apos;ll get back to you within 24 hours.
+          </p>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Your email"
+              required
+              maxLength={254}
+              disabled={status === 'loading' || status === 'success'}
+              className="w-full rounded-lg border border-gray-700 bg-gray-900/80 px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+            />
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Tell us about your business and what you're looking for..."
+              required
+              maxLength={5000}
+              rows={3}
+              disabled={status === 'loading' || status === 'success'}
+              className="w-full rounded-lg border border-gray-700 bg-gray-900/80 px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+            />
+            <Button
+              type="submit"
+              disabled={status === 'loading' || status === 'success'}
+              isLoading={status === 'loading'}
+              className="w-full text-sm"
+            >
+              {status === 'success' ? (
+                'Sent!'
+              ) : (
+                <>
+                  <Send className="mr-2 h-3.5 w-3.5" />
+                  Send Request
+                </>
+              )}
+            </Button>
+          </form>
+
+          {status === 'success' && (
+            <p className="mt-3 text-xs text-green-400 text-center">
+              Thanks! We&apos;ll be in touch soon.
+            </p>
+          )}
+
+          {status === 'error' && (
+            <p className="mt-3 text-xs text-red-400 text-center">
+              Something went wrong. Please try again or email us at support@lumapos.co
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }

@@ -2,6 +2,7 @@
 
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { Linkedin, Twitter } from 'lucide-react'
+import { event } from '@/lib/analytics'
 
 const team = [
   {
@@ -115,6 +116,7 @@ export default function Team() {
                 <div className="flex justify-center space-x-3">
                 <a
                   href={member.social.linkedin}
+                    onClick={() => event('team_linkedin_click', { name: member.name })}
                     className="text-gray-400 hover:text-primary transition-colors duration-300"
                     aria-label={`${member.name} LinkedIn`}
                   >
@@ -122,6 +124,7 @@ export default function Team() {
                   </a>
                   <a
                     href={member.social.twitter}
+                    onClick={() => event('team_twitter_click', { name: member.name })}
                     className="text-gray-400 hover:text-primary transition-colors duration-300"
                     aria-label={`${member.name} Twitter`}
                   >
