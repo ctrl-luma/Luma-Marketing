@@ -148,7 +148,7 @@ export default function Pricing() {
               <div key={tier.name} className={`relative ${tier.highlighted ? 'scale-105' : ''}`}>
                 {/* Most Popular badge — raised above card */}
                 {tier.highlighted && (
-                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20">
+                  <div className="absolute -top-[15px] left-1/2 -translate-x-1/2 z-20">
                     <span className="rounded-full bg-gradient-to-r from-primary-400 to-primary-600 px-6 py-2 text-sm font-bold text-white shadow-xl shadow-primary/40 whitespace-nowrap tracking-wide">
                       Most Popular
                     </span>
@@ -266,7 +266,7 @@ function DemoRequestForm() {
   }
 
   return (
-    <div id="demo" ref={ref} className={`fade-in-section ${isVisible ? 'visible' : ''} mt-10 sm:mt-14 scroll-mt-24`}>
+    <div id="demo" ref={ref} className={`fade-in-section ${isVisible ? 'visible' : ''} mt-10 sm:mt-14 scroll-mt-32`}>
       <div className="max-w-md mx-auto">
         <div className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 rounded-2xl p-5 sm:p-6 border border-gray-800">
           <div className="flex items-center justify-center w-10 h-10 bg-primary/15 rounded-xl mb-3 mx-auto">
