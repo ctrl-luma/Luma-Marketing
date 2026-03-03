@@ -136,7 +136,7 @@ function CheckoutForm({
       }`}>
         <Clock className="h-4 w-4 shrink-0" />
         <span>
-          Tickets reserved for {minutes}:{seconds.toString().padStart(2, '0')}
+          {event?.isRsvpOnly ? 'RSVP spots' : 'Tickets'} reserved for {minutes}:{seconds.toString().padStart(2, '0')}
         </span>
       </div>
 
@@ -220,7 +220,7 @@ function CheckoutForm({
             placeholder="john@example.com"
             className="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
           />
-          <p className="text-xs text-gray-500 mt-1">Tickets will be sent to this email</p>
+          <p className="text-xs text-gray-500 mt-1">{event?.isRsvpOnly ? 'Confirmation will be sent to this email' : 'Tickets will be sent to this email'}</p>
         </div>
       </div>
 
@@ -252,7 +252,7 @@ function CheckoutForm({
             Processing...
           </span>
         ) : totalAmount === 0 ? (
-          'Reserve Tickets'
+          event?.isRsvpOnly ? 'Confirm RSVP' : 'Reserve Tickets'
         ) : (
           `Pay ${formatCurrency(totalAmount, event?.currency || 'usd')}`
         )}
@@ -540,7 +540,7 @@ export default function CheckoutPage() {
             {event.name}
           </Link>
 
-          <h1 className="text-xl font-bold text-white mb-1">Checkout</h1>
+          <h1 className="text-xl font-bold text-white mb-1">{event?.isRsvpOnly ? 'RSVP' : 'Checkout'}</h1>
           <p className="text-sm text-gray-400 mb-4">{tier.name} — {event.name}</p>
 
           {/* Event info */}

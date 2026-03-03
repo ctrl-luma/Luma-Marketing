@@ -21,6 +21,7 @@ export interface PublicEvent {
   refundPolicy: string | null;
   contactEmail: string | null;
   ageRestriction: string | null;
+  isRsvpOnly?: boolean;
   organizationName: string | null;
   currency?: string;
   tiers: PublicTier[];

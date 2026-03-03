@@ -37,9 +37,13 @@ export default function SuccessPage() {
 
           <h1 className="text-2xl font-bold text-white text-center mb-1">You&apos;re in!</h1>
           <p className="text-sm text-gray-400 text-center mb-8">
-            {ticketIds.length > 1
-              ? `${ticketIds.length} tickets confirmed`
-              : 'Your ticket is confirmed'}
+            {event?.isRsvpOnly
+              ? ticketIds.length > 1
+                ? `${ticketIds.length} RSVPs confirmed`
+                : 'Your RSVP is confirmed'
+              : ticketIds.length > 1
+                ? `${ticketIds.length} tickets confirmed`
+                : 'Your ticket is confirmed'}
           </p>
 
           {/* Event info */}
@@ -74,7 +78,7 @@ export default function SuccessPage() {
               <div>
                 <p className="text-sm font-medium text-white">Check your email</p>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Your ticket{ticketIds.length > 1 ? 's' : ''} and QR code{ticketIds.length > 1 ? 's' : ''} have been sent to{customerEmail ? <> <span className="text-gray-300">{customerEmail}</span></> : ' your inbox'}.
+                  Your {event?.isRsvpOnly ? 'confirmation' : `ticket${ticketIds.length > 1 ? 's' : ''}`} and QR code{ticketIds.length > 1 ? 's' : ''} have been sent to{customerEmail ? <> <span className="text-gray-300">{customerEmail}</span></> : ' your inbox'}.
                 </p>
               </div>
             </div>

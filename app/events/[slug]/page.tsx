@@ -31,60 +31,6 @@ function useCountdown(targetDate: string | null) {
   return `Starts in ${minutes}m`
 }
 
-// --- OG Meta ---
-
-function EventMeta({ event }: { event: PublicEvent }) {
-  const title = `${event.name} | Luma Events`
-  const eventTimezone = event.timezone || 'America/New_York'
-  const description = event.description
-    ? event.description.slice(0, 160)
-    : `${event.name} — ${new Date(event.startsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: eventTimezone })}`
-  const image = event.bannerUrl || event.imageUrl || '/events.webp'
-
-  useEffect(() => {
-    // Set document title
-    document.title = title
-
-    // Set or create meta tags
-    const setMeta = (property: string, content: string) => {
-      let el = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement | null
-      if (!el) {
-        el = document.createElement('meta')
-        el.setAttribute('property', property)
-        document.head.appendChild(el)
-      }
-      el.content = content
-    }
-
-    const setNameMeta = (name: string, content: string) => {
-      let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null
-      if (!el) {
-        el = document.createElement('meta')
-        el.setAttribute('name', name)
-        document.head.appendChild(el)
-      }
-      el.content = content
-    }
-
-    // Open Graph
-    setMeta('og:title', event.name)
-    setMeta('og:description', description)
-    setMeta('og:type', 'event')
-    setMeta('og:url', window.location.href)
-    setMeta('og:image', image)
-
-    // Twitter Card
-    setNameMeta('twitter:card', 'summary_large_image')
-    setNameMeta('twitter:title', event.name)
-    setNameMeta('twitter:description', description)
-    setNameMeta('twitter:image', image)
-
-    // General description
-    setNameMeta('description', description)
-  }, [event, title, description, image])
-
-  return null
-}
 
 export default function EventPage() {
   const params = useParams()
@@ -256,7 +202,6 @@ export default function EventPage() {
   return (
     <div className="relative min-h-screen bg-black">
       <div className="relative z-10">
-        <EventMeta event={event} />
         <main className="pb-28 lg:pb-16">
           {/* Hero Banner */}
           <div className="w-full h-48 sm:h-72 md:h-96 bg-gray-900 relative overflow-hidden">
@@ -477,8 +422,9 @@ export default function EventPage() {
               className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-600 transition-colors"
             >
               <Ticket className="h-4 w-4" />
-              Get Tickets · {totalQuantity} {totalQuantity === 1 ? 'ticket' : 'tickets'}
-              {totalPrice > 0 ? ` · ${formatCurrency(totalPrice, event?.currency || 'usd')}` : ' · Free'}
+              {event?.isRsvpOnly
+                ? `RSVP · ${totalQuantity} ${totalQuantity === 1 ? 'spot' : 'spots'}`
+                : `Get Tickets · ${totalQuantity} ${totalQuantity === 1 ? 'ticket' : 'tickets'}${totalPrice > 0 ? ` · ${formatCurrency(totalPrice, event?.currency || 'usd')}` : ' · Free'}`}
             </Link>
           </div>
         )}
@@ -517,7 +463,7 @@ function TicketSidebar({
 }) {
   return (
     <div className="rounded-xl sm:rounded-2xl border border-gray-800/60 bg-gradient-to-b from-gray-900/80 to-gray-950/80 p-4 sm:p-6">
-      <h2 className="text-base sm:text-lg font-semibold text-white mb-4 sm:mb-5">Tickets</h2>
+      <h2 className="text-base sm:text-lg font-semibold text-white mb-4 sm:mb-5">{event?.isRsvpOnly ? 'RSVP' : 'Tickets'}</h2>
 
       {!salesOpen && (
         <div className="p-3 rounded-lg sm:rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-xs sm:text-sm mb-4 sm:mb-5">
@@ -552,7 +498,7 @@ function TicketSidebar({
                 <div className="flex items-start justify-between mb-1">
                   <h3 className="font-semibold text-white text-xs sm:text-sm">{tier.name}</h3>
                   <span className={`text-sm sm:text-base font-bold ${isSelected ? 'text-primary' : 'text-white'}`}>
-                    {tier.price === 0 ? 'Free' : formatCurrency(tier.price, event?.currency || 'usd')}
+                    {event?.isRsvpOnly ? 'Free' : tier.price === 0 ? 'Free' : formatCurrency(tier.price, event?.currency || 'usd')}
                   </span>
                 </div>
 
@@ -609,8 +555,9 @@ function TicketSidebar({
           className="hidden lg:inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-600 transition-colors mt-5"
         >
           <Ticket className="h-4 w-4" />
-          Go to Checkout · {totalQuantity} {totalQuantity === 1 ? 'ticket' : 'tickets'}
-          {totalPrice > 0 ? ` · ${formatCurrency(totalPrice, event?.currency || 'usd')}` : ' · Free'}
+          {event?.isRsvpOnly
+            ? `RSVP Now · ${totalQuantity} ${totalQuantity === 1 ? 'spot' : 'spots'}`
+            : `Go to Checkout · ${totalQuantity} ${totalQuantity === 1 ? 'ticket' : 'tickets'}${totalPrice > 0 ? ` · ${formatCurrency(totalPrice, event?.currency || 'usd')}` : ' · Free'}`}
         </Link>
       )}
     </div>

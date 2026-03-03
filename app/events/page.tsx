@@ -91,8 +91,9 @@ interface EventWithTiers {
   totalAvailable?: number
 }
 
-function getLowestPrice(evt: EventWithTiers & { currency?: string }): string | null {
+function getLowestPrice(evt: EventWithTiers & { currency?: string; isRsvpOnly?: boolean }): string | null {
   const cur = evt.currency || 'usd'
+  if (evt.isRsvpOnly) return 'Free RSVP'
   if (evt.minPrice !== undefined && evt.minPrice !== null) {
     return evt.minPrice === 0 ? 'Free' : formatCurrency(evt.minPrice, cur)
   }
@@ -226,9 +227,9 @@ function EventCard({ evt }: { evt: PublicEvent }) {
                   ? 'Sold out'
                   : available !== null
                   ? available > 0
-                    ? `${available} tickets available`
+                    ? `${available} ${evt.isRsvpOnly ? 'spots available' : 'tickets available'}`
                     : 'Sold out'
-                  : 'Tickets available'}
+                  : evt.isRsvpOnly ? 'RSVP open' : 'Tickets available'}
               </span>
             </div>
           </div>
