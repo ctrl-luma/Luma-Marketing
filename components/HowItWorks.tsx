@@ -252,7 +252,8 @@ function StepItem({ step, index, sym }: { step: typeof steps[number]; index: num
   return (
     <div
       ref={ref}
-      className={`fade-in-section ${directionClass} ${isVisible ? 'visible' : ''} flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12 ${isEven ? '' : 'lg:flex-row-reverse'}`}
+      id={step.title === 'Accept Payments' ? 'tap-to-pay' : undefined}
+      className={`fade-in-section ${directionClass} ${isVisible ? 'visible' : ''} flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12 ${isEven ? '' : 'lg:flex-row-reverse'} scroll-mt-24`}
     >
       {/* Text side */}
       <div className="flex-1">

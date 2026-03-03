@@ -81,27 +81,55 @@ export default function Mission() {
         </div>
 
         {/* Principles Grid */}
-        <div className={`fade-in-section ${isVisible ? 'visible' : ''} grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto`}>
-          {principles.map((principle) => {
-            const Icon = principle.icon
-            const colors = getColorClasses(principle.color)
-            return (
-              <div
-                key={principle.title}
-                className={`fade-child relative p-4 sm:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
-              >
-                <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center mb-3 sm:mb-6 mx-auto`}>
-                  <Icon className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
+        <div className={`fade-in-section ${isVisible ? 'visible' : ''} max-w-5xl mx-auto`}>
+          {/* Mobile: compact horizontal rows */}
+          <div className="flex flex-col gap-3 sm:hidden">
+            {principles.map((principle) => {
+              const Icon = principle.icon
+              const colors = getColorClasses(principle.color)
+              return (
+                <div
+                  key={principle.title}
+                  className={`fade-child flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border}`}
+                >
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center flex-shrink-0`}>
+                    <Icon className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-white mb-0.5">
+                      {principle.title}
+                    </h3>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      {principle.description}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-base sm:text-xl font-semibold text-white mb-1.5 sm:mb-3 text-center">
-                  {principle.title}
-                </h3>
-                <p className="text-xs sm:text-base text-gray-400 leading-relaxed text-center">
-                  {principle.description}
-                </p>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
+          {/* Desktop: centered card grid */}
+          <div className="hidden sm:grid sm:grid-cols-3 gap-6">
+            {principles.map((principle) => {
+              const Icon = principle.icon
+              const colors = getColorClasses(principle.color)
+              return (
+                <div
+                  key={principle.title}
+                  className={`fade-child relative p-8 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-950 border ${colors.border} group hover:border-opacity-50 transition-all duration-300`}
+                >
+                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${colors.bg} ${colors.shadow} flex items-center justify-center mb-6 mx-auto`}>
+                    <Icon className="h-7 w-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-3 text-center">
+                    {principle.title}
+                  </h3>
+                  <p className="text-base text-gray-400 leading-relaxed text-center">
+                    {principle.description}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     </section>

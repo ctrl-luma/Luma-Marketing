@@ -14,7 +14,7 @@ const footerLinks = {
     { name: 'Download App', href: '/download' },
   ],
   features: [
-    { name: 'Tap to Pay', href: '/#how-it-works' },
+    { name: 'Tap to Pay', href: '/#tap-to-pay' },
     { name: 'Events & Ticketing', href: '/#events-showcase' },
     { name: 'Online Ordering', href: '/#preorder-showcase' },
     { name: 'Invoicing', href: '/#invoice-showcase' },
