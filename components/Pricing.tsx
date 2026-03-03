@@ -58,7 +58,7 @@ export default function Pricing() {
                 }`}
               >
                 {tier.highlighted && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary-600 to-primary-700 px-4 py-1.5 text-xs font-semibold text-white shadow-lg shadow-primary/20 z-20 whitespace-nowrap">
+                  <span className="absolute -top-[14px] left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary-600 to-primary-700 px-4 py-1.5 text-xs font-semibold text-white shadow-lg shadow-primary/20 z-20 whitespace-nowrap">
                     Most Popular
                   </span>
                 )}
@@ -148,7 +148,7 @@ export default function Pricing() {
               <div key={tier.name} className={`relative ${tier.highlighted ? 'scale-105' : ''}`}>
                 {/* Most Popular badge — raised above card */}
                 {tier.highlighted && (
-                  <div className="absolute -top-[15px] left-1/2 -translate-x-1/2 z-20">
+                  <div className="absolute -top-[17px] left-1/2 -translate-x-1/2 z-20">
                     <span className="rounded-full bg-gradient-to-r from-primary-400 to-primary-600 px-6 py-2 text-sm font-bold text-white shadow-xl shadow-primary/40 whitespace-nowrap tracking-wide">
                       Most Popular
                     </span>
