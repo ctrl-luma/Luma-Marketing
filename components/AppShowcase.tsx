@@ -3,8 +3,11 @@
 import { useRef, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { event } from '@/lib/analytics'
+import { useCurrencyAssets } from '@/lib/currency-assets'
 
-function DemoVideo() {
+function DemoVideo({ poster, videoAv1, videoWebm, videoMp4 }: {
+  poster: string; videoAv1: string; videoWebm: string; videoMp4: string
+}) {
   const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
@@ -56,7 +59,7 @@ function DemoVideo() {
   return (
     <div
       className="relative aspect-video bg-gray-950 bg-cover bg-center"
-      style={{ backgroundImage: 'url(/analytics-poster.webp)' }}
+      style={{ backgroundImage: `url(${poster})` }}
     >
       <video
         ref={videoRef}
@@ -67,9 +70,9 @@ function DemoVideo() {
         preload="none"
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source src="/analytics-loop-av1.webm" type='video/webm; codecs="av01.0.05M.08"' />
-        <source src="/analytics-loop.webm" type="video/webm" />
-        <source src="/analytics-loop.mp4" type="video/mp4" />
+        <source src={videoAv1} type='video/webm; codecs="av01.0.05M.08"' />
+        <source src={videoWebm} type="video/webm" />
+        <source src={videoMp4} type="video/mp4" />
       </video>
     </div>
   )
@@ -77,6 +80,7 @@ function DemoVideo() {
 
 export default function AppShowcase() {
   const { ref, isVisible } = useFadeIn()
+  const assets = useCurrencyAssets()
 
   return (
     <section id="app-showcase" className="section-padding bg-gradient-to-b from-black to-gray-950 relative overflow-hidden scroll-mt-24">
@@ -116,7 +120,12 @@ export default function AppShowcase() {
 
             {/* Dashboard demo video */}
             <div className="rounded-b-lg sm:rounded-b-xl border border-gray-800 border-t-0 overflow-hidden">
-              <DemoVideo />
+              <DemoVideo
+                poster={assets.analyticsPoster}
+                videoAv1={assets.analyticsVideoAv1}
+                videoWebm={assets.analyticsVideoWebm}
+                videoMp4={assets.analyticsVideoMp4}
+              />
             </div>
 
             {/* Glow effect - hidden on mobile */}

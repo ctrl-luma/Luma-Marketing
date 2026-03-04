@@ -5,6 +5,7 @@ import { Ticket, QrCode, Wallet, BarChart3 } from 'lucide-react'
 import Link from 'next/link'
 import { event } from '@/lib/analytics'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { useCurrencyAssets } from '@/lib/currency-assets'
 
 const features = [
   {
@@ -29,7 +30,7 @@ const features = [
   },
 ]
 
-function BrowserFrame({ src, alt }: { src: string; alt: string }) {
+function BrowserFrame({ src, alt }: { src: string; alt: string; }) {
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://lumapos.co'
   const displayUrl = `${siteUrl.replace(/^https?:\/\//, '')}/events/summer-fest-2026`
 
@@ -56,6 +57,7 @@ function BrowserFrame({ src, alt }: { src: string; alt: string }) {
 
 export default function EventsShowcase() {
   const { ref, isVisible } = useFadeIn()
+  const assets = useCurrencyAssets()
 
   return (
     <section id="events-showcase" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
@@ -75,7 +77,7 @@ export default function EventsShowcase() {
           {/* Browser screenshot */}
           <div className={`fade-in-section from-left ${isVisible ? 'visible' : ''}`}>
             <BrowserFrame
-              src="/screenshots/events.webp"
+              src={assets.events}
               alt="Luma event page showing ticket tiers and purchase options"
             />
           </div>

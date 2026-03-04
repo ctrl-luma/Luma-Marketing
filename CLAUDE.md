@@ -153,8 +153,8 @@ The marketing site hosts the customer-facing external menu pages. Vendors genera
 ```tsx
 <Elements stripe={stripePromise} options={{
   mode: 'payment',
-  amount: Math.round(total * 100), // dollars → cents
-  currency: 'usd',
+  amount: Math.round(total * 100), // base unit → smallest unit (assumes 2-decimal currency)
+  currency: catalogCurrency, // Must use the catalog's currency from the API — NEVER hardcode 'usd'
   paymentMethodCreation: 'manual',
   appearance: { theme: 'night', variables: { colorPrimary: '#2563EB', colorBackground: '#111827' } },
 }}>
@@ -246,6 +246,20 @@ These mirror `Luma-API/src/config/platform-fees.ts` — keep them in sync.
 ### Country detection
 
 `middleware.ts` reads `x-vercel-ip-country` header (Vercel Edge), sets `luma-country` cookie. Client components read the cookie to show country-specific rates.
+
+---
+
+## Multi-Currency Support (MANDATORY)
+
+Luma supports 23 countries with different currencies. The marketing site must never assume USD when displaying prices or processing payments.
+
+### Rules
+
+1. **NEVER** hardcode `"$"` for currency symbols — use the org/catalog currency from API responses
+2. **NEVER** use raw `/ 100` or `* 100` — use proper conversion based on zero-decimal currency status
+3. **Checkout pages** (`/menu/[slug]/checkout`) must use the catalog's currency from the API, not hardcoded `'usd'`
+4. **Rate displays** must use `formatFixedFee()` and `formatRate()` from `lib/stripe-rates.ts` — these handle currency-appropriate formatting
+5. **Pricing page** (`/pricing`) uses country-detected currency via the `luma-country` cookie
 
 ---
 

@@ -6,6 +6,7 @@ import { useFadeIn } from '@/hooks/useFadeIn'
 import { QrCode, ShoppingCart, CreditCard, Bell } from 'lucide-react'
 import Link from 'next/link'
 import { event } from '@/lib/analytics'
+import { useCurrencyAssets } from '@/lib/currency-assets'
 
 const features = [
   {
@@ -65,7 +66,7 @@ function PhoneWithScreenshot({ src, alt }: { src: string; alt: string }) {
   )
 }
 
-function DualPhones() {
+function DualPhones({ preorderSrc, trackingSrc }: { preorderSrc: string; trackingSrc: string }) {
   return (
     <div className="relative flex items-center justify-center" style={{ height: 420 }}>
 
@@ -76,7 +77,7 @@ function DualPhones() {
             <span className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Browse Menu</span>
           </div>
           <PhoneFrame className="w-[155px] h-[320px] sm:w-[220px] sm:h-[455px]">
-            <PhoneWithScreenshot src="/screenshots/mobile-preorder.webp" alt="Customer browsing menu on phone" />
+            <PhoneWithScreenshot src={preorderSrc} alt="Customer browsing menu on phone" />
           </PhoneFrame>
         </div>
 
@@ -86,7 +87,7 @@ function DualPhones() {
             <span className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Track Order</span>
           </div>
           <PhoneFrame className="w-[155px] h-[320px] sm:w-[220px] sm:h-[455px]">
-            <PhoneWithScreenshot src="/screenshots/mobile-tracking.webp" alt="Customer tracking order status on phone" />
+            <PhoneWithScreenshot src={trackingSrc} alt="Customer tracking order status on phone" />
           </PhoneFrame>
         </div>
       </div>
@@ -96,6 +97,7 @@ function DualPhones() {
 
 export default function PreorderShowcase() {
   const { ref, isVisible } = useFadeIn()
+  const assets = useCurrencyAssets()
 
   return (
     <section id="preorder-showcase" className="section-padding bg-gradient-to-b from-black to-gray-950 relative overflow-hidden scroll-mt-24">
@@ -147,7 +149,7 @@ export default function PreorderShowcase() {
           {/* Dual phone mockups */}
           <div className={`fade-in-section ${isVisible ? 'visible' : ''} order-1 lg:order-2`}>
             <div className="fade-child">
-              <DualPhones />
+              <DualPhones preorderSrc={assets.mobilePreorder} trackingSrc={assets.mobileTracking} />
             </div>
           </div>
         </div>

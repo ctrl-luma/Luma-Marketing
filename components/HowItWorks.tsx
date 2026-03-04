@@ -9,6 +9,7 @@ import { event } from '@/lib/analytics'
 import { getCountryRate } from '@/lib/stripe-rates'
 import { getVisitorCountry, detectCountry } from '@/lib/country'
 import { getCurrencySymbol } from '@/lib/currency'
+import { useCurrencyAssets } from '@/lib/currency-assets'
 
 const steps = [
   {
@@ -300,6 +301,7 @@ export default function HowItWorks() {
   const [countryCode, setCountryCode] = useState(getVisitorCountry)
   useEffect(() => { detectCountry().then(setCountryCode) }, [])
   const sym = useMemo(() => getCurrencySymbol(getCountryRate(countryCode).currency), [countryCode])
+  const assets = useCurrencyAssets()
 
   return (
     <section id="how-it-works" className="section-padding bg-gradient-to-b from-gray-950 to-black relative overflow-hidden scroll-mt-24">
@@ -316,7 +318,7 @@ export default function HowItWorks() {
 
         <div className="space-y-14 sm:space-y-20 lg:space-y-28 max-w-5xl mx-auto">
           {steps.map((step, index) => (
-            <StepItem key={step.number} step={step} index={index} sym={sym} />
+            <StepItem key={step.number} step={step.image ? { ...step, image: assets.tapToPay } : step} index={index} sym={sym} />
           ))}
         </div>
       </div>

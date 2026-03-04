@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useCallback } from 'react'
+import { useCurrencyAssets } from '@/lib/currency-assets'
 
 interface PhoneShowcaseProps {
   mobile?: boolean
@@ -49,6 +50,7 @@ const IMAGE_COUNT = 3
 export default function PhoneShowcase({ mobile = false }: PhoneShowcaseProps) {
   const [ready, setReady] = useState(false)
   const [loadedCount, setLoadedCount] = useState(0)
+  const assets = useCurrencyAssets()
 
   const onImageLoad = useCallback(() => {
     setLoadedCount(prev => prev + 1)
@@ -90,7 +92,7 @@ export default function PhoneShowcase({ mobile = false }: PhoneShowcaseProps) {
             }}
           >
             <PhoneFrame small className="w-[150px] h-[320px]">
-              <PhoneWithScreenshot src="/screenshots/hero-left.webp" alt="Luma POS menu view" onLoad={onImageLoad} />
+              <PhoneWithScreenshot src={assets.heroLeft} alt="Luma POS menu view" onLoad={onImageLoad} />
             </PhoneFrame>
           </div>
 
@@ -128,7 +130,7 @@ export default function PhoneShowcase({ mobile = false }: PhoneShowcaseProps) {
             }}
           >
             <PhoneFrame small className="w-[170px] h-[360px]">
-              <PhoneWithScreenshot src="/screenshots/hero-center.webp" alt="Luma POS tap to pay" onLoad={onImageLoad} />
+              <PhoneWithScreenshot src={assets.heroCenter} alt="Luma POS tap to pay" onLoad={onImageLoad} />
             </PhoneFrame>
           </div>
         </div>
@@ -154,7 +156,7 @@ export default function PhoneShowcase({ mobile = false }: PhoneShowcaseProps) {
           }}
         >
           <PhoneFrame className="w-[250px] h-[520px]">
-            <PhoneWithScreenshot src="/screenshots/hero-left.webp" alt="Luma POS menu view" onLoad={onImageLoad} />
+            <PhoneWithScreenshot src={assets.heroLeft} alt="Luma POS menu view" onLoad={onImageLoad} />
           </PhoneFrame>
         </div>
 
@@ -188,7 +190,7 @@ export default function PhoneShowcase({ mobile = false }: PhoneShowcaseProps) {
           }}
         >
           <PhoneFrame className="w-[280px] h-[580px]">
-            <PhoneWithScreenshot src="/screenshots/hero-center.webp" alt="Luma POS tap to pay" onLoad={onImageLoad} />
+            <PhoneWithScreenshot src={assets.heroCenter} alt="Luma POS tap to pay" onLoad={onImageLoad} />
           </PhoneFrame>
         </div>
       </div>

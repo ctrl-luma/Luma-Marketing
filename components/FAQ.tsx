@@ -84,6 +84,55 @@ const AnswerContent = memo(function AnswerContent({ faq }: { faq: FaqItem }) {
   )
 })
 
+/* ── Mobile: accordion item ── */
+const MobileAccordionItem = memo(function MobileAccordionItem({
+  faq,
+  isOpen,
+  onToggle,
+}: {
+  faq: FaqItem
+  isOpen: boolean
+  onToggle: () => void
+}) {
+  const contentRef = useRef<HTMLDivElement>(null)
+  const [height, setHeight] = useState(0)
+
+  useEffect(() => {
+    if (isOpen && contentRef.current) {
+      setHeight(contentRef.current.scrollHeight)
+    } else {
+      setHeight(0)
+    }
+  }, [isOpen])
+
+  return (
+    <div className="border border-gray-800 rounded-xl overflow-hidden bg-gray-900/50">
+      <button
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        className="w-full px-4 py-3.5 flex items-center justify-between text-left cursor-pointer"
+      >
+        <span className={`font-medium text-sm pr-4 transition-colors duration-200 ${isOpen ? 'text-white' : 'text-gray-400'}`}>
+          {faq.question}
+        </span>
+        <ChevronRight
+          className={`h-4 w-4 text-gray-500 transition-transform duration-200 flex-shrink-0 ${
+            isOpen ? 'rotate-90' : ''
+          }`}
+        />
+      </button>
+      <div
+        className="overflow-hidden transition-[height] duration-200 ease-out"
+        style={{ height }}
+      >
+        <div ref={contentRef} className="px-4 pb-4">
+          <AnswerContent faq={faq} />
+        </div>
+      </div>
+    </div>
+  )
+})
+
 /* ── Mobile: accordion ── */
 const MobileFAQ = memo(function MobileFAQ({ faqs }: { faqs: FaqItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
@@ -96,32 +145,12 @@ const MobileFAQ = memo(function MobileFAQ({ faqs }: { faqs: FaqItem[] }) {
   return (
     <div className="md:hidden space-y-2">
       {faqs.map((faq, index) => (
-        <div key={index} className="border border-gray-800 rounded-xl overflow-hidden bg-gray-900/50">
-          <button
-            onClick={() => handleToggle(index)}
-            aria-expanded={openIndex === index}
-            className="w-full px-4 py-3.5 flex items-center justify-between text-left cursor-pointer"
-          >
-            <span className={`font-medium text-sm pr-4 transition-colors duration-200 ${openIndex === index ? 'text-white' : 'text-gray-400'}`}>
-              {faq.question}
-            </span>
-            <ChevronRight
-              className={`h-4 w-4 text-gray-500 transition-transform duration-200 flex-shrink-0 ${
-                openIndex === index ? 'rotate-90' : ''
-              }`}
-            />
-          </button>
-          <div
-            className="grid transition-[grid-template-rows] duration-200 ease-out"
-            style={{ gridTemplateRows: openIndex === index ? '1fr' : '0fr' }}
-          >
-            <div className="overflow-hidden min-h-0">
-              <div className="px-4 pb-4">
-                <AnswerContent faq={faq} />
-              </div>
-            </div>
-          </div>
-        </div>
+        <MobileAccordionItem
+          key={index}
+          faq={faq}
+          isOpen={openIndex === index}
+          onToggle={() => handleToggle(index)}
+        />
       ))}
     </div>
   )

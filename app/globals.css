@@ -58,6 +58,10 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
   }
+  @keyframes slideUp {
+    0% { opacity: 0; transform: translateY(100%); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
 }
 
 /* Fade-in animations - GPU accelerated */
@@ -430,7 +434,7 @@ select:-webkit-autofill:active {
   align-items: center;
   width: 100%;
   padding: 0.625rem 0.75rem;
-  background-color: rgba(17, 24, 39, 0.5);
+  background-color: #111827;
   border: 1px solid #374151;
   border-radius: 0.5rem;
   font-size: 0.875rem;

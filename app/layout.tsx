@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
-import Script from 'next/script'
 import './globals.css'
 import ScrollToTop from '@/components/ScrollToTop'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 import Analytics from '@/components/Analytics'
-import { GA_MEASUREMENT_ID } from '@/lib/analytics'
+import CookieConsent from '@/components/CookieConsent'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -72,44 +71,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
-      <head>
-        {process.env.NODE_ENV === 'production' && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="gtag-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
-              `}
-            </Script>
-            <Script id="gtm" strategy="afterInteractive">
-              {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PCNRKR3G');`}
-            </Script>
-          </>
-        )}
-      </head>
+      <head />
       <body>
-        {process.env.NODE_ENV === 'production' && (
-          <noscript>
-            <iframe
-              src="https://www.googletagmanager.com/ns.html?id=GTM-PCNRKR3G"
-              height="0"
-              width="0"
-              style={{ display: 'none', visibility: 'hidden' }}
-            />
-          </noscript>
-        )}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-PCNRKR3G"
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         <AuthProvider>
           <Analytics />
+          <CookieConsent />
           <ScrollToTop />
           {children}
         </AuthProvider>
