@@ -8,7 +8,7 @@ export default function TermsOfService() {
       <main className="pt-20 sm:pt-24 pb-12 sm:pb-16">
         <div className="container max-w-3xl mx-auto px-4">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">Luma POS Terms of Service</h1>
-          <p className="text-gray-400 text-sm sm:text-base mb-6 sm:mb-8">Last Updated: February 14, 2026</p>
+          <p className="text-gray-400 text-sm sm:text-base mb-6 sm:mb-8">Last Updated: March 4, 2026</p>
 
           <div className="prose prose-invert prose-gray max-w-none">
             {/* Section 1 */}
@@ -152,9 +152,19 @@ export default function TermsOfService() {
             <section className="mb-6 sm:mb-8">
               <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">6. Fees and Payment</h2>
 
-              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.1 Service Fees</h3>
+              <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.1 Service Fees and Transaction Rates</h3>
               <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">
-                Luma POS charges fees as outlined in your pricing plan. All fees are in addition to Stripe&apos;s processing fees.
+                Luma POS charges a platform fee on each transaction as outlined in your pricing plan. This platform fee is collected in addition to Stripe&apos;s payment processing fees.
+              </p>
+              <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">
+                Transaction rates displayed on our website and in our applications represent the combined total of Stripe&apos;s underlying processing fees and Luma&apos;s platform fee. Stripe&apos;s processing fees are determined solely by Stripe and vary by country, currency, payment method, and card type. Luma does not control Stripe&apos;s pricing.
+              </p>
+              <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">
+                If Stripe modifies its processing fees, the total transaction rate you pay will change accordingly, even if Luma&apos;s platform fee remains the same. Luma will make reasonable efforts to update displayed rates promptly but is not responsible for delays in reflecting Stripe&apos;s pricing changes. You can always view Stripe&apos;s current rates at{' '}
+                <a href="https://stripe.com/pricing" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">stripe.com/pricing</a>.
+              </p>
+              <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 uppercase font-semibold">
+                All transaction rates are subject to change. Displayed rates are provided for informational purposes and do not constitute a guarantee of fixed pricing.
               </p>
 
               <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">6.2 Card-Not-Present Transaction Fees</h3>

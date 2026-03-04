@@ -25,6 +25,7 @@ const footerLinks = {
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
     { name: 'Events', href: '/events' },
+    { name: 'Transaction Rates', href: '/pricing' },
   ],
   legal: [
     { name: 'Terms of Service', href: '/terms' },

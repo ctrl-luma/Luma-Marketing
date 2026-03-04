@@ -33,9 +33,9 @@ function RateRow({
 }) {
   return (
     <tr className={muted ? 'text-gray-500' : ''}>
-      <td className="py-2.5 pr-4 text-sm text-gray-300">{label}</td>
-      <td className="py-2.5 px-4 text-sm text-center font-mono">{starter}</td>
-      <td className="py-2.5 pl-4 text-sm text-center font-mono text-primary-100">{pro}</td>
+      <td className="py-2.5 pr-2 sm:pr-4 text-xs sm:text-sm text-gray-300">{label}</td>
+      <td className="py-2.5 px-2 sm:px-4 text-xs sm:text-sm text-center font-mono">{starter}</td>
+      <td className="py-2.5 pl-2 sm:pl-4 text-xs sm:text-sm text-center font-mono text-primary-100">{pro}</td>
     </tr>
   )
 }
@@ -164,22 +164,22 @@ export default function PricingPageContent({ detectedCountry }: { detectedCountr
 
             {/* Rate table */}
             <div className="fade-child rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900/80 to-gray-950/80 overflow-hidden">
-              <div className="px-5 sm:px-6 py-4 border-b border-gray-800/50">
-                <h2 className="text-base font-semibold text-white">
+              <div className="px-4 sm:px-6 py-4 border-b border-gray-800/50">
+                <h2 className="text-sm sm:text-base font-semibold text-white">
                   Rates for {country.name}
                 </h2>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
                   {country.currency.toUpperCase()} &middot; Stripe processing + Luma platform fee
                 </p>
               </div>
 
-              <div className="px-5 sm:px-6 py-4">
+              <div className="px-4 sm:px-6 py-4">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-800/50">
-                      <th className="pb-2.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Type</th>
-                      <th className="pb-2.5 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Starter</th>
-                      <th className="pb-2.5 text-center text-xs font-medium text-primary-300/60 uppercase tracking-wider">Pro</th>
+                      <th className="pb-2.5 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Type</th>
+                      <th className="pb-2.5 text-center text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Starter</th>
+                      <th className="pb-2.5 text-center text-[10px] sm:text-xs font-medium text-primary-300/60 uppercase tracking-wider">Pro</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-800/30">
@@ -240,8 +240,41 @@ export default function PricingPageContent({ detectedCountry }: { detectedCountr
               style={{ gridTemplateRows: showAllCountries ? '1fr' : '0fr' }}
             >
               <div className="overflow-hidden min-h-0">
-                <div className="mt-4 rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900/80 to-gray-950/80 overflow-x-auto">
-                  <table className="w-full min-w-[640px]">
+                {/* Mobile: card layout */}
+                <div className="mt-4 space-y-2 sm:hidden">
+                  {COUNTRY_RATES.map((c) => {
+                    const cTTP = getTTPRate(c)
+                    return (
+                      <button
+                        key={c.code}
+                        className={`w-full text-left rounded-xl border p-3.5 transition-colors cursor-pointer ${c.code === selectedCountry ? 'bg-primary/5 border-primary/30' : 'bg-gray-900/60 border-gray-800 hover:bg-gray-800/40'}`}
+                        onClick={() => {
+                          handleCountryChange(c.code)
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-gray-200">{c.name}</span>
+                          <span className="text-[10px] text-gray-500 uppercase">{c.currency}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-gray-500 block mb-0.5">TTP Starter</span>
+                            <span className="font-mono text-gray-300">{formatRate(cTTP, c.currency, 'starter')}</span>
+                          </div>
+                          <div>
+                            <span className="text-primary-300/60 block mb-0.5">TTP Pro</span>
+                            <span className="font-mono text-primary-100">{formatRate(cTTP, c.currency, 'pro')}</span>
+                          </div>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* Desktop: table layout */}
+                <div className="mt-4 rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900/80 to-gray-950/80 overflow-x-auto hidden sm:block">
+                  <table className="w-full">
                     <thead>
                       <tr className="border-b border-gray-800/50">
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
